@@ -8,12 +8,19 @@ export const isSupabaseConfigured = Boolean(
   supabaseUrl && 
   supabaseAnonKey && 
   !supabaseUrl.includes('placeholder') &&
-  !supabaseUrl.includes('your-project')
+  !supabaseUrl.includes('your-project') &&
+  supabaseUrl.startsWith('http')
 );
 
-export const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+let supabaseClient = null;
+if (isSupabaseConfigured) {
+  try {
+    supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+  } catch (err) {
+    console.error("Failed to initialize Supabase client. Check your VITE_SUPABASE_URL.", err);
+  }
+}
+export const supabase = supabaseClient;
 
 /**
  * Sign in using Google OAuth
