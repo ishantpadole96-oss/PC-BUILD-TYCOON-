@@ -35,10 +35,13 @@ export default function App() {
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) return;
 
-    // Check initial user
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUser(user);
+    // Check initial session — getSession() (not getUser()) is required here
+    // because after a Google OAuth redirect, the URL contains hash fragments
+    // (#access_token=...) that only getSession() will detect and exchange
+    // into a valid session. getUser() skips URL parsing and would miss the login.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
         syncCloudBuilds();
       }
     });
