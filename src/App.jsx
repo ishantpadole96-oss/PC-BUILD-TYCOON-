@@ -11,12 +11,16 @@ import { SavedBuildsView } from './components/saved/SavedBuildsView';
 import { ComponentModal } from './components/builder/ComponentModal';
 import { PriceHistoryModal } from './components/common/PriceHistoryModal';
 import { ExportModal } from './components/common/ExportModal';
+import { AuthModal } from './components/common/AuthModal';
+import { supabase, isSupabaseConfigured } from './utils/supabase';
 import './index.css';
 
 export default function App() {
   const activeTab = useSiteStore((s) => s.activeTab);
   const autoMarketSync = useSiteStore((s) => s.autoMarketSync);
   const tickMarket = useSiteStore((s) => s.tickMarket);
+  const setUser = useSiteStore((s) => s.setUser);
+  const syncCloudBuilds = useSiteStore((s) => s.syncCloudBuilds);
 
   // Background Live Market Sync: updates prices and retailer quotes every 25 seconds
   useEffect(() => {
@@ -26,6 +30,32 @@ export default function App() {
     }, 25000);
     return () => clearInterval(interval);
   }, [autoMarketSync, tickMarket]);
+
+  // Supabase Auth State Listener
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) return;
+
+    // Check initial user
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setUser(user);
+        syncCloudBuilds();
+      }
+    });
+
+    // Listen to changes (login, logout, refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      const currentUser = session?.user || null;
+      setUser(currentUser);
+      if (currentUser) {
+        syncCloudBuilds();
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [setUser, syncCloudBuilds]);
 
   return (
     <div className="pc-site-app">
@@ -53,6 +83,9 @@ export default function App() {
 
       {/* Specification Export Modal */}
       <ExportModal />
+
+      {/* Account & Google Login Modal */}
+      <AuthModal />
 
       {/* Global Footer */}
       <footer className="site-footer">

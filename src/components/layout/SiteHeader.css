@@ -273,6 +273,64 @@
   color: #f59e0b;
 }
 
+/* User Account / Sign In Button */
+.header-auth-btn {
+  background: #131d31;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s;
+}
+
+.header-auth-btn:hover {
+  background: #1e293b;
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.header-auth-btn.logged-in {
+  border-color: rgba(52, 211, 153, 0.4);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.header-signin-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.google-icon-sm {
+  width: 16px;
+  height: 16px;
+}
+
+.header-user-avatar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-img-sm {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #38bdf8;
+}
+
+.auth-name-tag {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #34d399;
+}
+
 @media (max-width: 900px) {
   .site-header-main {
     flex-direction: column;

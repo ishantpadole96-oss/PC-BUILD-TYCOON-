@@ -1,10 +1,11 @@
 // Site Store (Zustand)
 // Manages System Builder current build, dynamic market prices, multi-retailer tracking,
-// currency selection, saved user rigs, and live market sync intervals.
+// currency selection, saved user rigs, Supabase user authentication, and cloud synchronization.
 
 import { create } from 'zustand';
 import { initializeMarket, tickMarket as tickMarketEngine } from '../engine/marketSimulation';
 import { getComponentById } from '../data/index';
+import { supabase, isSupabaseConfigured, saveBuildToCloud, deleteCloudBuild, fetchUserCloudBuilds } from '../utils/supabase';
 
 const STORAGE_SAVED_BUILDS = 'pcpartpulse_saved_builds_v1';
 const STORAGE_CURRENT_BUILD = 'pcpartpulse_current_build_v1';
@@ -77,6 +78,11 @@ export const useSiteStore = create((set, get) => ({
   activePickerCategory: null,
   selectedComponentForDetail: null,
   exportModalOpen: false,
+  authModalOpen: false,
+  user: null,
+
+  setUser: (user) => set({ user }),
+  setAuthModalOpen: (open) => set({ authModalOpen: open }),
 
   setActiveTab: (tab) => set({ activeTab: tab }),
 
@@ -128,19 +134,45 @@ export const useSiteStore = create((set, get) => ({
     } catch (e) {}
   },
 
-  saveCurrentBuild: (name) => {
+  saveCurrentBuild: async (name) => {
     const current = get().currentBuild;
     const ids = {};
     Object.entries(current).forEach(([k, v]) => {
       if (v) ids[k] = v.id;
     });
 
+    const market = get().market;
+    const totalPrice = Object.values(current).filter(Boolean).reduce((sum, item) => {
+      const mData = market.prices[item.id];
+      return sum + (mData ? mData.currentPrice : item.basePrice);
+    }, 0);
+
+    const buildName = name || `Custom Build #${get().savedBuilds.length + 1}`;
     const newSave = {
       id: `build_${Date.now()}`,
-      name: name || `Custom Build #${get().savedBuilds.length + 1}`,
+      name: buildName,
       savedAt: new Date().toISOString().split('T')[0],
       components: ids,
+      totalPrice,
+      isCloudSynced: false,
     };
+
+    // If user is authenticated with Supabase, sync to cloud
+    if (get().user && isSupabaseConfigured) {
+      try {
+        const { data, error } = await saveBuildToCloud({
+          name: buildName,
+          components: ids,
+          totalPrice,
+        });
+        if (data && !error) {
+          newSave.id = data.id;
+          newSave.isCloudSynced = true;
+        }
+      } catch (e) {
+        console.warn('Cloud save fallback to local:', e);
+      }
+    }
 
     const savedBuilds = [newSave, ...get().savedBuilds];
     set({ savedBuilds });
@@ -149,12 +181,43 @@ export const useSiteStore = create((set, get) => ({
     } catch (e) {}
   },
 
-  deleteSavedBuild: (id) => {
+  deleteSavedBuild: async (id) => {
+    if (get().user && isSupabaseConfigured && !id.startsWith('saved_preset_')) {
+      try {
+        await deleteCloudBuild(id);
+      } catch (e) {}
+    }
+
     const savedBuilds = get().savedBuilds.filter(b => b.id !== id);
     set({ savedBuilds });
     try {
       localStorage.setItem(STORAGE_SAVED_BUILDS, JSON.stringify(savedBuilds));
     } catch (e) {}
+  },
+
+  syncCloudBuilds: async () => {
+    if (!get().user || !isSupabaseConfigured) return;
+    try {
+      const { data, error } = await fetchUserCloudBuilds();
+      if (data && !error && data.length > 0) {
+        const formatted = data.map(dbRow => ({
+          id: dbRow.id,
+          name: dbRow.name,
+          savedAt: new Date(dbRow.created_at).toISOString().split('T')[0],
+          components: dbRow.components,
+          totalPrice: dbRow.total_price,
+          isCloudSynced: true,
+        }));
+        
+        // Merge with non-cloud presets
+        const localOnly = get().savedBuilds.filter(b => b.id.startsWith('saved_preset_'));
+        const merged = [...formatted, ...localOnly];
+        set({ savedBuilds: merged });
+        localStorage.setItem(STORAGE_SAVED_BUILDS, JSON.stringify(merged));
+      }
+    } catch (e) {
+      console.warn('Failed to sync cloud builds:', e);
+    }
   },
 
   tickMarket: () => {

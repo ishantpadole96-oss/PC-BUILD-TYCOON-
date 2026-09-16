@@ -117,7 +117,14 @@ export function SavedBuildsView() {
               <div key={build.id} className={`saved-card ${isSelectedForCompare ? 'card-comparing' : ''}`}>
                 <div className="saved-card-top">
                   <div className="saved-card-titles">
-                    <h3 className="saved-build-name">{build.name}</h3>
+                    <div className="saved-name-row">
+                      <h3 className="saved-build-name">{build.name}</h3>
+                      {build.isCloudSynced && (
+                        <span className="cloud-synced-pill" title="Saved dynamically to your Supabase PostgreSQL cloud database">
+                          ☁️ Cloud Synced
+                        </span>
+                      )}
+                    </div>
                     <span className="saved-date">Saved on {build.savedAt}</span>
                   </div>
                   <div className="saved-price-block">
