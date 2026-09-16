@@ -71,6 +71,9 @@ export function GameHUD() {
           <button className="hud-btn hud-btn-reset" onClick={resetGame} title="Reset game to Day 1">
             🔄 Reset
           </button>
+          <button className="hud-btn hud-btn-signin" onClick={() => alert('Sign in functionality coming soon!')} title="Sign in to cloud save your progress">
+            👤 Sign In
+          </button>
         </div>
       </div>
 
