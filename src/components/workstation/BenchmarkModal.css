@@ -1,0 +1,311 @@
+/* ═══════════════════════════════════════════════════════════════
+   Benchmark Modal
+   ═══════════════════════════════════════════════════════════════ */
+
+.bench-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bench-modal {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+  animation: modalSlide 0.3s ease-out;
+}
+
+@keyframes modalSlide {
+  from { transform: translateY(20px) scale(0.97); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.bench-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+.bench-chip {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.12);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+.bench-title {
+  font-size: 1.2rem;
+  color: #f1f5f9;
+  margin-top: 0.3rem;
+}
+
+.bench-close {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid #334155;
+  color: #94a3b8;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.bench-close:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.bench-modal-body {
+  padding: 1.5rem;
+}
+
+/* Start Box */
+.bench-start-box {
+  text-align: center;
+}
+
+.bench-system-info {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.bench-system-info h3 {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.bench-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.bench-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem;
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 8px;
+  border: 1px solid #1e293b;
+}
+
+.bs-label {
+  font-size: 0.6rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.bs-val {
+  font-size: 0.82rem;
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.btn-run-bench {
+  background: linear-gradient(135deg, #f97316, #dc2626);
+  border: none;
+  color: white;
+  padding: 0.9rem 2rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-run-bench:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.35);
+}
+
+.btn-rerun {
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+}
+
+.btn-rerun:hover {
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
+}
+
+.bench-hint {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-top: 0.8rem;
+}
+
+/* Results */
+.bench-score-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(168, 85, 247, 0.15));
+  border: 3px solid #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  box-shadow: 0 0 32px rgba(59, 130, 246, 0.2);
+}
+
+.score-num {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #60a5fa;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1;
+}
+
+.score-max {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.score-label {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-top: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+}
+
+/* FPS */
+.bench-fps-section, .bench-thermals-section, .bench-value-section {
+  margin-bottom: 1.5rem;
+}
+
+.bench-fps-section h3, .bench-thermals-section h3, .bench-value-section h3 {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  margin-bottom: 0.8rem;
+}
+
+.bench-fps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.6rem;
+}
+
+.bench-fps-card {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: center;
+  text-align: center;
+}
+
+.fps-res {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.fps-avg {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #4ade80;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.fps-avg small {
+  font-size: 0.65rem;
+  color: #64748b;
+}
+
+.fps-bar-track {
+  width: 100%;
+  height: 4px;
+  background: #1e293b;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fps-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.fps-bar-fill.fill-good { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.fps-bar-fill.fill-low { background: linear-gradient(90deg, #f97316, #ef4444); }
+
+.fps-range {
+  font-size: 0.65rem;
+  color: #64748b;
+}
+
+/* Thermals */
+.thermals-grid, .value-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.thermal-item, .value-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+}
+
+.thermal-item span, .value-item span {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.thermal-item strong, .value-item strong {
+  font-size: 0.9rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.text-danger { color: #ef4444 !important; }
+.text-good { color: #4ade80 !important; }
