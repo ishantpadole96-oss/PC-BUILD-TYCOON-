@@ -1,0 +1,191 @@
+.component-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  overflow: hidden;
+}
+
+.component-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-default);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.component-card:hover .card-glow {
+  opacity: 1;
+}
+
+.component-card.selected {
+  border-color: var(--accent-cyan);
+  background: rgba(0, 229, 255, 0.06);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.component-card.incompatible {
+  border-color: rgba(239, 68, 68, 0.4);
+  opacity: 0.6;
+}
+
+.component-card.incompatible::after {
+  content: '⚠ Incompatible';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* Card glow */
+.card-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, var(--accent-cyan-dim) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+  pointer-events: none;
+}
+
+/* Selected badge */
+.selected-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-cyan);
+  color: var(--bg-primary);
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  z-index: 2;
+  animation: pop-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+/* Tier badge */
+.tier-badge {
+  display: inline-flex;
+  width: fit-content;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.tier-badge.tier-budget {
+  color: var(--tier-budget);
+  background: var(--tier-budget-bg);
+}
+.tier-badge.tier-mid {
+  color: var(--tier-mid);
+  background: var(--tier-mid-bg);
+}
+.tier-badge.tier-high {
+  color: var(--tier-high);
+  background: var(--tier-high-bg);
+}
+.tier-badge.tier-enthusiast {
+  color: var(--tier-enthusiast);
+  background: var(--tier-enthusiast-bg);
+}
+
+/* Card header */
+.card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-brand {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+.card-model {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Spec chips */
+.card-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.spec-chip {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Description */
+.card-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Footer */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.card-price {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+}
+
+.card-power {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Focus */
+.component-card:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}

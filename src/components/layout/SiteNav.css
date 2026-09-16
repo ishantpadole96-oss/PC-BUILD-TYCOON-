@@ -1,0 +1,83 @@
+.site-nav {
+  background: #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 28px;
+}
+
+.site-nav-container {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.nav-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #94a3b8;
+  padding: 14px 16px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.nav-tab-btn:hover {
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.nav-tab-btn.active {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.05);
+}
+
+.nav-tab-icon {
+  font-size: 1.05rem;
+}
+
+.nav-tab-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 10px;
+  letter-spacing: 0.04em;
+}
+
+.badge-builder {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.badge-market {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  animation: pulseLive 1.8s infinite;
+}
+
+@keyframes pulseLive {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.badge-catalog {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+}
+
+.badge-guides {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.badge-saved {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+}

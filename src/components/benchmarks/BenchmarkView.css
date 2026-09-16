@@ -1,0 +1,304 @@
+.benchmarks-view {
+  padding: 24px 28px;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.benchmarks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.benchmarks-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.benchmarks-sub {
+  font-size: 0.88rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.res-toggle-group {
+  display: flex;
+  background: #131d31;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.res-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.res-btn:hover {
+  color: #ffffff;
+}
+
+.res-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.missing-parts-callout {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fbbf24;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn-go-builder {
+  background: #1e293b;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Bottleneck Card */
+.bottleneck-card {
+  background: #131d31;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bottleneck-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bottleneck-badge {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.resolution-label {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  font-family: monospace;
+}
+
+.bottleneck-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bottleneck-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bottleneck-meter-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.meter-track {
+  position: relative;
+  height: 8px;
+  background: linear-gradient(90deg, #10b981 0%, #f59e0b 60%, #ef4444 100%);
+  border-radius: 4px;
+}
+
+.meter-thumb {
+  position: absolute;
+  top: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+  transform: translateX(-50%);
+  transition: left 0.3s ease;
+}
+
+.thumb-green { background: #10b981; }
+.thumb-orange { background: #f59e0b; }
+
+.bottleneck-explanation {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+/* Games Section */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.game-card {
+  background: #131d31;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.game-card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.game-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.game-genre {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.game-fps-display {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.fps-number {
+  font-size: 2.2rem;
+  font-weight: 900;
+  font-family: monospace;
+  color: #38bdf8;
+  line-height: 1;
+}
+
+.fps-unit {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.fps-meter-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fps-bar-track {
+  height: 6px;
+  background: #1e293b;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.fps-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.fill-smooth { background: #34d399; }
+.fill-stutter { background: #f87171; }
+
+.fps-verdict {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* Workstation Card */
+.workstation-bench-card {
+  background: #131d31;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.workstation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.workstation-box {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.workstation-label {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.workstation-val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-family: monospace;
+  color: #38bdf8;
+}
+
+.workstation-sub {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+@media (max-width: 950px) {
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .workstation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .games-grid {
+    grid-template-columns: 1fr;
+  }
+}

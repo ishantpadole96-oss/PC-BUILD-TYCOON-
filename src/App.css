@@ -1,0 +1,23 @@
+/* ── App Layout ── */
+.app-main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.app-main > .picker {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 24px;
+}
+
+/* ── Mobile Overlay ── */
+@media (max-width: 900px) {
+  .app-main {
+    flex-direction: column;
+  }
+
+  .app-main > .picker {
+    padding: 16px;
+  }
+}
