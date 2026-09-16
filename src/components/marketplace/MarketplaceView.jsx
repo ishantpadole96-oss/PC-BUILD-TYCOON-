@@ -11,6 +11,7 @@ export function MarketplaceView() {
 
   const cash = useGameStore((s) => s.cash);
   const buyComponent = useGameStore((s) => s.buyComponent);
+  const buyShadyDeal = useGameStore((s) => s.buyShadyDeal);
   const market = useGameStore((s) => s.market);
 
   // Aggregate all components or filter by category
@@ -61,7 +62,53 @@ export function MarketplaceView() {
           </div>
           <div className="event-timer">
             <span>Duration Remaining:</span>
-            <strong>{market.eventDaysRemaining} In-Game Days</strong>
+            <strong>{market.eventTicksRemaining} In-Game Days</strong>
+          </div>
+        </div>
+      )}
+
+      {/* News Ticker for Alerts */}
+      {market.alerts && market.alerts.length > 0 && (
+        <div className="news-ticker-container">
+          <div className="news-ticker-label">LATEST MARKET NEWS</div>
+          <div className="news-ticker">
+            <div className="ticker-content">
+              {market.alerts.map(a => (
+                <span key={a.id} className={`ticker-item type-${a.type}`}>
+                  {a.text} ({a.time})
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Shady Deals (Dark Web) Section */}
+      {market.shadyDeals && market.shadyDeals.length > 0 && (
+        <div className="shady-deals-section">
+          <h3>🕷️ DARK WEB OFFERS</h3>
+          <p className="shady-warning">WARNING: High risk of scams. Parts are cheap, but might be permanently damaged.</p>
+          <div className="shady-deals-grid">
+            {market.shadyDeals.map(deal => (
+              <div key={deal.id} className="shady-deal-card">
+                <div className="shady-header">
+                  <span>{deal.item.category.toUpperCase()} - {deal.item.tier}</span>
+                  <span className="expires">Expires in {deal.expiresInTicks} days</span>
+                </div>
+                <h4>{deal.item.model}</h4>
+                <div className="shady-price-row">
+                  <span className="shady-price">₹{deal.price.toLocaleString('en-IN')}</span>
+                  <span className="shady-original-price">₹{deal.item.basePrice.toLocaleString('en-IN')}</span>
+                </div>
+                <button 
+                  onClick={() => buyShadyDeal(deal.id)}
+                  disabled={cash < deal.price}
+                  className="btn-shady-buy"
+                >
+                  {cash >= deal.price ? 'Risk it!' : 'No Funds'}
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       )}

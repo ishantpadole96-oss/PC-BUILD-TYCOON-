@@ -159,6 +159,7 @@ export function initializeMarket() {
     prices,
     history,
     alerts,
+    shadyDeals: [], // dark web components
     activeEvent: null,
     eventTicksRemaining: 0,
     marketTickCount: 1,
@@ -270,10 +271,41 @@ export function tickMarket(currentMarket) {
 
   if (newAlerts.length > 12) newAlerts.length = 12;
 
+  let shadyDeals = currentMarket.shadyDeals ? [...currentMarket.shadyDeals] : [];
+  // Randomly add a shady deal
+  if (Math.random() < 0.1 && shadyDeals.length < 3) {
+    // Pick a random expensive part
+    const gpus = ALL_COMPONENTS['gpu'] || [];
+    const highEndGpus = gpus.filter(g => g.basePrice > 40000);
+    if (highEndGpus.length > 0) {
+      const targetGpu = highEndGpus[Math.floor(Math.random() * highEndGpus.length)];
+      shadyDeals.push({
+        id: `shady_${Date.now()}`,
+        item: targetGpu,
+        price: Math.round(targetGpu.basePrice * 0.3), // 70% off!
+        isScam: Math.random() > 0.5, // 50% chance it's a scam (broken part)
+        expiresInTicks: 3,
+      });
+      newAlerts.unshift({
+        id: Date.now() + 2,
+        type: 'warning',
+        text: `🕷️ DARK WEB: Suspiciously cheap ${targetGpu.model} listed. Is it a scam?`,
+        time: 'Just now',
+      });
+    }
+  }
+
+  // Tick down shady deals
+  shadyDeals = shadyDeals.filter(deal => {
+    deal.expiresInTicks--;
+    return deal.expiresInTicks > 0;
+  });
+
   return {
     prices: newPrices,
     history: newHistory,
     alerts: newAlerts,
+    shadyDeals,
     activeEvent,
     eventTicksRemaining,
     marketTickCount: (currentMarket.marketTickCount || 1) + 1,

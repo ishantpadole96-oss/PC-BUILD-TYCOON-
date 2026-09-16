@@ -5,6 +5,9 @@ import { PCScene } from '../../scene/PCScene';
 import { CATEGORIES, ALL_COMPONENTS } from '../../data/index';
 import { checkCompatibility, calcTotalPowerDraw, calcTotalCost } from '../../engine/compatibility';
 import { soundFx } from '../../utils/audio';
+import { BenchmarkModal } from '../benchmark/BenchmarkModal';
+import { Canvas } from '@react-three/fiber';
+import { PCViewer } from './PCModel3D';
 
 export function WorkstationView({ onOpenBenchmark }) {
   const [selectedCategory, setSelectedCategory] = useState('cpu');
@@ -27,6 +30,10 @@ export function WorkstationView({ onOpenBenchmark }) {
   const submitChallenge = useGameStore((s) => s.submitChallenge);
   const setActiveTab = useGameStore((s) => s.setActiveTab);
   const benchmarkResult = useGameStore((s) => s.benchmarkResult);
+  const biosSettings = useGameStore((s) => s.biosSettings);
+  const setBiosSetting = useGameStore((s) => s.setBiosSetting);
+
+  const [showBiosOverlay, setShowBiosOverlay] = useState(false);
 
   const compatibility = checkCompatibility(currentBuild);
   const totalPower = calcTotalPowerDraw(currentBuild);
@@ -148,35 +155,13 @@ export function WorkstationView({ onOpenBenchmark }) {
 
           {/* 3D Scene / 2D Schematic */}
           <div className="viewport-canvas-box">
-            {viewMode === '3d' ? (
-              <PCScene
-                selectedCategory={selectedCategory}
-                onSelectCategory={setSelectedCategory}
-              />
-            ) : (
-              <div className="schematic-board">
-                <div className="schematic-motherboard">
-                  <div className="mb-header">MOTHERBOARD SCHEMATIC VIEW</div>
-                  <div className="mb-grid">
-                    {CATEGORIES.map((cat) => {
-                      const part = currentBuild[cat.key];
-                      const isSel = selectedCategory === cat.key;
-                      return (
-                        <div
-                          key={cat.key}
-                          onClick={() => setSelectedCategory(cat.key)}
-                          className={`schematic-slot slot-${cat.key} ${isSel ? 'slot-selected' : ''} ${part ? 'slot-occupied' : 'slot-empty'}`}
-                        >
-                          <span className="slot-icon">{cat.icon}</span>
-                          <span className="slot-name">{cat.label}</span>
-                          <span className="slot-status">{part ? part.model : 'EMPTY'}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+            <div className="work-bench" style={{ width: '100%', height: '100%' }}>
+              <div className="bench-pc-container" style={{ width: '100%', height: '100%', minHeight: '600px' }}>
+                <Canvas camera={{ position: [5, 3, 5], fov: 50 }}>
+                  <PCViewer build={currentBuild} powerState={pcPowerState} />
+                </Canvas>
               </div>
-            )}
+            </div>
           </div>
 
           {/* Virtual Gaming Monitor Screen */}
@@ -243,11 +228,43 @@ export function WorkstationView({ onOpenBenchmark }) {
                         <span className="icon-img">🔥</span>
                         <span className="icon-name">TimeSpy Sim 3D</span>
                       </div>
-                      <div className="desktop-icon">
+                      <div className="desktop-icon" onClick={() => setShowBiosOverlay(true)}>
                         <span className="icon-img">⚙️</span>
-                        <span className="icon-name">Hardware Monitor</span>
+                        <span className="icon-name">BIOS Config</span>
                       </div>
                     </div>
+
+                    {showBiosOverlay && (
+                      <div className="bios-overlay">
+                        <div className="bios-window">
+                          <div className="bios-header">
+                            <span>MEGATRENDS BIOS - ADVANCED</span>
+                            <button onClick={() => setShowBiosOverlay(false)}>✕</button>
+                          </div>
+                          <div className="bios-body">
+                            <p className="bios-warning">⚠️ Overclocking increases performance but generates extreme heat.</p>
+                            
+                            <label className="bios-label">
+                              <span>CPU Core Offset (+MHz): {biosSettings.cpuClockOffset}</span>
+                              <input 
+                                type="range" min="0" max="1000" step="50" 
+                                value={biosSettings.cpuClockOffset}
+                                onChange={(e) => setBiosSetting('cpuClockOffset', parseInt(e.target.value))}
+                              />
+                            </label>
+
+                            <label className="bios-label">
+                              <span>GPU Core Offset (+MHz): {biosSettings.gpuClockOffset}</span>
+                              <input 
+                                type="range" min="0" max="1000" step="50" 
+                                value={biosSettings.gpuClockOffset}
+                                onChange={(e) => setBiosSetting('gpuClockOffset', parseInt(e.target.value))}
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {/* On-Screen Hardware Sensor Overlay */}
                     <div className="desktop-sensors">

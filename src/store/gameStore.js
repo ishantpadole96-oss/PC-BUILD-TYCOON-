@@ -11,6 +11,7 @@ import { runBenchmark, evaluateCustomerSatisfaction } from '../engine/benchmark'
 import { initializeMarket, advanceMarketDay } from '../engine/marketSimulation';
 import { generateRepairJob } from '../engine/repairDiagnostics';
 import { soundFx } from '../utils/audio';
+import confetti from 'canvas-confetti';
 
 const STORAGE_KEY = 'pc_builder_tycoon_save_v1';
 
@@ -24,6 +25,11 @@ const INITIAL_BUILD = {
   case: null,
   cooler: null,
   fans: [],
+};
+
+const INITIAL_BIOS = {
+  cpuClockOffset: 0,
+  gpuClockOffset: 0,
 };
 
 function getInitialState() {
@@ -45,6 +51,7 @@ function getInitialState() {
     activeTab: 'workstation', // start on workstation for immediate gameplay
     inventory: [],
     currentBuild: { ...INITIAL_BUILD },
+    biosSettings: { ...INITIAL_BIOS },
     installedFromInventory: {}, // map of category -> inventory item ID
 
     orders: initialOrders,
@@ -140,6 +147,16 @@ export const useGameStore = create((set, get) => ({
     }, 4500);
   },
 
+  setBiosSetting: (key, val) => {
+    soundFx.playClick();
+    set(state => ({
+      biosSettings: {
+        ...state.biosSettings,
+        [key]: val
+      }
+    }));
+  },
+
   // ── ORDER SYSTEM ──
   acceptOrder: (orderId) => {
     const state = get();
@@ -174,7 +191,14 @@ export const useGameStore = create((set, get) => ({
       return;
     }
 
-    const benchmark = state.benchmarkResult || runBenchmark(build);
+    const benchmark = state.benchmarkResult || runBenchmark(build, state.biosSettings);
+    
+    if (benchmark.thermal.isOverheating) {
+      soundFx.playWarning();
+      get().setNotification('PC is overheating and crashing! Reduce overclock or improve cooling.', 'error');
+      return;
+    }
+
     const satisfaction = evaluateCustomerSatisfaction(build, state.activeOrder.requirements, benchmark);
 
     // Calculate payout
@@ -214,6 +238,15 @@ export const useGameStore = create((set, get) => ({
 
     get().setNotification(`PC Delivered! Earned ₹${totalPayout.toLocaleString('en-IN')} (Profit: ₹${profit.toLocaleString('en-IN')}, Rep +${repGained})`, 'success');
     get().persist();
+    
+    // Confetti!
+    if (satisfaction >= 90) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
   },
 
   refreshOrders: () => {
@@ -267,6 +300,55 @@ export const useGameStore = create((set, get) => ({
     }));
 
     get().setNotification(`Purchased ${component.model} for ₹${price.toLocaleString('en-IN')}`, 'success');
+    get().persist();
+    return true;
+  },
+
+  buyShadyDeal: (dealId) => {
+    const state = get();
+    const deal = state.market.shadyDeals?.find(d => d.id === dealId);
+    if (!deal) return false;
+
+    if (state.cash < deal.price) {
+      soundFx.playWarning();
+      get().setNotification(`Insufficient funds! Need ₹${deal.price.toLocaleString('en-IN')}`, 'error');
+      return false;
+    }
+
+    soundFx.playCash();
+
+    const invItem = {
+      instanceId: `inv_shady_${Date.now()}`,
+      componentId: deal.item.id,
+      category: deal.item.category,
+      item: deal.isScam ? { ...deal.item, isDamaged: true, model: `[BROKEN] ${deal.item.model}`, description: 'This part is completely fried.' } : deal.item,
+      purchasePrice: deal.price,
+      purchasedAt: Date.now(),
+    };
+
+    const newTx = {
+      id: `tx_${Date.now()}`,
+      description: `Dark Web Purchase: ${deal.item.model}`,
+      amount: -deal.price,
+      type: 'debit',
+      timestamp: Date.now(),
+    };
+
+    set(prev => ({
+      cash: prev.cash - deal.price,
+      inventory: [invItem, ...prev.inventory],
+      transactions: [newTx, ...prev.transactions],
+      market: {
+        ...prev.market,
+        shadyDeals: prev.market.shadyDeals.filter(d => d.id !== dealId)
+      }
+    }));
+
+    if (deal.isScam) {
+      get().setNotification(`SCAMMED! The ${deal.item.model} you bought is a broken brick!`, 'error');
+    } else {
+      get().setNotification(`LUCKY! You got a working ${deal.item.model} for dirt cheap!`, 'success');
+    }
     get().persist();
     return true;
   },
@@ -333,6 +415,7 @@ export const useGameStore = create((set, get) => ({
         ...prev.installedFromInventory,
         [category]: invItem.instanceId,
       },
+      biosSettings: { ...INITIAL_BIOS }, // reset overclock on hardware swap
       pcPowerState: 'off', // Turn off PC on hardware change
       postFailReason: null,
       benchmarkResult: null,
@@ -400,6 +483,7 @@ export const useGameStore = create((set, get) => ({
       currentBuild: { ...INITIAL_BUILD },
       inventory: [...returnedItems, ...prev.inventory],
       installedFromInventory: {},
+      biosSettings: { ...INITIAL_BIOS },
       pcPowerState: 'off',
       postFailReason: null,
       benchmarkResult: null,
@@ -489,7 +573,15 @@ export const useGameStore = create((set, get) => ({
     }
 
     soundFx.playClick();
-    const result = runBenchmark(state.currentBuild);
+    const result = runBenchmark(state.currentBuild, state.biosSettings);
+    
+    if (result.thermal.isOverheating) {
+      soundFx.playPostError();
+      set({ pcPowerState: 'failed', postFailReason: 'THERMAL TRIP: CPU/GPU critically overheated during load. System halted to prevent damage.' });
+      get().setNotification('Benchmark crashed due to overheating!', 'error');
+      return;
+    }
+
     set({ benchmarkResult: result });
     get().setNotification(`Benchmark Complete! Overall Score: ${result.overallScore}/100`, 'success');
     get().persist();
@@ -608,7 +700,14 @@ export const useGameStore = create((set, get) => ({
       return;
     }
 
-    const benchmark = state.benchmarkResult || runBenchmark(build);
+    const benchmark = state.benchmarkResult || runBenchmark(build, state.biosSettings);
+    
+    if (benchmark.thermal.isOverheating) {
+      soundFx.playWarning();
+      get().setNotification('Challenge failed: System crashed due to overheating.', 'error');
+      return;
+    }
+
     const totalCost = benchmark.value.totalCost;
 
     // Check rules
@@ -645,6 +744,13 @@ export const useGameStore = create((set, get) => ({
 
     get().setNotification(`🏆 Challenge Complete: ${ch.name}! Won ₹${reward.toLocaleString('en-IN')} +25 Rep!`, 'success');
     get().persist();
+    
+    confetti({
+      particleCount: 150,
+      spread: 90,
+      origin: { y: 0.5 },
+      colors: ['#ffd700', '#ff8c00', '#ff0000']
+    });
   },
 
   // ── SHOP UPGRADES ──
@@ -689,6 +795,12 @@ export const useGameStore = create((set, get) => ({
     get().setNotification(`🎉 Shop Upgraded to Level ${nextLevelNum}: ${nextTier.name}!`, 'success');
     get().refreshOrders();
     get().persist();
+    
+    confetti({
+      particleCount: 200,
+      spread: 120,
+      origin: { y: 0.3 }
+    });
   },
 
   // ── ADVANCE IN-GAME DAY ──
@@ -730,7 +842,12 @@ export const useGameStore = create((set, get) => ({
       return;
     }
 
-    const bench = state.benchmarkResult || runBenchmark(build);
+    const bench = state.benchmarkResult || runBenchmark(build, state.biosSettings);
+    if (bench.thermal.isOverheating) {
+      get().setNotification('Cannot publish a PC that overheats and crashes!', 'error');
+      return;
+    }
+
     soundFx.playCash();
 
     const newSaved = {
@@ -776,6 +893,7 @@ export const useGameStore = create((set, get) => ({
         day: state.day,
         inventory: state.inventory,
         currentBuild: state.currentBuild,
+        biosSettings: state.biosSettings,
         installedFromInventory: state.installedFromInventory,
         orders: state.orders,
         activeOrder: state.activeOrder,

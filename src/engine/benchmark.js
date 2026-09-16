@@ -5,16 +5,20 @@
 /**
  * Run benchmark simulation on a completed build
  * @param {Object} build - The PC build object
+ * @param {Object} biosSettings - The overclock settings
  * @returns {Object} Benchmark results
  */
-export function runBenchmark(build) {
+export function runBenchmark(build, biosSettings = { cpuClockOffset: 0, gpuClockOffset: 0 }) {
   const { cpu, gpu, ram: ramStick, storage: stor, cooler, psu } = build;
 
   if (!cpu) return null;
 
-  // Base scores from components
-  const cpuScore = calcCpuScore(cpu);
-  const gpuScore = gpu ? calcGpuScore(gpu) : (cpu.specs?.integratedGraphics ? 8 : 0);
+  // Base scores from components (apply overclocking offsets)
+  const cpuOCMult = 1.0 + (biosSettings.cpuClockOffset / 1000); // e.g. +200MHz = 1.2x score
+  const gpuOCMult = 1.0 + (biosSettings.gpuClockOffset / 1000);
+
+  const cpuScore = calcCpuScore(cpu) * cpuOCMult;
+  const gpuScore = gpu ? calcGpuScore(gpu) * gpuOCMult : (cpu.specs?.integratedGraphics ? 8 : 0);
   const ramScore = ramStick ? calcRamScore(ramStick) : 0;
   const storageScore = stor ? calcStorageScore(stor) : 0;
 
@@ -32,21 +36,41 @@ export function runBenchmark(build) {
   const baseFps4k = gpuScore * 0.65 + cpuScore * 0.15;
 
   // Thermal simulation
-  const cpuTdp = cpu.specs?.tdp || cpu.powerDraw || 65;
+  const cpuTdpBase = cpu.specs?.tdp || cpu.powerDraw || 65;
+  const gpuTdpBase = gpu?.powerDraw || 0;
+
+  // Overclocking increases power draw quadratically
+  const cpuTdp = Math.round(cpuTdpBase * Math.pow(cpuOCMult, 2));
+  const gpuTdp = Math.round(gpuTdpBase * Math.pow(gpuOCMult, 2));
+
   const coolerCapacity = cooler?.specs?.maxTDP || 65;
-  const thermalHeadroom = coolerCapacity / Math.max(cpuTdp, 1);
-  const thermalPenalty = thermalHeadroom < 1.0 ? (1.0 - thermalHeadroom) * 0.3 : 0;
+  
+  // Calculate temps
+  const cpuTemp = Math.round(35 + (cpuTdp / coolerCapacity) * 40 + Math.random() * 5);
+  const gpuTemp = gpu ? Math.round(40 + (gpuTdp / 300) * 35 + Math.random() * 5) : 0;
+
+  let thermalPenalty = 0;
+  let isOverheating = false;
+
+  if (cpuTemp > 90) {
+    thermalPenalty += (cpuTemp - 90) * 0.05; // 5% penalty per degree over 90
+    if (cpuTemp > 105) isOverheating = true;
+  }
+  if (gpuTemp > 85) {
+    thermalPenalty += (gpuTemp - 85) * 0.05; // 5% penalty per degree over 85
+    if (gpuTemp > 95) isOverheating = true;
+  }
 
   // Power efficiency
-  const totalPower = calcTotalPower(build);
+  const baseTotalPower = calcTotalPower(build);
+  const totalPower = baseTotalPower - cpuTdpBase - gpuTdpBase + cpuTdp + gpuTdp;
   const psuEfficiency = psu?.specs?.efficiency || 0.8;
 
-  // Apply thermal penalty
-  const finalMultiplier = 1.0 - thermalPenalty;
-
-  // CPU temperature estimate
-  const cpuTemp = Math.round(35 + (cpuTdp / coolerCapacity) * 40 + Math.random() * 5);
-  const gpuTemp = gpu ? Math.round(40 + (gpu.powerDraw / 300) * 35 + Math.random() * 5) : 0;
+  // Apply thermal penalty (cap multiplier at 0.1 so it doesn't go negative)
+  let finalMultiplier = Math.max(0.1, 1.0 - thermalPenalty);
+  if (isOverheating) {
+    finalMultiplier = 0.1; // extreme thermal throttling
+  }
 
   // FPS with thermal penalty and variance
   const fps1080p = Math.round(baseFps1080p * finalMultiplier);
@@ -96,10 +120,11 @@ export function runBenchmark(build) {
       efficiency: Math.round(psuEfficiency * 100),
     },
     thermal: {
-      cpuTemp: Math.min(cpuTemp, 105),
-      gpuTemp: Math.min(gpuTemp, 95),
-      thermalHeadroom: Math.round(thermalHeadroom * 100),
+      cpuTemp: Math.min(cpuTemp, 115),
+      gpuTemp: Math.min(gpuTemp, 110),
+      thermalHeadroom: Math.round((coolerCapacity / Math.max(cpuTdp, 1)) * 100),
       thermalPenalty: Math.round(thermalPenalty * 100),
+      isOverheating,
     },
     noise: {
       estimated: noiseLevel,
