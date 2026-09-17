@@ -1,6 +1,6 @@
 // Benchmark Simulation Modal
 // Deterministic synthetic benchmark with simulated 3D test scenes, FPS breakdowns, thermals, and value ratings
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { runBenchmark } from '../../engine/benchmark';
 
@@ -13,12 +13,15 @@ export function BenchmarkModal({ isOpen, onClose }) {
   const benchmarkResult = useGameStore((s) => s.benchmarkResult);
   const runBenchmarkSuite = useGameStore((s) => s.runBenchmarkSuite);
 
-  useEffect(() => {
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
     if (!isOpen) {
       setBenchState('ready');
       setProgress(0);
     }
-  }, [isOpen]);
+  }
 
   const handleStartBenchmark = () => {
     setBenchState('running');
