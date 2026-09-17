@@ -1,11 +1,9 @@
 // Workstation View - 3D Interactive Assembly, Power/POST simulation, Component installation, and Compatibility inspector
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/gameStore';
-import { PCScene } from '../../scene/PCScene';
-import { CATEGORIES, ALL_COMPONENTS } from '../../data/index';
+import { CATEGORIES } from '../../data/index';
 import { checkCompatibility, calcTotalPowerDraw, calcTotalCost } from '../../engine/compatibility';
 import { soundFx } from '../../utils/audio';
-import { BenchmarkModal } from '../benchmark/BenchmarkModal';
 import { Canvas } from '@react-three/fiber';
 import { PCViewer } from './PCModel3D';
 
@@ -21,7 +19,6 @@ export function WorkstationView({ onOpenBenchmark }) {
   const pcPowerState = useGameStore((s) => s.pcPowerState);
   const postFailReason = useGameStore((s) => s.postFailReason);
   const powerOnPC = useGameStore((s) => s.powerOnPC);
-  const powerOffPC = useGameStore((s) => s.powerOffPC);
   const activeOrder = useGameStore((s) => s.activeOrder);
   const deliverOrder = useGameStore((s) => s.deliverOrder);
   const activeRepair = useGameStore((s) => s.activeRepair);
@@ -29,7 +26,6 @@ export function WorkstationView({ onOpenBenchmark }) {
   const activeChallenge = useGameStore((s) => s.activeChallenge);
   const submitChallenge = useGameStore((s) => s.submitChallenge);
   const setActiveTab = useGameStore((s) => s.setActiveTab);
-  const benchmarkResult = useGameStore((s) => s.benchmarkResult);
   const biosSettings = useGameStore((s) => s.biosSettings);
   const setBiosSetting = useGameStore((s) => s.setBiosSetting);
 

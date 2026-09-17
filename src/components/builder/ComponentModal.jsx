@@ -18,16 +18,17 @@ export function ComponentModal() {
   const [sortBy, setSortBy] = useState('popular'); // 'popular' | 'price_asc' | 'price_desc' | 'perf_desc' | 'deals'
   const [hideIncompatible, setHideIncompatible] = useState(true);
 
-  if (!activeCategory) return null;
-
-  const categoryMeta = CATEGORIES.find(c => c.key === activeCategory) || { label: activeCategory, icon: '📦' };
-  const allInCat = getComponentsByCategory(activeCategory);
+  const categoryMeta = activeCategory
+    ? (CATEGORIES.find(c => c.key === activeCategory) || { label: activeCategory, icon: '📦' })
+    : { label: '', icon: '' };
+  const allInCat = useMemo(() => activeCategory ? getComponentsByCategory(activeCategory) : [], [activeCategory]);
 
   // Extract unique brands
   const brands = ['ALL', ...new Set(allInCat.map(c => c.brand).filter(Boolean))];
 
   // Evaluate compatibility for each candidate
   const processedItems = useMemo(() => {
+    if (!activeCategory) return [];
     return allInCat.map(candidate => {
       const testBuild = { ...currentBuild, [activeCategory]: candidate };
       const compResult = checkCompatibility(testBuild);
@@ -78,6 +79,9 @@ export function ComponentModal() {
         return 0; // Default ordering
       });
   }, [processedItems, hideIncompatible, selectedBrand, searchQuery, sortBy]);
+
+  // Early return AFTER all hooks
+  if (!activeCategory) return null;
 
   const handleSelect = (component) => {
     setComponent(activeCategory, component);

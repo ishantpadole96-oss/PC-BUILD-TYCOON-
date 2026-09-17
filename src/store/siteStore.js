@@ -5,7 +5,7 @@
 import { create } from 'zustand';
 import { initializeMarket, tickMarket as tickMarketEngine } from '../engine/marketSimulation';
 import { getComponentById } from '../data/index';
-import { supabase, isSupabaseConfigured, saveBuildToCloud, deleteCloudBuild, fetchUserCloudBuilds } from '../utils/supabase';
+import { isSupabaseConfigured, saveBuildToCloud, deleteCloudBuild, fetchUserCloudBuilds } from '../utils/supabase';
 
 const STORAGE_SAVED_BUILDS = 'pcpartpulse_saved_builds_v1';
 const STORAGE_CURRENT_BUILD = 'pcpartpulse_current_build_v1';
@@ -102,7 +102,7 @@ export const useSiteStore = create((set, get) => ({
         if (v) ids[k] = v.id;
       });
       localStorage.setItem(STORAGE_CURRENT_BUILD, JSON.stringify(ids));
-    } catch (e) {}
+    } catch {}
   },
 
   removeComponent: (category) => {
@@ -114,7 +114,7 @@ export const useSiteStore = create((set, get) => ({
         if (v) ids[k] = v.id;
       });
       localStorage.setItem(STORAGE_CURRENT_BUILD, JSON.stringify(ids));
-    } catch (e) {}
+    } catch {}
   },
 
   clearBuild: () => {
@@ -131,7 +131,7 @@ export const useSiteStore = create((set, get) => ({
     set({ currentBuild: newBuild, activeTab: 'builder' });
     try {
       localStorage.setItem(STORAGE_CURRENT_BUILD, JSON.stringify(componentMap));
-    } catch (e) {}
+    } catch {}
   },
 
   saveCurrentBuild: async (name) => {
@@ -178,21 +178,21 @@ export const useSiteStore = create((set, get) => ({
     set({ savedBuilds });
     try {
       localStorage.setItem(STORAGE_SAVED_BUILDS, JSON.stringify(savedBuilds));
-    } catch (e) {}
+    } catch {}
   },
 
   deleteSavedBuild: async (id) => {
     if (get().user && isSupabaseConfigured && !id.startsWith('saved_preset_')) {
       try {
         await deleteCloudBuild(id);
-      } catch (e) {}
+      } catch {}
     }
 
     const savedBuilds = get().savedBuilds.filter(b => b.id !== id);
     set({ savedBuilds });
     try {
       localStorage.setItem(STORAGE_SAVED_BUILDS, JSON.stringify(savedBuilds));
-    } catch (e) {}
+    } catch {}
   },
 
   syncCloudBuilds: async () => {

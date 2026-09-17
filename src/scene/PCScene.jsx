@@ -1,10 +1,9 @@
 // 3D PC Scene built with React Three Fiber & Three.js
 // Interactive stylized 3D workstation with camera presets, animated fans, and slot interactions
 
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Float, Text, Html } from '@react-three/drei';
-import * as THREE from 'three';
+import { OrbitControls, Text } from '@react-three/drei';
 import { useGameStore } from '../store/gameStore';
 
 // Animated Case Fan
@@ -49,8 +48,8 @@ function AnimatedFan({ position, rotation = [0, 0, 0], size = 0.45, isPowered = 
 
 // 3D Component Models inside Case
 function ComputerChassis({ build, isPowered, onSlotClick, selectedCategory }) {
-  const { cpu, motherboard, gpu, ram, storage, psu, cooler, case: pcCase } = build;
-  const rgbColor = '#3b82f6';
+  const { cpu, motherboard, gpu, ram, storage, psu, cooler, case: _pcCase } = build;
+  const _rgbColor = '#3b82f6';
 
   return (
     <group position={[0, 0, 0]}>

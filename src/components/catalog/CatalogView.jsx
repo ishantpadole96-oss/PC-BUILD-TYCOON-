@@ -17,7 +17,7 @@ export function CatalogView() {
   // Collect all components
   const allComponents = useMemo(() => {
     const list = [];
-    Object.entries(ALL_COMPONENTS).forEach(([category, items]) => {
+    Object.entries(ALL_COMPONENTS).forEach(([_category, items]) => {
       items.forEach((item) => {
         const mData = market.prices[item.id] || {
           currentPrice: item.basePrice,

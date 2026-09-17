@@ -22,7 +22,7 @@ export function OrdersView() {
           </p>
         </div>
         <button
-          onClick={refreshOrders}
+          onClick={() => { soundFx.playClick(); refreshOrders(); }}
           className="btn-secondary"
           title="Search for new customer inquiries"
         >
@@ -35,7 +35,7 @@ export function OrdersView() {
         <div className="active-order-highlight">
           <div className="highlight-header">
             <span className="badge-active">ACTIVE CONTRACT IN PROGRESS</span>
-            <button onClick={abandonOrder} className="btn-danger-sm">Abandon Contract</button>
+            <button onClick={() => { soundFx.playClick(); abandonOrder(); }} className="btn-danger-sm">Abandon Contract</button>
           </div>
           <div className="highlight-body">
             <div className="client-profile">
@@ -72,13 +72,13 @@ export function OrdersView() {
             </div>
             <div className="highlight-actions">
               <button
-                onClick={() => setActiveTab('workstation')}
+                onClick={() => { soundFx.playClick(); setActiveTab('workstation'); }}
                 className="btn-primary btn-lg"
               >
                 🛠️ Open Assembly Workstation
               </button>
               <button
-                onClick={() => setActiveTab('marketplace')}
+                onClick={() => { soundFx.playClick(); setActiveTab('marketplace'); }}
                 className="btn-secondary"
               >
                 🛒 Buy Parts in Marketplace
@@ -143,8 +143,8 @@ export function OrdersView() {
                 </div>
 
                 <button
-                  onClick={() => acceptOrder(order.id)}
-                  disabled={!!activeOrder}
+                onClick={() => { soundFx.playClick(); acceptOrder(order.id); }}
+                disabled={!!activeOrder}
                   className="btn-primary btn-accept"
                 >
                   {isCurrent ? 'Contract In Progress' : activeOrder ? 'Finish Active Contract First' : 'Accept Contract'}

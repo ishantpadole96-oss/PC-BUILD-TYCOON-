@@ -173,7 +173,7 @@ export const useGameStore = create((set, get) => ({
           activeChallenge: null,
         });
         soundFx.playBootChime();
-      } catch (e) {
+      } catch {
         console.error("Save file corrupted");
       }
     }
@@ -188,21 +188,6 @@ export const useGameStore = create((set, get) => ({
     get().setNotification(msg, type);
   },
 
-  persist: () => {
-    const state = get();
-    const saveData = {
-      cash: state.cash,
-      reputation: state.reputation,
-      shopLevel: state.shopLevel,
-      day: state.day,
-      inventory: state.inventory,
-      orders: state.orders,
-      repairJobs: state.repairJobs,
-      completedChallenges: state.completedChallenges,
-      market: state.market,
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
-  },
 
   // Navigation
   setActiveTab: (tab) => {

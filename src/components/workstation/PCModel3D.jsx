@@ -1,6 +1,6 @@
 import React, { useRef, Suspense } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { Box, Plane, Cylinder, OrbitControls, Environment } from '@react-three/drei';
+import { Box, Plane, Cylinder, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 // A spinning fan component

@@ -18,7 +18,7 @@ export function AuthModal() {
     setLoading(true);
     setErrorMsg('');
     try {
-      const { data, error } = await signInWithGoogle();
+      const { data: _data, error } = await signInWithGoogle();
       if (error) {
         setErrorMsg(error.message);
       }

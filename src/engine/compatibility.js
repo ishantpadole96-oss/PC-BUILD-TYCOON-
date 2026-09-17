@@ -8,7 +8,7 @@
  */
 export function checkCompatibility(build) {
   const issues = [];
-  const { cpu, gpu, motherboard, ram: ramStick, storage: stor, psu, case: pcCase, cooler } = build;
+  const { cpu, gpu, motherboard, ram: ramStick, storage: _stor, psu, case: pcCase, cooler } = build;
 
   // Track what's present
   const present = {};
