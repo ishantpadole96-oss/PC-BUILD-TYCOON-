@@ -440,21 +440,20 @@ body {
 
 .viewport-canvas-box {
   height: 480px;
-  background: #080b12;
+  background: linear-gradient(135deg, #121829, #1a2038);
   border-radius: 10px;
   border: 1px solid var(--border-color);
   overflow: hidden;
   position: relative;
 }
 
-/* 2D Schematic Board */
 .schematic-board {
   height: 100%;
   padding: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0d121f;
+  background: linear-gradient(135deg, #121829, #182038);
 }
 
 .schematic-motherboard {

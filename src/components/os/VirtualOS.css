@@ -1,0 +1,237 @@
+.virtual-room {
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, #2a2a35 0%, #111116 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  perspective: 1000px;
+}
+
+.monitor-bezel {
+  width: 90vw;
+  height: 85vh;
+  max-width: 1600px;
+  background: #151515;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 
+    0 20px 50px rgba(0,0,0,0.8),
+    inset 0 2px 2px rgba(255,255,255,0.1),
+    inset 0 -2px 5px rgba(0,0,0,0.5);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.monitor-screen {
+  flex: 1;
+  background: #000;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 0 20px rgba(0,0,0,1);
+}
+
+.monitor-stand-neck {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 40px;
+  background: linear-gradient(to right, #222, #444, #222);
+}
+
+.monitor-stand-base {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 20px;
+  background: linear-gradient(to bottom, #444, #111);
+  border-radius: 10px 10px 0 0;
+}
+
+/* Booting */
+.virtual-os-booting {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.boot-logo {
+  font-size: 5rem;
+  color: #00ffcc;
+  animation: pulse 2s infinite;
+}
+
+.boot-text {
+  margin-top: 2rem;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Desktop */
+.os-desktop {
+  width: 100%;
+  height: 100%;
+  background-image: url('/textures/wallpaper.jpg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.os-icons-column {
+  position: absolute;
+  top: 80px; /* Below HUD */
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.os-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80px;
+  padding: 10px 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
+.os-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.os-icon.active {
+  background: rgba(0, 255, 204, 0.2);
+  border: 1px solid rgba(0, 255, 204, 0.5);
+}
+
+.os-icon-emoji {
+  font-size: 2rem;
+  margin-bottom: 5px;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+}
+
+.os-icon-label {
+  color: #fff;
+  font-size: 0.8rem;
+  text-align: center;
+  text-shadow: 1px 1px 2px #000;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Window Manager */
+.os-window {
+  position: absolute;
+  top: 50px;
+  left: 120px;
+  right: 20px;
+  bottom: 50px;
+  background: rgba(15, 15, 25, 0.95);
+  border: 1px solid #333;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  animation: windowOpen 0.2s ease-out forwards;
+}
+
+@keyframes windowOpen {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.os-window-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, #1a1a2e, #16213e);
+  padding: 8px 16px;
+  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid #333;
+}
+
+.os-window-title {
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.os-window-close {
+  background: #ff4757;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.os-window-close:hover {
+  background: #ff6b81;
+}
+
+.os-window-content {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Taskbar */
+.os-taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: rgba(10, 10, 15, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 100;
+}
+
+.os-start-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.os-start-btn:hover {
+  color: #00ffcc;
+}
+
+.os-taskbar-clock {
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+}

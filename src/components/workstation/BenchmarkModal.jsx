@@ -1,6 +1,7 @@
 // Benchmark Modal - Runs from the Workstation Desktop
 import React from 'react';
 import { useGameStore } from '../../store/gameStore';
+import { soundFx } from '../../utils/audio';
 import './BenchmarkModal.css';
 
 export function BenchmarkModal({ isOpen, onClose }) {
@@ -13,7 +14,7 @@ export function BenchmarkModal({ isOpen, onClose }) {
   const hasBench = !!benchmarkResult;
 
   return (
-    <div className="bench-modal-backdrop" onClick={onClose}>
+    <div className="bench-modal-backdrop" onClick={() => { soundFx.playClick(); onClose(); }}>
       <div className="bench-modal" onClick={(e) => e.stopPropagation()}>
         <div className="bench-modal-header">
           <div>
@@ -48,7 +49,7 @@ export function BenchmarkModal({ isOpen, onClose }) {
                 </div>
               </div>
 
-              <button className="btn-run-bench" onClick={runBenchmarkSuite}>
+              <button className="btn-run-bench" onClick={() => { soundFx.playBenchmarkPulse(); runBenchmarkSuite(); }}>
                 🚀 RUN FULL BENCHMARK SUITE
               </button>
               <p className="bench-hint">PC must be booted to desktop first</p>

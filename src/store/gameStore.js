@@ -44,6 +44,7 @@ function getInitialState() {
   ];
 
   return {
+    gameState: 'landing', // 'landing', 'intro', 'booting', 'desktop'
     cash: 50000, // ₹50,000 starting cash as specified
     reputation: 0,
     shopLevel: 1,
@@ -134,13 +135,92 @@ function loadPersistedState() {
 export const useGameStore = create((set, get) => ({
   ...loadPersistedState(),
 
+  setGameState: (state) => set({ gameState: state }),
+
+  saveGame: () => {
+    const state = get();
+    // Only save core game data, omit temporary UI states
+    const saveData = {
+      cash: state.cash,
+      reputation: state.reputation,
+      shopLevel: state.shopLevel,
+      day: state.day,
+      inventory: state.inventory,
+      orders: state.orders,
+      repairJobs: state.repairJobs,
+      completedChallenges: state.completedChallenges,
+      market: state.market,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
+    soundFx.playCash();
+    get().triggerNotification('Game Saved Successfully!', 'success');
+  },
+
+  loadGame: () => {
+    const savedStr = localStorage.getItem(STORAGE_KEY);
+    if (savedStr) {
+      try {
+        const savedData = JSON.parse(savedStr);
+        set({
+          ...savedData,
+          gameState: 'desktop', // load straight to OS
+          currentBuild: { ...INITIAL_BUILD },
+          biosSettings: { ...INITIAL_BIOS },
+          installedFromInventory: {},
+          pcPowerState: 'off',
+          activeOrder: null,
+          activeRepair: null,
+          activeChallenge: null,
+        });
+        soundFx.playBootChime();
+      } catch (e) {
+        console.error("Save file corrupted");
+      }
+    }
+  },
+
+  clearSave: () => {
+    localStorage.removeItem(STORAGE_KEY);
+    set({ ...getInitialState() });
+  },
+
+  triggerNotification: (msg, type = 'info') => {
+    get().setNotification(msg, type);
+  },
+
+  persist: () => {
+    const state = get();
+    const saveData = {
+      cash: state.cash,
+      reputation: state.reputation,
+      shopLevel: state.shopLevel,
+      day: state.day,
+      inventory: state.inventory,
+      orders: state.orders,
+      repairJobs: state.repairJobs,
+      completedChallenges: state.completedChallenges,
+      market: state.market,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
+  },
+
   // Navigation
   setActiveTab: (tab) => {
-    soundFx.playClick();
+    soundFx.playTabSwitch();
     set({ activeTab: tab });
   },
 
   setNotification: (msg, type = 'info') => {
+    // Play appropriate sound based on notification type
+    if (type === 'success') {
+      soundFx.playSuccess();
+    } else if (type === 'error') {
+      soundFx.playError();
+    } else if (type === 'warning') {
+      soundFx.playWarning();
+    } else {
+      soundFx.playNotification();
+    }
     set({ notification: { message: msg, type, id: Date.now() } });
     setTimeout(() => {
       set(state => (state.notification?.message === msg ? { notification: null } : {}));
@@ -792,6 +872,7 @@ export const useGameStore = create((set, get) => ({
       transactions: [newTx, ...prev.transactions],
     }));
 
+    soundFx.playLevelUp();
     get().setNotification(`🎉 Shop Upgraded to Level ${nextLevelNum}: ${nextTier.name}!`, 'success');
     get().refreshOrders();
     get().persist();

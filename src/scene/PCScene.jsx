@@ -260,7 +260,7 @@ export function PCScene({ selectedCategory, onSelectCategory }) {
   };
 
   return (
-    <div style={{ width: '100%', height: '100%', position: 'relative', background: '#0a0d14', overflow: 'hidden' }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative', background: 'linear-gradient(135deg, #141a2e 0%, #1a1f35 50%, #0f1424 100%)', overflow: 'hidden' }}>
       {/* 3D Viewport Controls Bar */}
       <div style={{
         position: 'absolute',
@@ -303,10 +303,12 @@ export function PCScene({ selectedCategory, onSelectCategory }) {
 
       {/* 3D Canvas */}
       <Canvas camera={{ position: [2.8, 1.8, 3.2], fov: 45 }}>
-        <ambientLight intensity={0.45} />
-        <directionalLight position={[5, 8, 5]} intensity={1.2} />
-        <pointLight position={[-4, 2, -2]} intensity={0.5} color="#3b82f6" />
-        <pointLight position={[3, -2, 2]} intensity={0.4} color="#8b5cf6" />
+        <ambientLight intensity={0.9} color="#e8ecf4" />
+        <directionalLight position={[5, 8, 5]} intensity={2.2} color="#ffffff" />
+        <directionalLight position={[-3, 4, 3]} intensity={0.8} color="#b4c6e8" />
+        <hemisphereLight args={['#b4d4ff', '#2a2a35', 0.5]} />
+        <pointLight position={[-4, 2, -2]} intensity={1.0} color="#3b82f6" />
+        <pointLight position={[3, -2, 2]} intensity={0.8} color="#8b5cf6" />
 
         <ComputerChassis
           build={currentBuild}

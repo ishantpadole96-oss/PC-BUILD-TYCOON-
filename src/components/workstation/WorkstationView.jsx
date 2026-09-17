@@ -1,5 +1,5 @@
 // Workstation View - 3D Interactive Assembly, Power/POST simulation, Component installation, and Compatibility inspector
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { PCScene } from '../../scene/PCScene';
 import { CATEGORIES, ALL_COMPONENTS } from '../../data/index';
@@ -44,6 +44,17 @@ export function WorkstationView({ onOpenBenchmark }) {
   // Inventory items matching currently selected slot
   const matchingInventory = inventory.filter((i) => i.category === selectedCategory);
   const installedPart = currentBuild[selectedCategory];
+
+  // Start/stop ambient fan hum based on PC power state
+  useEffect(() => {
+    const isPcOn = pcPowerState === 'desktop' || pcPowerState === 'booting_os' || pcPowerState === 'post';
+    if (isPcOn) {
+      soundFx.startFanHum();
+    } else {
+      soundFx.stopFanHum();
+    }
+    return () => soundFx.stopFanHum();
+  }, [pcPowerState]);
 
   return (
     <div className="workstation-container">

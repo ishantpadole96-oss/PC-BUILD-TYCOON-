@@ -1,7 +1,8 @@
 // Game HUD - Top status bar showing Cash, Reputation, Day, Shop Level
-import React from 'react';
+import React, { useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { shopLevels } from '../../data/shopLevels';
+import { soundFx } from '../../utils/audio';
 import './GameHUD.css';
 
 export function GameHUD() {
@@ -13,8 +14,14 @@ export function GameHUD() {
   const resetGame = useGameStore((s) => s.resetGame);
   const market = useGameStore((s) => s.market);
   const notification = useGameStore((s) => s.notification);
+  const [isMuted, setIsMuted] = useState(soundFx.isMuted);
 
   const currentTier = shopLevels.find((l) => l.level === shopLevel) || shopLevels[0];
+
+  const handleToggleMute = () => {
+    const newMuted = soundFx.toggleMute();
+    setIsMuted(newMuted);
+  };
 
   return (
     <>
@@ -65,6 +72,13 @@ export function GameHUD() {
 
         {/* Controls */}
         <div className="hud-controls">
+          <button
+            className={`hud-btn hud-btn-mute ${isMuted ? 'muted' : ''}`}
+            onClick={handleToggleMute}
+            title={isMuted ? 'Unmute sound effects' : 'Mute sound effects'}
+          >
+            {isMuted ? '🔇' : '🔊'} {isMuted ? 'Muted' : 'Sound'}
+          </button>
           <button className="hud-btn hud-btn-day" onClick={advanceDay} title="Advance to next business day">
             ☀️ Next Day
           </button>
@@ -99,3 +113,4 @@ export function GameHUD() {
     </>
   );
 }
+
