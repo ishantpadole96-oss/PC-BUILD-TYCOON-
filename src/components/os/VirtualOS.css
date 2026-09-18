@@ -231,7 +231,7 @@
 /* Window Manager */
 .os-window {
   position: absolute;
-  top: 40px;
+  top: 85px;
   left: 80px;
   right: 80px;
   bottom: 85px;
@@ -275,24 +275,28 @@
 }
 
 .os-window-btn {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.2);
-  cursor: pointer;
-  padding: 0;
-  display: inline-block;
-  outline: none;
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(0,0,0,0.2) !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  display: inline-block !important;
+  outline: none !important;
+  margin: 0 !important;
+  -webkit-appearance: none !important;
 }
 
-.os-window-close { background: #ff5f56; }
-.os-window-close:hover { background: #ff746d; }
+.os-window-close { background: #ff5f56 !important; }
+.os-window-close:hover { background: #ff746d !important; }
 
-.os-window-min { background: #ffbd2e; }
-.os-window-min:hover { background: #ffcf54; }
+.os-window-min { background: #ffbd2e !important; }
+.os-window-min:hover { background: #ffcf54 !important; }
 
-.os-window-max { background: #27c93f; }
-.os-window-max:hover { background: #3ce053; }
+.os-window-max { background: #27c93f !important; }
+.os-window-max:hover { background: #3ce053 !important; }
 
 .os-window-content {
   flex: 1;
