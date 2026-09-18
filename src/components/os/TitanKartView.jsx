@@ -27,11 +27,15 @@ export function TitanKartView() {
     }
   };
 
-  const filteredProducts = titankartProducts.filter(product => 
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const allCategories = ['All', ...new Set(titankartProducts.map(p => p.category))];
+
+  const filteredProducts = titankartProducts.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = activeCategory === 'All' || product.category === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', background: '#f1f3f6', overflowY: 'auto' }}>
@@ -96,6 +100,29 @@ export function TitanKartView() {
             <p style={{ margin: 0, fontSize: '16px' }}>Unlock exclusive perks to boost your PC building empire.</p>
           </div>
           <div style={{ fontSize: '50px' }}>🛍️</div>
+        </div>
+
+        {/* Category Tabs */}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px', padding: '0 5px' }}>
+          {allCategories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              style={{
+                padding: '7px 18px',
+                borderRadius: '20px',
+                border: activeCategory === cat ? '2px solid #2874f0' : '1px solid #ddd',
+                background: activeCategory === cat ? '#e3f0ff' : 'white',
+                color: activeCategory === cat ? '#2874f0' : '#333',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: activeCategory === cat ? '700' : '500',
+                transition: 'all 0.15s'
+              }}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
 
         {/* Product Grid */}

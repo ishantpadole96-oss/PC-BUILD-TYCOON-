@@ -22,9 +22,11 @@ import { soundFx } from '../../utils/audio';
 import { getWallpaperBlob } from '../../utils/idb';
 import './VirtualOS.css';
 import { TitanKartView } from './TitanKartView';
+import { AssetManagerView } from './AssetManagerView';
 
 const DESKTOP_ICONS = [
   { id: 'titankart', label: 'TitanKart', icon: '🛍️' },
+  { id: 'assets', label: 'Asset Manager', icon: '💼' },
   { id: 'browser', label: 'Web Browser', icon: '🌐' },
   { id: 'notepad', label: 'Notepad', icon: '📝' },
   { id: 'files', label: 'File Manager', icon: '📁' },
@@ -54,6 +56,7 @@ export function VirtualOS() {
   const [showStartMenu, setShowStartMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchMenu, setShowSearchMenu] = useState(false);
+  const [browserSearchQuery, setBrowserSearchQuery] = useState(null);
   const [windowState, setWindowState] = useState('normal');
   const [isBooting, setIsBooting] = useState(gameState === 'booting');
   const wallpaper = useGameStore((s) => s.wallpaper);
@@ -232,8 +235,9 @@ export function VirtualOS() {
                     {activeTab === 'donate' && <DonateView />}
                     {activeTab === 'contact' && <ContactView />}
                     {activeTab === 'wallpaper' && <WallpaperSettings />}
-                    {activeTab === 'browser' && <BrowserView />}
+                    {activeTab === 'browser' && <BrowserView initialSearchQuery={browserSearchQuery} onSearchConsumed={() => setBrowserSearchQuery(null)} />}
                     {activeTab === 'titankart' && <TitanKartView />}
+                    {activeTab === 'assets' && <AssetManagerView />}
                     {activeTab === 'files' && <FileManagerView />}
                     {activeTab === 'minigame' && <MiniGameView />}
                     {activeTab === 'notepad' && <NotepadView />}
@@ -320,8 +324,10 @@ export function VirtualOS() {
                         <>
                           <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '8px 0' }}></div>
                           <div 
-                            onMouseDown={(e) => {
+                          onMouseDown={(e) => {
                               e.preventDefault();
+                              const query = searchQuery;
+                              setBrowserSearchQuery(query);
                               openApp('browser');
                               setShowSearchMenu(false);
                               setSearchQuery('');

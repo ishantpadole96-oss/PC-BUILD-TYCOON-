@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './VirtualOS.css';
 
-export function BrowserView() {
+export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
   const [history, setHistory] = useState(['https://titanos.web/home']);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [inputUrl, setInputUrl] = useState('https://titanos.web/home');
   const [iframeKey, setIframeKey] = useState(0);
 
   const url = history[currentIndex];
+
+  // When opened with a search query, navigate to Google search
+  useEffect(() => {
+    if (initialSearchQuery && initialSearchQuery.trim().length > 0) {
+      const googleUrl = `https://www.google.com/search?igu=1&q=${encodeURIComponent(initialSearchQuery)}`;
+      const newHistory = [...history, googleUrl];
+      setHistory(newHistory);
+      setCurrentIndex(newHistory.length - 1);
+      setInputUrl(googleUrl);
+      setIframeKey(k => k + 1);
+      if (onSearchConsumed) onSearchConsumed();
+    }
+  }, [initialSearchQuery]);
 
   const handleNavigate = (e) => {
     e.preventDefault();
