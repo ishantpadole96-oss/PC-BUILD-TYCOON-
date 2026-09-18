@@ -68,15 +68,11 @@ export function AuthModal() {
           {user ? (
             <div className="user-profile-card">
               <div className="user-avatar-circle">
-                {user.user_metadata?.avatar_url ? (
-                  <img src={user.user_metadata.avatar_url} alt="Avatar" className="user-avatar-img" />
-                ) : (
-                  <span>{user.email?.[0]?.toUpperCase() || '👤'}</span>
-                )}
+                <span>{user.user_metadata?.full_name?.[0]?.toUpperCase() || '👤'}</span>
               </div>
               <div className="user-profile-info">
                 <h3>{user.user_metadata?.full_name || 'PC Builder'}</h3>
-                <p>{user.email}</p>
+                <p className="pc-id-display">PC ID: {user.email?.replace('@titanos.local', '')}</p>
                 <span className="cloud-status-badge">✓ Cloud Sync Active</span>
               </div>
 
@@ -111,35 +107,43 @@ export function AuthModal() {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-                <input 
-                  type="text" 
-                  placeholder="Enter a Unique PC ID" 
-                  value={pcId} 
-                  onChange={(e) => setPcId(e.target.value)}
-                  style={{ padding: '0.8rem', borderRadius: '4px', border: '1px solid #475569', background: '#1e293b', color: 'white' }}
-                />
-                <input 
-                  type="password" 
-                  placeholder="Enter a Password" 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)}
-                  style={{ padding: '0.8rem', borderRadius: '4px', border: '1px solid #475569', background: '#1e293b', color: 'white' }}
-                />
+              <form onSubmit={handleSubmit} className="custom-auth-form">
+                <div className="input-group">
+                  <label>PC ID</label>
+                  <input 
+                    type="text" 
+                    placeholder="Enter a Unique PC ID" 
+                    value={pcId} 
+                    onChange={(e) => setPcId(e.target.value)}
+                    className="custom-auth-input"
+                  />
+                </div>
+                
+                <div className="input-group">
+                  <label>Password</label>
+                  <input 
+                    type="password" 
+                    placeholder="Enter a Password" 
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="custom-auth-input"
+                  />
+                </div>
+                
                 <button
                   type="submit"
-                  className="btn-primary"
+                  className="btn-custom-auth"
                   disabled={loading}
-                  style={{ marginTop: '0.5rem', width: '100%' }}
                 >
                   {loading ? 'Processing...' : (isRegistering ? 'Create Account' : 'Sign In')}
                 </button>
               </form>
               
-              <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <div className="auth-toggle-wrapper">
                 <button 
                   onClick={() => setIsRegistering(!isRegistering)} 
-                  style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', textDecoration: 'underline' }}
+                  className="btn-auth-toggle"
+                  type="button"
                 >
                   {isRegistering ? 'Already have a PC ID? Sign In' : 'Need a new PC ID? Create Account'}
                 </button>
