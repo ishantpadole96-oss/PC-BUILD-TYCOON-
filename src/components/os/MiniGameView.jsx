@@ -318,6 +318,122 @@ function SnakeGame({ onBack }) {
   );
 }
 
+function PongGame({ onBack }) {
+  const [gameState, setGameState] = useState('start');
+  const [score, setScore] = useState({ player: 0, ai: 0 });
+  
+  const [ball, setBall] = useState({x: 200, y: 250});
+  const [playerY, setPlayerY] = useState(200);
+  const [aiY, setAiY] = useState(200);
+
+  const ballRef = useRef({x: 200, y: 250, dx: 4, dy: 4});
+  const playerYRef = useRef(200);
+  const aiYRef = useRef(200);
+  const scoreRef = useRef({ player: 0, ai: 0 });
+
+  const PADDLE_H = 80;
+  const PADDLE_W = 10;
+  const BALL_SIZE = 10;
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (gameState === 'start' || gameState === 'gameover') {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          setGameState('playing');
+        }
+        return;
+      }
+      if (e.code === 'ArrowUp') {
+        e.preventDefault();
+        playerYRef.current = Math.max(0, playerYRef.current - 40);
+        setPlayerY(playerYRef.current);
+      }
+      if (e.code === 'ArrowDown') {
+        e.preventDefault();
+        playerYRef.current = Math.min(GAME_HEIGHT - PADDLE_H, playerYRef.current + 40);
+        setPlayerY(playerYRef.current);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [gameState]);
+
+  useEffect(() => {
+    if (gameState !== 'playing') return;
+
+    let frameId;
+    const loop = () => {
+      let b = ballRef.current;
+      b.x += b.dx;
+      b.y += b.dy;
+
+      // AI movement
+      if (b.y > aiYRef.current + PADDLE_H/2) aiYRef.current += 3;
+      else aiYRef.current -= 3;
+      aiYRef.current = Math.max(0, Math.min(GAME_HEIGHT - PADDLE_H, aiYRef.current));
+
+      // Wall bounce top/bottom
+      if (b.y <= 0 || b.y >= GAME_HEIGHT - BALL_SIZE) b.dy *= -1;
+
+      // Paddle collision
+      if (b.x <= 20 + PADDLE_W && b.y + BALL_SIZE >= playerYRef.current && b.y <= playerYRef.current + PADDLE_H) {
+        b.dx = Math.abs(b.dx) + 0.2;
+        b.x = 20 + PADDLE_W;
+      }
+      if (b.x >= GAME_WIDTH - 20 - PADDLE_W - BALL_SIZE && b.y + BALL_SIZE >= aiYRef.current && b.y <= aiYRef.current + PADDLE_H) {
+        b.dx = -Math.abs(b.dx) - 0.2;
+        b.x = GAME_WIDTH - 20 - PADDLE_W - BALL_SIZE;
+      }
+
+      // Scoring
+      if (b.x <= 0) {
+        scoreRef.current.ai += 1;
+        b = {x: 200, y: 250, dx: -4, dy: (Math.random() > 0.5 ? 4 : -4)};
+      } else if (b.x >= GAME_WIDTH) {
+        scoreRef.current.player += 1;
+        b = {x: 200, y: 250, dx: 4, dy: (Math.random() > 0.5 ? 4 : -4)};
+      }
+
+      ballRef.current = b;
+      setBall({...b});
+      setAiY(aiYRef.current);
+      setScore({...scoreRef.current});
+
+      frameId = requestAnimationFrame(loop);
+    };
+
+    frameId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(frameId);
+  }, [gameState]);
+
+  return (
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: GAME_WIDTH, marginBottom: '10px' }}>
+        <button onClick={onBack} style={{ background: '#334155', border: 'none', color: 'white', padding: '5px 15px', borderRadius: '4px', cursor: 'pointer' }}>◀ Back</button>
+        <h2 style={{ margin: 0 }}>You {score.player} - {score.ai} CPU</h2>
+      </div>
+      
+      <div 
+        style={{ 
+          position: 'relative', width: GAME_WIDTH, height: GAME_HEIGHT, 
+          background: '#000', border: '4px solid #334155', borderRadius: '8px'
+        }}
+      >
+        <div style={{ position: 'absolute', top: 0, left: GAME_WIDTH/2 - 1, width: 2, height: '100%', borderLeft: '2px dashed #333' }}></div>
+        <div style={{ position: 'absolute', top: playerY, left: 20, width: PADDLE_W, height: PADDLE_H, background: '#fff' }}></div>
+        <div style={{ position: 'absolute', top: aiY, left: GAME_WIDTH - 20 - PADDLE_W, width: PADDLE_W, height: PADDLE_H, background: '#fff' }}></div>
+        <div style={{ position: 'absolute', top: ball.y, left: ball.x, width: BALL_SIZE, height: BALL_SIZE, background: '#fff', borderRadius: '50%' }}></div>
+        {gameState === 'start' && (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', color: 'white', fontSize: '24px', fontWeight: 'bold' }}>
+            Press Space to Start
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function MiniGameView() {
   const [activeGame, setActiveGame] = useState(null);
 
@@ -327,31 +443,42 @@ export function MiniGameView() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <h1 style={{ color: '#38bdf8', marginBottom: '40px', fontSize: '3rem', textAlign: 'center' }}>TitanOS<br/>Arcade Hub</h1>
           
-          <div style={{ display: 'flex', gap: '20px' }}>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '600px' }}>
             <div 
               onClick={() => setActiveGame('flappy')}
-              style={{ background: '#1e293b', padding: '30px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center', border: '2px solid #334155', width: '200px', transition: 'transform 0.2s' }}
+              style={{ background: '#1e293b', padding: '30px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center', border: '2px solid #334155', width: '150px', transition: 'transform 0.2s' }}
               onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
               onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             >
               <div style={{ fontSize: '48px', marginBottom: '10px' }}>🐦</div>
-              <h3 style={{ margin: 0 }}>Flappy Bird</h3>
+              <h3 style={{ margin: 0 }}>Flappy</h3>
             </div>
             
             <div 
               onClick={() => setActiveGame('snake')}
-              style={{ background: '#1e293b', padding: '30px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center', border: '2px solid #334155', width: '200px', transition: 'transform 0.2s' }}
+              style={{ background: '#1e293b', padding: '30px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center', border: '2px solid #334155', width: '150px', transition: 'transform 0.2s' }}
               onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
               onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             >
               <div style={{ fontSize: '48px', marginBottom: '10px' }}>🐍</div>
               <h3 style={{ margin: 0 }}>Snake</h3>
             </div>
+
+            <div 
+              onClick={() => setActiveGame('pong')}
+              style={{ background: '#1e293b', padding: '30px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center', border: '2px solid #334155', width: '150px', transition: 'transform 0.2s' }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '10px' }}>🏓</div>
+              <h3 style={{ margin: 0 }}>Pong</h3>
+            </div>
           </div>
         </div>
       )}
       {activeGame === 'flappy' && <FlappyBird onBack={() => setActiveGame(null)} />}
       {activeGame === 'snake' && <SnakeGame onBack={() => setActiveGame(null)} />}
+      {activeGame === 'pong' && <PongGame onBack={() => setActiveGame(null)} />}
     </div>
   );
 }
