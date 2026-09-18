@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import './VirtualOS.css';
 
@@ -9,6 +9,18 @@ export function FileManagerView() {
   const setActiveNotepadFile = useGameStore((s) => s.setActiveNotepadFile);
 
   const [currentPath, setCurrentPath] = useState(['C:', 'Users', 'Guest']);
+  
+  // Inline Creation State
+  const [isCreating, setIsCreating] = useState(false); // 'file' | 'dir' | false
+  const [createName, setCreateName] = useState('');
+  const createInputRef = useRef(null);
+
+  useEffect(() => {
+    if (isCreating && createInputRef.current) {
+      createInputRef.current.focus();
+      createInputRef.current.select();
+    }
+  }, [isCreating]);
 
   const getCurrentDir = () => {
     let dir = fs;
@@ -44,11 +56,21 @@ export function FileManagerView() {
     return current;
   };
 
-  const handleCreateFile = () => {
-    const name = prompt("Enter new file name (e.g. notes.txt):", "newfile.txt");
-    if (!name) return;
-    if (currentDirFiles[name]) {
+  const confirmCreate = () => {
+    if (!createName.trim()) {
+      setIsCreating(false);
+      setCreateName('');
+      return;
+    }
+    
+    let finalName = createName.trim();
+    if (isCreating === 'file' && !finalName.includes('.')) {
+      finalName += '.txt'; // Default extension
+    }
+
+    if (currentDirFiles[finalName]) {
       alert("File or folder already exists!");
+      setIsCreating(false);
       return;
     }
     
@@ -56,26 +78,24 @@ export function FileManagerView() {
     const dir = ensurePathExists(currentPath, newFs);
     
     if (!dir.children) dir.children = {};
-    dir.children[name] = { type: 'file', size: '1 KB', content: '' };
+    if (isCreating === 'file') {
+      dir.children[finalName] = { type: 'file', size: '1 KB', content: '' };
+    } else {
+      dir.children[finalName] = { type: 'dir', children: {} };
+    }
+    
     setFs(newFs);
     useGameStore.getState().saveGame();
+    setIsCreating(false);
+    setCreateName('');
   };
 
-  const handleCreateFolder = () => {
-    const name = prompt("Enter new folder name:");
-    if (!name) return;
-    if (currentDirFiles[name]) {
-      alert("File or folder already exists!");
-      return;
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') confirmCreate();
+    if (e.key === 'Escape') {
+      setIsCreating(false);
+      setCreateName('');
     }
-    
-    const newFs = JSON.parse(JSON.stringify(fs));
-    const dir = ensurePathExists(currentPath, newFs);
-    
-    if (!dir.children) dir.children = {};
-    dir.children[name] = { type: 'dir', children: {} };
-    setFs(newFs);
-    useGameStore.getState().saveGame();
   };
 
   const handleOpenFile = (name, data) => {
@@ -83,7 +103,6 @@ export function FileManagerView() {
       setCurrentPath([...currentPath, name]);
     } else {
       if (name.endsWith('.txt') || name.endsWith('.ini')) {
-        // Dispatch to Notepad app
         setActiveNotepadFile({ name, path: [...currentPath, name], content: data.content || '' });
         setActiveTab('notepad');
       } else if (name.endsWith('.png') || name.endsWith('.jpg')) {
@@ -113,72 +132,158 @@ export function FileManagerView() {
   const usedSpaceMB = (calculateSpace(fs) / (1024 * 1024)).toFixed(1);
 
   return (
-    <div className="file-manager-view" style={{ display: 'flex', width: '100%', height: '100%', background: '#f8fafc', overflow: 'hidden' }}>
+    <div className="file-manager-view" style={{ display: 'flex', width: '100%', height: '100%', background: '#fff', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
       
-      {/* Sidebar Navigation */}
-      <div style={{ width: '200px', background: '#f1f5f9', borderRight: '1px solid #cbd5e1', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-        <div style={{ padding: '15px 10px', fontWeight: 'bold', color: '#475569', fontSize: '12px', textTransform: 'uppercase' }}>Quick Access</div>
+      {/* Sidebar Navigation (macOS Sidebar Style) */}
+      <div style={{ 
+        width: '220px', 
+        background: 'rgba(235, 235, 240, 0.8)', 
+        backdropFilter: 'blur(20px)',
+        borderRight: '1px solid #d1d1d6', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        overflowY: 'auto' 
+      }}>
+        <div style={{ padding: '20px 15px 10px', fontWeight: '600', color: '#8e8e93', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Favorites</div>
         
-        <div onClick={() => handleQuickAccess(['C:'])} style={{ padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', background: currentPath.join() === 'C:' ? '#e2e8f0' : 'transparent' }}>
-          <span>💻</span> This PC
+        <div onClick={() => handleQuickAccess(['C:'])} style={{ padding: '8px 15px', margin: '2px 10px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', background: currentPath.join() === 'C:' ? '#007aff' : 'transparent', color: currentPath.join() === 'C:' ? '#fff' : '#000' }}>
+          <span>💻</span> <span style={{ fontSize: '13px', fontWeight: currentPath.join() === 'C:' ? '500' : 'normal' }}>This PC</span>
         </div>
-        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Documents'])} style={{ padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', background: currentPath.join() === 'C:,Users,Guest,Documents' ? '#e2e8f0' : 'transparent' }}>
-          <span>📄</span> Documents
+        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Documents'])} style={{ padding: '8px 15px', margin: '2px 10px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', background: currentPath.join() === 'C:,Users,Guest,Documents' ? '#007aff' : 'transparent', color: currentPath.join() === 'C:,Users,Guest,Documents' ? '#fff' : '#000' }}>
+          <span>📄</span> <span style={{ fontSize: '13px', fontWeight: currentPath.join() === 'C:,Users,Guest,Documents' ? '500' : 'normal' }}>Documents</span>
         </div>
-        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Downloads'])} style={{ padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', background: currentPath.join() === 'C:,Users,Guest,Downloads' ? '#e2e8f0' : 'transparent' }}>
-          <span>⬇️</span> Downloads
+        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Downloads'])} style={{ padding: '8px 15px', margin: '2px 10px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', background: currentPath.join() === 'C:,Users,Guest,Downloads' ? '#007aff' : 'transparent', color: currentPath.join() === 'C:,Users,Guest,Downloads' ? '#fff' : '#000' }}>
+          <span>⬇️</span> <span style={{ fontSize: '13px', fontWeight: currentPath.join() === 'C:,Users,Guest,Downloads' ? '500' : 'normal' }}>Downloads</span>
         </div>
-        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Pictures'])} style={{ padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', background: currentPath.join() === 'C:,Users,Guest,Pictures' ? '#e2e8f0' : 'transparent' }}>
-          <span>🖼️</span> Pictures
+        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Pictures'])} style={{ padding: '8px 15px', margin: '2px 10px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', background: currentPath.join() === 'C:,Users,Guest,Pictures' ? '#007aff' : 'transparent', color: currentPath.join() === 'C:,Users,Guest,Pictures' ? '#fff' : '#000' }}>
+          <span>🖼️</span> <span style={{ fontSize: '13px', fontWeight: currentPath.join() === 'C:,Users,Guest,Pictures' ? '500' : 'normal' }}>Pictures</span>
         </div>
-        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Games'])} style={{ padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', background: currentPath.join() === 'C:,Users,Guest,Games' ? '#e2e8f0' : 'transparent' }}>
-          <span>🎮</span> Games
+        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Games'])} style={{ padding: '8px 15px', margin: '2px 10px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', background: currentPath.join() === 'C:,Users,Guest,Games' ? '#007aff' : 'transparent', color: currentPath.join() === 'C:,Users,Guest,Games' ? '#fff' : '#000' }}>
+          <span>🎮</span> <span style={{ fontSize: '13px', fontWeight: currentPath.join() === 'C:,Users,Guest,Games' ? '500' : 'normal' }}>Games</span>
         </div>
       </div>
 
       {/* Main Content Area */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         
-        {/* Toolbar */}
-        <div className="file-toolbar" style={{ display: 'flex', gap: '10px', padding: '10px', background: '#ffffff', borderBottom: '1px solid #cbd5e1' }}>
-          <button onClick={handleNavigateUp} disabled={currentPath.length <= 1} style={{ padding: '5px 10px', cursor: currentPath.length <= 1 ? 'default' : 'pointer' }}>⬆️ Up</button>
-          
-          {/* Breadcrumb Path */}
-          <div style={{ flex: 1, padding: '5px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', color: '#334155', display: 'flex', alignItems: 'center' }}>
-            {currentPath.join(' \\ ')}
+        {/* Toolbar (macOS Style) */}
+        <div className="file-toolbar" style={{ display: 'flex', gap: '15px', padding: '15px 20px', background: '#fff', borderBottom: '1px solid #e5e5ea', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '5px' }}>
+            <button 
+              onClick={handleNavigateUp} 
+              disabled={currentPath.length <= 1} 
+              style={{ 
+                padding: '6px 12px', 
+                background: currentPath.length <= 1 ? '#f2f2f7' : '#fff', 
+                color: currentPath.length <= 1 ? '#c7c7cc' : '#000',
+                border: '1px solid #d1d1d6', 
+                borderRadius: '6px', 
+                cursor: currentPath.length <= 1 ? 'default' : 'pointer',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                fontSize: '16px'
+              }}
+            >
+              <span style={{ transform: 'rotate(90deg)', display: 'inline-block' }}>↰</span>
+            </button>
           </div>
           
-          <button onClick={handleCreateFolder} style={{ padding: '5px 10px', background: '#eab308', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ Folder</button>
-          <button onClick={handleCreateFile} style={{ padding: '5px 10px', background: '#10b981', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ Text File</button>
+          {/* Breadcrumb Path */}
+          <div style={{ 
+            flex: 1, 
+            padding: '6px 15px', 
+            background: '#f2f2f7', 
+            borderRadius: '6px', 
+            color: '#333', 
+            fontSize: '13px',
+            display: 'flex', 
+            alignItems: 'center',
+            fontWeight: '500'
+          }}>
+            {currentPath.join(' > ')}
+          </div>
+          
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button 
+              onClick={() => { setIsCreating('dir'); setCreateName('Untitled Folder'); }} 
+              style={{ padding: '6px 12px', background: '#fff', border: '1px solid #d1d1d6', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: '500', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+            >
+              + Folder
+            </button>
+            <button 
+              onClick={() => { setIsCreating('file'); setCreateName('untitled.txt'); }} 
+              style={{ padding: '6px 12px', background: '#fff', border: '1px solid #d1d1d6', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: '500', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+            >
+              + File
+            </button>
+          </div>
         </div>
         
         {/* File Grid/List */}
-        <div className="file-list" style={{ flex: 1, background: 'white', color: '#333', padding: '10px', overflowY: 'auto' }}>
-          {Object.entries(currentDirFiles).map(([name, data]) => (
-            <div 
-              key={name}
-              style={{ display: 'flex', alignItems: 'center', padding: '8px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}
-              onClick={() => handleOpenFile(name, data)}
-            >
-              <span style={{ fontSize: '24px', marginRight: '15px' }}>
-                {data.type === 'dir' ? '📁' : '📄'}
-              </span>
-              <span style={{ flex: 1, fontWeight: data.type === 'dir' ? 'bold' : 'normal' }}>{name}</span>
-              {data.type === 'file' && <span style={{ color: '#64748b', fontSize: '12px' }}>{data.size}</span>}
-            </div>
-          ))}
-          {Object.keys(currentDirFiles).length === 0 && (
-            <div style={{ padding: '40px', color: '#94a3b8', textAlign: 'center' }}>
-              <div style={{ fontSize: '48px', marginBottom: '10px' }}>📂</div>
-              This folder is empty.
+        <div className="file-list" style={{ flex: 1, background: '#fff', color: '#000', padding: '20px', overflowY: 'auto' }}>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '20px' }}>
+            {Object.entries(currentDirFiles).map(([name, data]) => (
+              <div 
+                key={name}
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  alignItems: 'center', 
+                  padding: '10px', 
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'background 0.1s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#f2f2f7'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                onDoubleClick={() => handleOpenFile(name, data)}
+              >
+                <div style={{ fontSize: '48px', marginBottom: '8px', textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                  {data.type === 'dir' ? '📁' : (name.endsWith('.png') || name.endsWith('.jpg') ? '🖼️' : '📄')}
+                </div>
+                <div style={{ fontSize: '12px', textAlign: 'center', wordBreak: 'break-word', color: '#333' }}>
+                  {name}
+                </div>
+              </div>
+            ))}
+
+            {isCreating && (
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column',
+                alignItems: 'center', 
+                padding: '10px', 
+                borderRadius: '6px',
+                background: '#e3f2fd'
+              }}>
+                <div style={{ fontSize: '48px', marginBottom: '8px' }}>
+                  {isCreating === 'dir' ? '📁' : '📄'}
+                </div>
+                <input 
+                  ref={createInputRef}
+                  type="text" 
+                  value={createName}
+                  onChange={(e) => setCreateName(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  onBlur={confirmCreate}
+                  style={{ width: '100%', fontSize: '12px', textAlign: 'center', padding: '2px', border: '1px solid #007aff', borderRadius: '3px', outline: 'none' }}
+                />
+              </div>
+            )}
+          </div>
+
+          {Object.keys(currentDirFiles).length === 0 && !isCreating && (
+            <div style={{ padding: '60px', color: '#8e8e93', textAlign: 'center' }}>
+              <div style={{ fontSize: '48px', marginBottom: '10px', opacity: 0.5 }}>📂</div>
+              <div style={{ fontSize: '14px' }}>This folder is empty</div>
             </div>
           )}
         </div>
 
         {/* Status Bar */}
-        <div style={{ padding: '8px 10px', background: '#e2e8f0', borderTop: '1px solid #cbd5e1', fontSize: '12px', color: '#475569', display: 'flex', justifyContent: 'space-between' }}>
-          <span>{Object.keys(currentDirFiles).length} item(s)</span>
-          <span>Disk Space: {usedSpaceMB} MB Used / 256.0 GB Total</span>
+        <div style={{ padding: '8px 15px', background: '#fff', borderTop: '1px solid #e5e5ea', fontSize: '11px', color: '#8e8e93', display: 'flex', justifyContent: 'center', gap: '20px' }}>
+          <span>{Object.keys(currentDirFiles).length} item{Object.keys(currentDirFiles).length !== 1 ? 's' : ''}</span>
+          <span>{usedSpaceMB} MB Used / 256.0 GB Total</span>
         </div>
       </div>
     </div>
