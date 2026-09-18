@@ -57,7 +57,7 @@ export function LandingPage() {
       
       <div className="landing-content">
         <div className="landing-logo">
-          <span className="logo-icon">⚡</span>
+          <img src="/logo.png" alt="PC Builder Tycoon Logo" className="logo-icon-image" style={{ width: '150px', height: 'auto', marginBottom: '1rem', borderRadius: '12px' }} />
           <h1>PC BUILDER TYCOON</h1>
           <p className="subtitle">Build. Repair. Dominate.</p>
         </div>

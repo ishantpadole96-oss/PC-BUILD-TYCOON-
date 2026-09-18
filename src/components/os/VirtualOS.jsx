@@ -96,7 +96,7 @@ export function VirtualOS() {
         <div className="monitor-screen">
           {isBooting ? (
             <div className="virtual-os-booting">
-              <div className="boot-logo">⚡</div>
+              <div className="boot-logo"><img src="/logo.png" alt="Boot Logo" style={{ width: '100px', borderRadius: '12px' }} /></div>
               <div className="boot-text">Loading TitanOS v2.0...</div>
             </div>
           ) : (
