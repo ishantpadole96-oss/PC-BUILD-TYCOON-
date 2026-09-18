@@ -15,9 +15,9 @@ function FlappyBird({ onBack }) {
   const pipesRef = useRef([]);
   const scoreRef = useRef(0);
   
-  const GRAVITY = 0.5;
-  const JUMP = -8;
-  const PIPE_SPEED = 4;
+  const GRAVITY = 0.4;
+  const JUMP = -7;
+  const PIPE_SPEED = 2.5;
   const PIPE_WIDTH = 50;
   const HOLE_SIZE = 140;
   const BIRD_SIZE = 30;
@@ -270,7 +270,7 @@ function SnakeGame({ onBack }) {
       snakeRef.current = newSnake;
       setSnake(newSnake);
 
-    }, 100);
+    }, 150);
 
     return () => clearInterval(loop);
   }, [gameState]);
@@ -326,7 +326,7 @@ function PongGame({ onBack }) {
   const [playerY, setPlayerY] = useState(200);
   const [aiY, setAiY] = useState(200);
 
-  const ballRef = useRef({x: 200, y: 250, dx: 4, dy: 4});
+  const ballRef = useRef({x: 200, y: 250, dx: 3, dy: 3});
   const playerYRef = useRef(200);
   const aiYRef = useRef(200);
   const scoreRef = useRef({ player: 0, ai: 0 });
@@ -369,8 +369,8 @@ function PongGame({ onBack }) {
       b.y += b.dy;
 
       // AI movement
-      if (b.y > aiYRef.current + PADDLE_H/2) aiYRef.current += 3;
-      else aiYRef.current -= 3;
+      if (b.y > aiYRef.current + PADDLE_H/2) aiYRef.current += 2;
+      else aiYRef.current -= 2;
       aiYRef.current = Math.max(0, Math.min(GAME_HEIGHT - PADDLE_H, aiYRef.current));
 
       // Wall bounce top/bottom
@@ -389,10 +389,10 @@ function PongGame({ onBack }) {
       // Scoring
       if (b.x <= 0) {
         scoreRef.current.ai += 1;
-        b = {x: 200, y: 250, dx: -4, dy: (Math.random() > 0.5 ? 4 : -4)};
+        b = {x: 200, y: 250, dx: -3, dy: (Math.random() > 0.5 ? 3 : -3)};
       } else if (b.x >= GAME_WIDTH) {
         scoreRef.current.player += 1;
-        b = {x: 200, y: 250, dx: 4, dy: (Math.random() > 0.5 ? 4 : -4)};
+        b = {x: 200, y: 250, dx: 3, dy: (Math.random() > 0.5 ? 3 : -3)};
       }
 
       ballRef.current = b;

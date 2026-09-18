@@ -56,6 +56,25 @@ export function WallpaperSettings() {
       <div className="wallpaper-settings-body">
         <p>Select an image or dynamic video (.mp4, .webm) from your PC to set as the TitanOS background.</p>
         
+        <div className="default-wallpapers-section">
+          <h3>Default Wallpapers</h3>
+          <div className="default-wallpapers-grid">
+            {['/wallpaper.jpg', '/wallpaper_1.jpg', '/wallpaper_2.jpg', '/wallpaper_3.jpg', '/wallpaper_4.jpg'].map((wp, index) => (
+              <div 
+                key={index} 
+                className="default-wallpaper-thumb"
+                onClick={() => {
+                  soundFx.playSuccess();
+                  setWallpaper({ type: 'image', url: wp });
+                  clearWallpaper().catch(console.error); // Clear custom to use default
+                }}
+              >
+                <img src={wp} alt={`Wallpaper ${index + 1}`} />
+              </div>
+            ))}
+          </div>
+        </div>
+        
         <div className="wallpaper-actions">
           <button 
             className="btn-select-wallpaper" 
@@ -70,7 +89,7 @@ export function WallpaperSettings() {
             onClick={handleReset}
             disabled={loading}
           >
-            🔄 Reset to Default
+            🔄 Reset to Original
           </button>
         </div>
         

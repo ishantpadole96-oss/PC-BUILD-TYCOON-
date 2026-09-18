@@ -54,3 +54,41 @@
   font-size: 0.85rem;
   font-style: italic;
 }
+
+.default-wallpapers-section {
+  margin-bottom: 20px;
+}
+
+.default-wallpapers-section h3 {
+  font-size: 1rem;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.default-wallpapers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.default-wallpaper-thumb {
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  aspect-ratio: 16 / 9;
+}
+
+.default-wallpaper-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.default-wallpaper-thumb:hover {
+  border-color: #00ffcc;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 255, 204, 0.3);
+}
