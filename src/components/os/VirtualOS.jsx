@@ -113,7 +113,7 @@ export function VirtualOS() {
                   muted 
                   playsInline
                   className="dynamic-wallpaper-video"
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0, pointerEvents: 'none', transform: 'translateZ(0)' }}
                 />
               )}
               
