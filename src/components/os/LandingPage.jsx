@@ -53,6 +53,9 @@ export function LandingPage() {
     <div className="landing-page">
       <div className="landing-background">
         <div className="grid-overlay"></div>
+        {Array.from({ length: 15 }).map((_, i) => (
+          <div key={i} className="particle"></div>
+        ))}
       </div>
       
       <div className="landing-content">
