@@ -11,7 +11,10 @@ export function BenchmarkModal({ isOpen, onClose }) {
 
   const currentBuild = useGameStore((s) => s.currentBuild);
   const benchmarkResult = useGameStore((s) => s.benchmarkResult);
+  const pcPowerState = useGameStore((s) => s.pcPowerState);
   const runBenchmarkSuite = useGameStore((s) => s.runBenchmarkSuite);
+  const biosSettings = useGameStore((s) => s.biosSettings);
+  const perks = useGameStore((s) => s.perks);
 
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
 
@@ -48,7 +51,8 @@ export function BenchmarkModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const result = benchmarkResult || runBenchmark(currentBuild);
+  // Use cached result or run simulation if null (pure display, does not save state)
+  const result = benchmarkResult || runBenchmark(currentBuild, biosSettings, perks);
 
   return (
     <div className="modal-backdrop">

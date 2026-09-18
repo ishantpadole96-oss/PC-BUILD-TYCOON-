@@ -6,9 +6,10 @@
  * Run benchmark simulation on a completed build
  * @param {Object} build - The PC build object
  * @param {Object} biosSettings - The overclock settings
+ * @param {Array} perks - Active game perks
  * @returns {Object} Benchmark results
  */
-export function runBenchmark(build, biosSettings = { cpuClockOffset: 0, gpuClockOffset: 0 }) {
+export function runBenchmark(build, biosSettings = { cpuClockOffset: 0, gpuClockOffset: 0 }, perks = []) {
   const { cpu, gpu, ram: ramStick, storage: stor, cooler, psu } = build;
 
   if (!cpu) return null;
@@ -45,9 +46,14 @@ export function runBenchmark(build, biosSettings = { cpuClockOffset: 0, gpuClock
 
   const coolerCapacity = cooler?.specs?.maxTDP || 65;
   
-  // Calculate temps
-  const cpuTemp = Math.round(35 + (cpuTdp / coolerCapacity) * 40 + Math.random() * 5);
-  const gpuTemp = gpu ? Math.round(40 + (gpuTdp / 300) * 35 + Math.random() * 5) : 0;
+  // Apply Liquid Metal Thermal Compound perk if owned
+  let cpuTemp = Math.round(35 + (cpuTdp / coolerCapacity) * 40 + Math.random() * 5);
+  let gpuTemp = gpu ? Math.round(40 + (gpuTdp / 300) * 35 + Math.random() * 5) : 0;
+  
+  if (perks.includes('perk_thermal_paste')) {
+    cpuTemp = Math.max(30, cpuTemp - 15);
+    if (gpu) gpuTemp = Math.max(35, gpuTemp - 10);
+  }
 
   let thermalPenalty = 0;
   let isOverheating = false;

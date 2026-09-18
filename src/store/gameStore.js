@@ -59,6 +59,7 @@ function getInitialState() {
 
     wallpaper: null, // { type: 'image' | 'video', url: string }
     fileSystem: DEFAULT_FS,
+    perks: [], // IDs of purchased TitanKart products
 
     orders: initialOrders,
     activeOrder: null,
@@ -162,6 +163,7 @@ export const useGameStore = create((set, get) => ({
       completedChallenges: state.completedChallenges,
       market: state.market,
       fileSystem: state.fileSystem,
+      perks: state.perks,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
     
@@ -186,6 +188,7 @@ export const useGameStore = create((set, get) => ({
       completedChallenges: state.completedChallenges,
       market: state.market,
       fileSystem: state.fileSystem,
+      perks: state.perks,
     };
     
     const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });
@@ -340,7 +343,7 @@ export const useGameStore = create((set, get) => ({
       return;
     }
 
-    const benchmark = state.benchmarkResult || runBenchmark(build, state.biosSettings);
+    const benchmark = state.benchmarkResult || runBenchmark(build, state.biosSettings, state.perks);
     
     if (benchmark.thermal.isOverheating) {
       soundFx.playWarning();
@@ -356,7 +359,11 @@ export const useGameStore = create((set, get) => ({
     const satisfactionMultiplier = satisfaction / 100;
     const profit = Math.round(baseReward * satisfactionMultiplier);
     const totalPayout = totalCost + profit; // Customer pays for components + labor/profit
-    const repGained = satisfaction >= 70 ? Math.round(satisfaction / 10) : -5;
+    
+    let repGained = satisfaction >= 70 ? Math.round(satisfaction / 10) : -5;
+    if (repGained > 0 && state.perks.includes('perk_deskmat')) {
+      repGained += 1; // RGB Desk Mat perk
+    }
 
     soundFx.playCash();
 
@@ -722,7 +729,7 @@ export const useGameStore = create((set, get) => ({
     }
 
     soundFx.playClick();
-    const result = runBenchmark(state.currentBuild, state.biosSettings);
+    const result = runBenchmark(state.currentBuild, state.biosSettings, state.perks);
     
     if (result.thermal.isOverheating) {
       soundFx.playPostError();
@@ -768,6 +775,38 @@ export const useGameStore = create((set, get) => ({
     get().setNotification(`Diagnostic Results: ${state.activeRepair.diagnosticClue}`, 'info');
   },
 
+  // ── TITANKART PERKS ──
+  buyPerk: (perk) => {
+    const state = get();
+    if (state.perks.includes(perk.id)) return false;
+    
+    if (state.cash < perk.price) {
+      soundFx.playWarning();
+      get().setNotification(`Insufficient funds to buy ${perk.name}!`, 'error');
+      return false;
+    }
+
+    soundFx.playCash();
+    
+    const newTx = {
+      id: `tx_${Date.now()}`,
+      description: `TitanKart: ${perk.name}`,
+      amount: -perk.price,
+      type: 'debit',
+      timestamp: Date.now(),
+    };
+
+    set(prev => ({
+      cash: prev.cash - perk.price,
+      perks: [...prev.perks, perk.id],
+      transactions: [newTx, ...prev.transactions],
+    }));
+
+    get().setNotification(`Purchased ${perk.name} from TitanKart!`, 'success');
+    get().persist();
+    return true;
+  },
+
   completeRepairJob: () => {
     const state = get();
     if (!state.activeRepair) return;
@@ -791,7 +830,11 @@ export const useGameStore = create((set, get) => ({
     }
 
     soundFx.playCash();
-    const reward = state.activeRepair.laborFee;
+    let reward = state.activeRepair.laborFee;
+    
+    if (state.perks.includes('perk_screwdriver')) {
+      reward = Math.round(reward * 1.15); // Electric Screwdriver Pro perk
+    }
 
     const newTx = {
       id: `tx_${Date.now()}`,
@@ -849,7 +892,7 @@ export const useGameStore = create((set, get) => ({
       return;
     }
 
-    const benchmark = state.benchmarkResult || runBenchmark(build, state.biosSettings);
+    const benchmark = state.benchmarkResult || runBenchmark(build, state.biosSettings, state.perks);
     
     if (benchmark.thermal.isOverheating) {
       soundFx.playWarning();
@@ -992,7 +1035,7 @@ export const useGameStore = create((set, get) => ({
       return;
     }
 
-    const bench = state.benchmarkResult || runBenchmark(build, state.biosSettings);
+    const bench = state.benchmarkResult || runBenchmark(build, state.biosSettings, state.perks);
     if (bench.thermal.isOverheating) {
       get().setNotification('Cannot publish a PC that overheats and crashes!', 'error');
       return;
