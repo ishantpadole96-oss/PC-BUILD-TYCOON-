@@ -33,7 +33,7 @@ export function FileManagerView() {
   const [fs, setFs] = useState(() => {
     const saved = localStorage.getItem('titanos_fs');
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
+      try { return JSON.parse(saved); } catch (e) { console.error("Failed to parse saved filesystem:", e); }
     }
     return DEFAULT_FS;
   });
