@@ -56,6 +56,7 @@ export function VirtualOS() {
   const [showStartMenu, setShowStartMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchMenu, setShowSearchMenu] = useState(false);
+  const [searchHighlightIdx, setSearchHighlightIdx] = useState(0);
   const [browserSearchQuery, setBrowserSearchQuery] = useState(null);
   const [windowState, setWindowState] = useState('normal');
   const [isBooting, setIsBooting] = useState(gameState === 'booting');
@@ -303,24 +304,41 @@ export function VirtualOS() {
                       type="text" 
                       placeholder="Type here to search..." 
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e) => { setSearchQuery(e.target.value); setSearchHighlightIdx(0); }}
                       onFocus={() => {
                         setShowSearchMenu(true);
                         setShowStartMenu(false);
+                        setSearchHighlightIdx(0);
                       }}
                       onBlur={() => setTimeout(() => setShowSearchMenu(false), 200)}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter' && searchQuery.trim().length > 0) {
+                        const filtered = DESKTOP_ICONS.filter(app => app.label.toLowerCase().includes(searchQuery.toLowerCase()));
+                        const hasWebOption = searchQuery.trim().length > 0;
+                        const totalItems = filtered.length + (hasWebOption ? 1 : 0);
+
+                        if (e.key === 'ArrowDown') {
                           e.preventDefault();
-                          const match = DESKTOP_ICONS.find(app => app.label.toLowerCase().includes(searchQuery.toLowerCase()));
-                          if (match) {
-                            openApp(match.id);
+                          setSearchHighlightIdx(prev => (prev + 1) % Math.max(totalItems, 1));
+                          soundFx.playHover();
+                        } else if (e.key === 'ArrowUp') {
+                          e.preventDefault();
+                          setSearchHighlightIdx(prev => (prev - 1 + Math.max(totalItems, 1)) % Math.max(totalItems, 1));
+                          soundFx.playHover();
+                        } else if (e.key === 'Enter' && searchQuery.trim().length > 0) {
+                          e.preventDefault();
+                          if (searchHighlightIdx < filtered.length) {
+                            openApp(filtered[searchHighlightIdx].id);
                           } else {
                             setBrowserSearchQuery(searchQuery);
                             openApp('browser');
                           }
                           setShowSearchMenu(false);
                           setSearchQuery('');
+                          setSearchHighlightIdx(0);
+                        } else if (e.key === 'Escape') {
+                          setShowSearchMenu(false);
+                          setSearchQuery('');
+                          setSearchHighlightIdx(0);
                         }
                       }}
                       style={{ padding: '4px 10px 4px 30px', borderRadius: '15px', border: 'none', outline: 'none', background: 'rgba(255,255,255,0.2)', color: 'white', fontSize: '12px', width: '200px' }}
@@ -346,7 +364,7 @@ export function VirtualOS() {
                       overflowY: 'auto'
                     }}>
                       <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', marginBottom: '8px', paddingBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Best Matches</div>
-                      {DESKTOP_ICONS.filter(app => app.label.toLowerCase().includes(searchQuery.toLowerCase())).map(app => (
+                      {DESKTOP_ICONS.filter(app => app.label.toLowerCase().includes(searchQuery.toLowerCase())).map((app, i) => (
                         <div 
                           key={app.id} 
                           onMouseDown={(e) => {
@@ -355,6 +373,7 @@ export function VirtualOS() {
                             setShowSearchMenu(false);
                             setSearchQuery('');
                           }}
+                          onMouseEnter={() => { setSearchHighlightIdx(i); soundFx.playHover(); }}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -364,47 +383,48 @@ export function VirtualOS() {
                             borderRadius: '6px',
                             color: 'white',
                             fontSize: '13px',
+                            background: searchHighlightIdx === i ? 'rgba(255,255,255,0.1)' : 'transparent',
                             transition: 'background 0.1s'
                           }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; soundFx.playHover(); }}
-                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                         >
                           <span style={{ fontSize: '1.4rem' }}>{app.icon}</span>
                           <span>{app.label}</span>
                         </div>
                       ))}
                       
-                      {searchQuery.trim().length > 0 && (
-                        <>
-                          <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '8px 0' }}></div>
-                          <div 
-                          onMouseDown={(e) => {
-                              e.preventDefault();
-                              const query = searchQuery;
-                              setBrowserSearchQuery(query);
-                              openApp('browser');
-                              setShowSearchMenu(false);
-                              setSearchQuery('');
-                            }}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '12px',
-                              padding: '8px 10px',
-                              cursor: 'pointer',
-                              borderRadius: '6px',
-                              color: 'white',
-                              fontSize: '13px',
-                              transition: 'background 0.1s'
-                            }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; soundFx.playHover(); }}
-                            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                          >
-                            <span style={{ fontSize: '1.4rem' }}>🌐</span>
-                            <span>Search Web for "{searchQuery}"</span>
-                          </div>
-                        </>
-                      )}
+                      {searchQuery.trim().length > 0 && (() => {
+                        const webIdx = DESKTOP_ICONS.filter(app => app.label.toLowerCase().includes(searchQuery.toLowerCase())).length;
+                        return (
+                          <>
+                            <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '8px 0' }}></div>
+                            <div 
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                setBrowserSearchQuery(searchQuery);
+                                openApp('browser');
+                                setShowSearchMenu(false);
+                                setSearchQuery('');
+                              }}
+                              onMouseEnter={() => { setSearchHighlightIdx(webIdx); soundFx.playHover(); }}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px',
+                                padding: '8px 10px',
+                                cursor: 'pointer',
+                                borderRadius: '6px',
+                                color: 'white',
+                                fontSize: '13px',
+                                background: searchHighlightIdx === webIdx ? 'rgba(255,255,255,0.1)' : 'transparent',
+                                transition: 'background 0.1s'
+                              }}
+                            >
+                              <span style={{ fontSize: '1.4rem' }}>🌐</span>
+                              <span>Search Web for "{searchQuery}"</span>
+                            </div>
+                          </>
+                        );
+                      })()}
 
                       {DESKTOP_ICONS.filter(app => app.label.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
                         <div style={{ padding: '20px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>
