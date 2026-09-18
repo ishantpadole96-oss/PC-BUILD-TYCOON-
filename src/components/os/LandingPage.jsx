@@ -64,34 +64,19 @@ export function LandingPage() {
         </div>
 
         <div className="landing-menu">
-          {!user ? (
-            <div className="landing-signin-prompt">
-              <p style={{ color: '#fbbf24', marginBottom: '1rem', fontWeight: 'bold' }}>⚠️ Cloud Account Required to Save Progress</p>
-              <button 
-                className="menu-btn btn-new" 
-                style={{ background: '#3b82f6', borderColor: '#60a5fa' }}
-                onClick={() => { soundFx.playClick(); setAuthModalOpen(true); }}
-              >
-                👤 SIGN IN TO PLAY
-              </button>
-            </div>
-          ) : (
-            <>
-              <button 
-                className="menu-btn btn-continue" 
-                onClick={handleContinue} 
-                disabled={!hasSave}
-              >
-                ▶ CONTINUE GAME
-              </button>
-              <button 
-                className="menu-btn btn-new" 
-                onClick={handleNewGame}
-              >
-                + NEW GAME
-              </button>
-            </>
-          )}
+          <button 
+            className="menu-btn btn-continue" 
+            onClick={handleContinue} 
+            disabled={!hasSave}
+          >
+            ▶ CONTINUE GAME
+          </button>
+          <button 
+            className="menu-btn btn-new" 
+            onClick={handleNewGame}
+          >
+            + NEW GAME
+          </button>
         </div>
         
         {/* Advanced Save Management */}

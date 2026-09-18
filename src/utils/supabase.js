@@ -23,20 +23,46 @@ if (isSupabaseConfigured) {
 export const supabase = supabaseClient;
 
 /**
- * Sign in using Google OAuth
+ * Sign Up using Custom PC ID
  */
-export async function signInWithGoogle() {
+export async function signUpWithPCID(pcId, password) {
   if (!isSupabaseConfigured || !supabase) {
     return {
-      error: { message: 'Supabase credentials not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local' }
+      error: { message: 'Supabase credentials not configured yet.' }
     };
   }
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
+  // Append dummy domain to satisfy email requirements
+  const dummyEmail = `${pcId.toLowerCase()}@titanos.local`;
+  
+  const { data, error } = await supabase.auth.signUp({
+    email: dummyEmail,
+    password: password,
     options: {
-      redirectTo: `${window.location.origin}/`,
+      data: {
+        full_name: pcId,
+      }
     }
+  });
+
+  return { data, error };
+}
+
+/**
+ * Sign In using Custom PC ID
+ */
+export async function signInWithPCID(pcId, password) {
+  if (!isSupabaseConfigured || !supabase) {
+    return {
+      error: { message: 'Supabase credentials not configured yet.' }
+    };
+  }
+
+  const dummyEmail = `${pcId.toLowerCase()}@titanos.local`;
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: dummyEmail,
+    password: password,
   });
 
   return { data, error };
