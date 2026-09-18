@@ -57,6 +57,47 @@ export function VirtualOS() {
   const wallpaper = useGameStore((s) => s.wallpaper);
   const setWallpaper = useGameStore((s) => s.setWallpaper);
 
+  const [icons, setIcons] = useState(() => {
+    const saved = localStorage.getItem('desktop_icons_order');
+    if (saved) {
+      try {
+        const savedIds = JSON.parse(saved);
+        return [...DESKTOP_ICONS].sort((a, b) => {
+          let indexA = savedIds.indexOf(a.id);
+          let indexB = savedIds.indexOf(b.id);
+          if (indexA === -1) indexA = 999;
+          if (indexB === -1) indexB = 999;
+          return indexA - indexB;
+        });
+      } catch (e) {}
+    }
+    return DESKTOP_ICONS;
+  });
+  const [draggedIdx, setDraggedIdx] = useState(null);
+
+  const handleDragStart = (e, index) => {
+    setDraggedIdx(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e, targetIdx) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === targetIdx) return;
+    
+    const newIcons = [...icons];
+    const draggedItem = newIcons[draggedIdx];
+    newIcons.splice(draggedIdx, 1);
+    newIcons.splice(targetIdx, 0, draggedItem);
+    
+    setIcons(newIcons);
+    localStorage.setItem('desktop_icons_order', JSON.stringify(newIcons.map(i => i.id)));
+    setDraggedIdx(null);
+  };
+
   useEffect(() => {
     // Load wallpaper from IndexedDB on mount
     getWallpaperBlob().then((data) => {
@@ -141,15 +182,19 @@ export function VirtualOS() {
               
               {/* Desktop Icons (Grid) */}
               <div className="os-icons-column" style={{ zIndex: 1 }}>
-                {DESKTOP_ICONS.map((app) => (
+                {icons.map((app, idx) => (
                   <div 
                     key={app.id} 
                     className={`os-icon ${activeTab === app.id ? 'active' : ''}`}
                     onClick={() => openApp(app.id)}
                     onMouseEnter={() => soundFx.playHover()}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, idx)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, idx)}
                   >
-                    <span className="os-icon-emoji">{app.icon}</span>
-                    <span className="os-icon-label" style={{ display: 'block', fontSize: '11px', color: 'white', marginTop: '5px', textShadow: '1px 1px 2px black' }}>{app.label}</span>
+                    <span className="os-icon-emoji" style={{ pointerEvents: 'none' }}>{app.icon}</span>
+                    <span className="os-icon-label" style={{ display: 'block', fontSize: '11px', color: 'white', marginTop: '5px', textShadow: '1px 1px 2px black', pointerEvents: 'none' }}>{app.label}</span>
                   </div>
                 ))}
               </div>
