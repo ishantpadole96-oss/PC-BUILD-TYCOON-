@@ -159,9 +159,8 @@ export function VirtualOS() {
                     setShowStartMenu(!showStartMenu);
                   }}
                 >
-              >
-                ⊞ Start
-              </button>
+                  ⊞ Start
+                </button>
               
               {showStartMenu && (
                 <div className="os-start-menu">
@@ -188,7 +187,7 @@ export function VirtualOS() {
             />
             <TutorialOverlay />
           </div>
-        </div>
+        )}
         <div className="monitor-stand-neck"></div>
         <div className="monitor-stand-base"></div>
       </div>
