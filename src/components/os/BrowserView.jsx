@@ -126,13 +126,37 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                     <span style={{ color: '#fa003f' }}>🎮</span> GX Corner
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222' }} onClick={() => navigateTo('https://pcpartpicker.mock')}>
+                    <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
+                      onClick={() => navigateTo('https://pcpartpicker.com')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
                       <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>PC Parts Store</div>
                       <div style={{ fontSize: '12px', color: '#888' }}>Shop the latest hardware</div>
                     </div>
-                    <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222' }} onClick={() => navigateTo('https://tech-news.mock')}>
+                    <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
+                      onClick={() => navigateTo('https://www.tomshardware.com')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
                       <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>Tech News Hub</div>
-                      <div style={{ fontSize: '12px', color: '#888' }}>Live market intelligence</div>
+                      <div style={{ fontSize: '12px', color: '#888' }}>Tom's Hardware - Latest tech news</div>
+                    </div>
+                    <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
+                      onClick={() => navigateTo('https://www.youtube.com')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
+                      <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>YouTube</div>
+                      <div style={{ fontSize: '12px', color: '#888' }}>Watch tech reviews & builds</div>
+                    </div>
+                    <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
+                      onClick={() => navigateTo('https://www.reddit.com/r/buildapc')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
+                      <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>Reddit r/buildapc</div>
+                      <div style={{ fontSize: '12px', color: '#888' }}>Community PC building advice</div>
                     </div>
                   </div>
                 </div>
@@ -159,11 +183,19 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                     <span style={{ color: '#a200ff' }}>🎁</span> Free Games
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#18181f', padding: '12px', borderRadius: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }}
+                      onClick={() => navigateTo('https://store.steampowered.com')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#a200ff'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
                       <div style={{ fontSize: '13px', color: '#ccc' }}>Cyber Strike 2077</div>
                       <div style={{ fontSize: '11px', background: '#a200ff', padding: '2px 6px', borderRadius: '4px', color: 'white' }}>FREE</div>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#18181f', padding: '12px', borderRadius: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }}
+                      onClick={() => navigateTo('https://playvalorant.com')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#a200ff'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
                       <div style={{ fontSize: '13px', color: '#ccc' }}>Valorant</div>
                       <div style={{ fontSize: '11px', background: '#a200ff', padding: '2px 6px', borderRadius: '4px', color: 'white' }}>FREE</div>
                     </div>
@@ -182,7 +214,8 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
             key={iframeKey}
             src={url} 
             title="web-content"
-            sandbox="allow-scripts allow-same-origin allow-forms"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+            referrerPolicy="no-referrer-when-downgrade"
             style={{ flex: 1, width: '100%', height: '100%', border: 'none', background: '#fff' }}
           />
         )}
