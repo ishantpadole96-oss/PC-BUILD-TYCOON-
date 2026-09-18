@@ -1,0 +1,56 @@
+.wallpaper-settings-content {
+  padding: 24px;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.wallpaper-settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.wallpaper-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.btn-select-wallpaper {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-select-wallpaper:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+
+.btn-reset-wallpaper {
+  background: transparent;
+  border: 1px solid #475569;
+  color: #94a3b8;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reset-wallpaper:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+}
+
+.wallpaper-info {
+  margin-top: auto;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-style: italic;
+}

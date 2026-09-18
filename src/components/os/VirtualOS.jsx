@@ -11,9 +11,11 @@ import { ShopView } from '../shop/ShopView';
 import { CommunityView } from '../community/CommunityView';
 import { DonateView } from './DonateView';
 import { ContactView } from './ContactView';
+import { WallpaperSettings } from './WallpaperSettings';
 import { BenchmarkModal } from '../workstation/BenchmarkModal';
 import { TutorialOverlay } from '../common/TutorialOverlay';
 import { soundFx } from '../../utils/audio';
+import { getWallpaperBlob } from '../../utils/idb';
 import './VirtualOS.css';
 
 const DESKTOP_ICONS = [
@@ -25,6 +27,7 @@ const DESKTOP_ICONS = [
   { id: 'shop', label: 'Upgrade Shop', icon: '🏬' },
   { id: 'community', label: 'Community', icon: '🌐' },
   { id: 'workstation', label: 'Assembly Desk', icon: '🛠️' },
+  { id: 'wallpaper', label: 'Wallpaper', icon: '🖼️' },
   { id: 'donate', label: 'Donate', icon: '❤️' },
   { id: 'contact', label: 'Developer', icon: '📱' }
 ];
@@ -40,6 +43,18 @@ export function VirtualOS() {
   const [benchModalOpen, setBenchModalOpen] = useState(false);
   const [showStartMenu, setShowStartMenu] = useState(false);
   const [isBooting, setIsBooting] = useState(gameState === 'booting');
+  const wallpaper = useGameStore((s) => s.wallpaper);
+  const setWallpaper = useGameStore((s) => s.setWallpaper);
+
+  useEffect(() => {
+    // Load wallpaper from IndexedDB on mount
+    getWallpaperBlob().then((data) => {
+      if (data && data.blob) {
+        const url = URL.createObjectURL(data.blob);
+        setWallpaper({ type: data.type, url });
+      }
+    }).catch(console.error);
+  }, [setWallpaper]);
 
   useEffect(() => {
     if (gameState === 'booting') {
@@ -69,68 +84,81 @@ export function VirtualOS() {
     setGameState('landing');
   };
 
-  if (isBooting) {
-    return (
-      <div className="virtual-os-booting">
-        <div className="boot-logo">⊞</div>
-        <div className="boot-spinner"></div>
-        <div className="boot-text">Starting TITAN OS...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="virtual-room">
       <div className="monitor-bezel">
         <div className="monitor-screen">
-          
-          <div className="os-desktop">
-            <GameHUD />
-            
-            <div className="os-icons-column">
-              {DESKTOP_ICONS.map((app) => (
-                <div 
-                  key={app.id} 
-                  className={`os-icon ${activeTab === app.id ? 'active' : ''}`}
-                  onClick={() => openApp(app.id)}
-                  onMouseEnter={() => soundFx.playHover()}
-                >
-                  <span className="os-icon-emoji">{app.icon}</span>
-                  <span className="os-icon-label">{app.label}</span>
-                </div>
-              ))}
+          {isBooting ? (
+            <div className="virtual-os-booting">
+              <div className="boot-logo">⚡</div>
+              <div className="boot-text">Loading TitanOS v2.0...</div>
             </div>
-
-            {activeTab && (
-              <div className="os-window">
-                <div className="os-window-titlebar">
-                  <span className="os-window-title">
-                    {DESKTOP_ICONS.find(i => i.id === activeTab)?.icon} {DESKTOP_ICONS.find(i => i.id === activeTab)?.label}
-                  </span>
-                  <button className="os-window-close" onClick={closeApp}>✕</button>
-                </div>
-                <div className="os-window-content">
-                  {activeTab === 'workstation' && <WorkstationView onOpenBenchmark={() => setBenchModalOpen(true)} />}
-                  {activeTab === 'orders' && <OrdersView />}
-                  {activeTab === 'marketplace' && <MarketplaceView />}
-                  {activeTab === 'inventory' && <InventoryView />}
-                  {activeTab === 'repairs' && <RepairsView />}
-                  {activeTab === 'challenges' && <ChallengesView />}
-                  {activeTab === 'shop' && <ShopView />}
-                  {activeTab === 'community' && <CommunityView />}
-                  {activeTab === 'donate' && <DonateView />}
-                  {activeTab === 'contact' && <ContactView />}
-                </div>
+          ) : (
+            <div 
+              className="os-desktop" 
+              style={wallpaper?.type === 'image' ? { backgroundImage: `url(${wallpaper.url})` } : {}}
+            >
+              {wallpaper?.type === 'video' && (
+                <video 
+                  src={wallpaper.url} 
+                  autoPlay 
+                  loop 
+                  muted 
+                  className="dynamic-wallpaper-video"
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
+                />
+              )}
+              
+              <GameHUD />
+              <TutorialOverlay />
+              
+              <div className="os-icons-column" style={{ zIndex: 1 }}>
+                {DESKTOP_ICONS.map((app) => (
+                  <div 
+                    key={app.id} 
+                    className={`os-icon ${activeTab === app.id ? 'active' : ''}`}
+                    onClick={() => openApp(app.id)}
+                    onMouseEnter={() => soundFx.playHover()}
+                  >
+                    <span className="os-icon-emoji">{app.icon}</span>
+                    <span className="os-icon-label">{app.label}</span>
+                  </div>
+                ))}
               </div>
-            )}
 
-            <div className="os-taskbar">
-              <button 
-                className={`os-start-btn ${showStartMenu ? 'active' : ''}`} 
-                onClick={() => {
-                  soundFx.playClick();
-                  setShowStartMenu(!showStartMenu);
-                }}
+              {activeTab && (
+                <div className="os-window">
+                  <div className="os-window-titlebar">
+                    <span className="os-window-title">
+                      {DESKTOP_ICONS.find(i => i.id === activeTab)?.icon} {DESKTOP_ICONS.find(i => i.id === activeTab)?.label}
+                    </span>
+                    <button className="os-window-close" onClick={closeApp}>✕</button>
+                  </div>
+                  <div className="os-window-content">
+                    {activeTab === 'workstation' && <WorkstationView onOpenBenchmark={() => setBenchModalOpen(true)} />}
+                    {activeTab === 'orders' && <OrdersView />}
+                    {activeTab === 'marketplace' && <MarketplaceView />}
+                    {activeTab === 'inventory' && <InventoryView />}
+                    {activeTab === 'repairs' && <RepairsView />}
+                    {activeTab === 'challenges' && <ChallengesView />}
+                    {activeTab === 'shop' && <ShopView />}
+                    {activeTab === 'community' && <CommunityView />}
+                    {activeTab === 'donate' && <DonateView />}
+                    {activeTab === 'contact' && <ContactView />}
+                    {activeTab === 'wallpaper' && <WallpaperSettings />}
+                  </div>
+                </div>
+              )}
+
+              {/* Taskbar */}
+              <div className="os-taskbar" style={{ zIndex: 2 }}>
+                <button 
+                  className={`os-start-btn ${showStartMenu ? 'active' : ''}`} 
+                  onClick={() => {
+                    soundFx.playClick();
+                    setShowStartMenu(!showStartMenu);
+                  }}
+                >
               >
                 ⊞ Start
               </button>

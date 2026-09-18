@@ -56,6 +56,8 @@ function getInitialState() {
     biosSettings: { ...INITIAL_BIOS },
     installedFromInventory: {}, // map of category -> inventory item ID
 
+    wallpaper: null, // { type: 'image' | 'video', url: string }
+
     orders: initialOrders,
     activeOrder: null,
 
