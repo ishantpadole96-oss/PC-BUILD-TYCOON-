@@ -96,6 +96,14 @@ export function GameHUD() {
           >
             🔄 Reset
           </button>
+          <button 
+            className="hud-btn" 
+            onClick={() => useGameStore.getState().exportSaveToFile()} 
+            title="Export Save File"
+            style={{ background: '#3b82f6' }}
+          >
+            💾 Export
+          </button>
           <button className="hud-btn hud-btn-signin" onClick={() => { setAuthModalOpen(true); useGameStore.getState().saveGame(); }} title="Sign in to cloud save your progress">
             {user ? '✅ Cloud Saved' : '👤 Sign In to Save'}
           </button>

@@ -275,12 +275,14 @@
 }
 
 .os-window-btn {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   border: 1px solid rgba(0,0,0,0.2);
   cursor: pointer;
   padding: 0;
+  display: inline-block;
+  outline: none;
 }
 
 .os-window-close { background: #ff5f56; }

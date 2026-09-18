@@ -124,57 +124,8 @@ export function VirtualOS() {
               <GameHUD />
               <TutorialOverlay />
               
-              {/* Top Menu Bar (macOS style) */}
-              <div className="os-taskbar" style={{ zIndex: 2 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                  <button 
-                    className={`os-start-btn ${showStartMenu ? 'active' : ''}`} 
-                    onClick={() => {
-                      soundFx.playClick();
-                      setShowStartMenu(!showStartMenu);
-                    }}
-                  >
-                    
-                  </button>
-                  <span style={{ fontSize: '13px', fontWeight: 'bold', cursor: 'default' }}>TitanOS</span>
-                  <span style={{ fontSize: '13px', cursor: 'default' }}>File</span>
-                  <span style={{ fontSize: '13px', cursor: 'default' }}>Edit</span>
-                  <span style={{ fontSize: '13px', cursor: 'default' }}>View</span>
-                  <span style={{ fontSize: '13px', cursor: 'default' }}>Go</span>
-                  <span style={{ fontSize: '13px', cursor: 'default' }}>Window</span>
-                  <span style={{ fontSize: '13px', cursor: 'default' }}>Help</span>
-                </div>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <span style={{ fontSize: '14px', cursor: 'default' }}>🔋 100%</span>
-                  <span style={{ fontSize: '14px', cursor: 'default' }}>📶</span>
-                  <div className="os-taskbar-clock" style={{ fontWeight: '500', fontSize: '13px', cursor: 'default' }}>
-                    {new Date().toLocaleTimeString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
-              </div>
-
-              {/* Apple Menu Dropdown */}
-              {showStartMenu && (
-                <div className="os-start-menu">
-                  <div className="os-start-menu-items">
-                    <button className="os-start-menu-item" onClick={() => { soundFx.playClick(); setShowStartMenu(false); }}>
-                      <span>About This PC</span>
-                    </button>
-                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '5px 0' }}></div>
-                    <button className="os-start-menu-item" onClick={() => { soundFx.playClick(); useGameStore.getState().exportSaveToFile(); setShowStartMenu(false); }}>
-                      <span>Export Save File...</span>
-                    </button>
-                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '5px 0' }}></div>
-                    <button className="os-start-menu-item" onClick={handleShutDown}>
-                      <span>Shut Down...</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Bottom Dock (macOS style) */}
-              <div className="os-dock" style={{ zIndex: 1 }}>
+              {/* Desktop Icons (Grid) */}
+              <div className="os-icons-column" style={{ zIndex: 1 }}>
                 {DESKTOP_ICONS.map((app) => (
                   <div 
                     key={app.id} 
@@ -182,9 +133,8 @@ export function VirtualOS() {
                     onClick={() => openApp(app.id)}
                     onMouseEnter={() => soundFx.playHover()}
                   >
-                    <div className="os-icon-tooltip">{app.label}</div>
                     <span className="os-icon-emoji">{app.icon}</span>
-                    {activeTab === app.id && <div className="os-icon-indicator" />}
+                    <span className="os-icon-label" style={{ display: 'block', fontSize: '11px', color: 'white', marginTop: '5px', textShadow: '1px 1px 2px black' }}>{app.label}</span>
                   </div>
                 ))}
               </div>
@@ -222,6 +172,58 @@ export function VirtualOS() {
                   </div>
                 </div>
               )}
+
+              {/* Bottom Taskbar */}
+              <div className="os-taskbar" style={{ zIndex: 2, top: 'auto', bottom: 0, borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                  <button 
+                    className={`os-start-btn ${showStartMenu ? 'active' : ''}`} 
+                    onClick={() => {
+                      soundFx.playClick();
+                      setShowStartMenu(!showStartMenu);
+                    }}
+                  >
+                    ⊞ Start
+                  </button>
+                  <div className="os-taskbar-search" style={{ position: 'relative' }}>
+                    <input 
+                      type="text" 
+                      placeholder="Type here to search..." 
+                      style={{ padding: '4px 10px 4px 30px', borderRadius: '15px', border: 'none', outline: 'none', background: 'rgba(255,255,255,0.2)', color: 'white', fontSize: '12px', width: '200px' }}
+                    />
+                    <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px' }}>🔍</span>
+                  </div>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <span style={{ fontSize: '14px', cursor: 'default' }}>🔋 100%</span>
+                  <span style={{ fontSize: '14px', cursor: 'default' }}>📶</span>
+                  <div className="os-taskbar-clock" style={{ fontWeight: '500', fontSize: '13px', cursor: 'default' }}>
+                    {new Date().toLocaleTimeString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Start Menu Dropdown */}
+              {showStartMenu && (
+                <div className="os-start-menu" style={{ bottom: '40px', top: 'auto' }}>
+                  <div className="os-start-menu-items">
+                    <button className="os-start-menu-item" onClick={() => { soundFx.playClick(); setShowStartMenu(false); }}>
+                      <span>About This PC</span>
+                    </button>
+                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '5px 0' }}></div>
+                    <button className="os-start-menu-item" onClick={() => { soundFx.playClick(); useGameStore.getState().exportSaveToFile(); setShowStartMenu(false); }}>
+                      <span>Export Save File...</span>
+                    </button>
+                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '5px 0' }}></div>
+                    <button className="os-start-menu-item" onClick={handleShutDown}>
+                      <span>Shut Down...</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+
 
             <BenchmarkModal
               isOpen={benchModalOpen}
