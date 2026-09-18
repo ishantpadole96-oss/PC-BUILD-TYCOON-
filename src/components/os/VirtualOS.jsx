@@ -181,6 +181,10 @@ export function VirtualOS() {
                     <span className="os-start-menu-brand">TITAN OS</span>
                   </div>
                   <div className="os-start-menu-items">
+                    <button className="os-start-menu-item" onClick={() => { soundFx.playClick(); useGameStore.getState().exportSaveToFile(); setShowStartMenu(false); }}>
+                      <span className="icon">💾</span>
+                      <span>Export Save File</span>
+                    </button>
                     <button className="os-start-menu-item" onClick={handleShutDown}>
                       <span className="icon">⏻</span>
                       <span>Save & Shut Down</span>

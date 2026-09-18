@@ -85,7 +85,15 @@ export function GameHUD() {
           <button className="hud-btn hud-btn-day" onClick={advanceDay} title="Advance to next business day">
             ☀️ Next Day
           </button>
-          <button className="hud-btn hud-btn-reset" onClick={clearSave} title="Reset game to Day 1">
+          <button 
+            className="hud-btn hud-btn-reset" 
+            onClick={() => {
+              if (window.confirm('WARNING: Are you sure you want to reset your game? All progress, items, and cash will be lost!')) {
+                clearSave();
+              }
+            }} 
+            title="Reset game to Day 1"
+          >
             🔄 Reset
           </button>
           <button className="hud-btn hud-btn-signin" onClick={() => { setAuthModalOpen(true); useGameStore.getState().saveGame(); }} title="Sign in to cloud save your progress">
