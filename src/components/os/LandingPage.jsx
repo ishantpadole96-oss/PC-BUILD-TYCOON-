@@ -10,6 +10,7 @@ export function LandingPage() {
   const clearSave = useGameStore((s) => s.clearSave);
   const exportSaveToFile = useGameStore((s) => s.exportSaveToFile);
   const importSaveFromFile = useGameStore((s) => s.importSaveFromFile);
+  const setAuthModalOpen = useSiteStore((s) => s.setAuthModalOpen);
   
   const fileInputRef = useRef(null);
 
@@ -74,6 +75,13 @@ export function LandingPage() {
             onClick={handleNewGame}
           >
             + NEW GAME
+          </button>
+          <button 
+            className="menu-btn btn-login" 
+            onClick={() => { soundFx.playClick(); setAuthModalOpen(true); }}
+            style={{ marginTop: '1rem', background: '#1e293b', border: '1px solid #334155' }}
+          >
+            👤 CLOUD LOGIN
           </button>
         </div>
         
