@@ -15,9 +15,9 @@ function FlappyBird({ onBack }) {
   const pipesRef = useRef([]);
   const scoreRef = useRef(0);
   
-  const GRAVITY = 0.4;
-  const JUMP = -7;
-  const PIPE_SPEED = 2.5;
+  const GRAVITY = 0.3;
+  const JUMP = -5.5;
+  const PIPE_SPEED = 1.5;
   const PIPE_WIDTH = 50;
   const HOLE_SIZE = 140;
   const BIRD_SIZE = 30;
@@ -145,8 +145,9 @@ function FlappyBird({ onBack }) {
       >
         {/* Bird */}
         <div style={{
-          position: 'absolute', top: birdPos, left: 100, width: BIRD_SIZE, height: BIRD_SIZE,
-          background: '#FFD700', borderRadius: '50%', border: '2px solid #000'
+          position: 'absolute', top: birdPos, left: 100, width: BIRD_SIZE * 1.5, height: BIRD_SIZE * 1.5,
+          backgroundImage: 'url(/bird.png)', backgroundSize: 'contain', backgroundRepeat: 'no-repeat',
+          transform: `translateY(-25%)`
         }}></div>
 
         {/* Pipes */}
@@ -270,7 +271,7 @@ function SnakeGame({ onBack }) {
       snakeRef.current = newSnake;
       setSnake(newSnake);
 
-    }, 150);
+    }, 200);
 
     return () => clearInterval(loop);
   }, [gameState]);
@@ -326,7 +327,7 @@ function PongGame({ onBack }) {
   const [playerY, setPlayerY] = useState(200);
   const [aiY, setAiY] = useState(200);
 
-  const ballRef = useRef({x: 200, y: 250, dx: 3, dy: 3});
+  const ballRef = useRef({x: 200, y: 250, dx: 2, dy: 2});
   const playerYRef = useRef(200);
   const aiYRef = useRef(200);
   const scoreRef = useRef({ player: 0, ai: 0 });
@@ -369,8 +370,8 @@ function PongGame({ onBack }) {
       b.y += b.dy;
 
       // AI movement
-      if (b.y > aiYRef.current + PADDLE_H/2) aiYRef.current += 2;
-      else aiYRef.current -= 2;
+      if (b.y > aiYRef.current + PADDLE_H/2) aiYRef.current += 1.5;
+      else aiYRef.current -= 1.5;
       aiYRef.current = Math.max(0, Math.min(GAME_HEIGHT - PADDLE_H, aiYRef.current));
 
       // Wall bounce top/bottom
@@ -389,10 +390,10 @@ function PongGame({ onBack }) {
       // Scoring
       if (b.x <= 0) {
         scoreRef.current.ai += 1;
-        b = {x: 200, y: 250, dx: -3, dy: (Math.random() > 0.5 ? 3 : -3)};
+        b = {x: 200, y: 250, dx: -2, dy: (Math.random() > 0.5 ? 2 : -2)};
       } else if (b.x >= GAME_WIDTH) {
         scoreRef.current.player += 1;
-        b = {x: 200, y: 250, dx: 3, dy: (Math.random() > 0.5 ? 3 : -3)};
+        b = {x: 200, y: 250, dx: 2, dy: (Math.random() > 0.5 ? 2 : -2)};
       }
 
       ballRef.current = b;
