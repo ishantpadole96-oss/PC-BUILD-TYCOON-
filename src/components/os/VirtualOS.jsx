@@ -309,6 +309,20 @@ export function VirtualOS() {
                         setShowStartMenu(false);
                       }}
                       onBlur={() => setTimeout(() => setShowSearchMenu(false), 200)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && searchQuery.trim().length > 0) {
+                          e.preventDefault();
+                          const match = DESKTOP_ICONS.find(app => app.label.toLowerCase().includes(searchQuery.toLowerCase()));
+                          if (match) {
+                            openApp(match.id);
+                          } else {
+                            setBrowserSearchQuery(searchQuery);
+                            openApp('browser');
+                          }
+                          setShowSearchMenu(false);
+                          setSearchQuery('');
+                        }
+                      }}
                       style={{ padding: '4px 10px 4px 30px', borderRadius: '15px', border: 'none', outline: 'none', background: 'rgba(255,255,255,0.2)', color: 'white', fontSize: '12px', width: '200px' }}
                     />
                     <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px' }}>🔍</span>
