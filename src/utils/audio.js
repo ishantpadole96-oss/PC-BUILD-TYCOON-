@@ -6,7 +6,7 @@ class SoundManager {
     this.ctx = null;
     this.muted = false;
     this.masterGain = null;
-    this._volume = 0.35;
+    this._volume = 0.85;
     this._fanNode = null;
     this._fanGain = null;
   }
