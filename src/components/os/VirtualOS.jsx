@@ -9,7 +9,10 @@ import { RepairsView } from '../repairs/RepairsView';
 import { ChallengesView } from '../challenges/ChallengesView';
 import { ShopView } from '../shop/ShopView';
 import { CommunityView } from '../community/CommunityView';
+import { DonateView } from './DonateView';
+import { ContactView } from './ContactView';
 import { BenchmarkModal } from '../workstation/BenchmarkModal';
+import { TutorialOverlay } from '../common/TutorialOverlay';
 import { soundFx } from '../../utils/audio';
 import './VirtualOS.css';
 
@@ -21,7 +24,9 @@ const DESKTOP_ICONS = [
   { id: 'challenges', label: 'Challenges', icon: '🏆' },
   { id: 'shop', label: 'Upgrade Shop', icon: '🏬' },
   { id: 'community', label: 'Community', icon: '🌐' },
-  { id: 'workstation', label: 'Assembly Desk', icon: '🛠️' }
+  { id: 'workstation', label: 'Assembly Desk', icon: '🛠️' },
+  { id: 'donate', label: 'Donate', icon: '❤️' },
+  { id: 'contact', label: 'Developer', icon: '📱' }
 ];
 
 export function VirtualOS() {
@@ -33,6 +38,7 @@ export function VirtualOS() {
   const setActiveTab = useGameStore((s) => s.setActiveTab);
   
   const [benchModalOpen, setBenchModalOpen] = useState(false);
+  const [showStartMenu, setShowStartMenu] = useState(false);
   const [isBooting, setIsBooting] = useState(gameState === 'booting');
 
   useEffect(() => {
@@ -55,6 +61,12 @@ export function VirtualOS() {
   const closeApp = () => {
     soundFx.playClick();
     setActiveTab(null);
+  };
+
+  const handleShutDown = async () => {
+    soundFx.playPowerClick();
+    await useGameStore.getState().saveGame();
+    setGameState('landing');
   };
 
   if (isBooting) {
@@ -106,12 +118,37 @@ export function VirtualOS() {
                   {activeTab === 'challenges' && <ChallengesView />}
                   {activeTab === 'shop' && <ShopView />}
                   {activeTab === 'community' && <CommunityView />}
+                  {activeTab === 'donate' && <DonateView />}
+                  {activeTab === 'contact' && <ContactView />}
                 </div>
               </div>
             )}
 
             <div className="os-taskbar">
-              <button className="os-start-btn" onClick={() => soundFx.playClick()}>⊞ Start</button>
+              <button 
+                className={`os-start-btn ${showStartMenu ? 'active' : ''}`} 
+                onClick={() => {
+                  soundFx.playClick();
+                  setShowStartMenu(!showStartMenu);
+                }}
+              >
+                ⊞ Start
+              </button>
+              
+              {showStartMenu && (
+                <div className="os-start-menu">
+                  <div className="os-start-menu-sidebar">
+                    <span className="os-start-menu-brand">TITAN OS</span>
+                  </div>
+                  <div className="os-start-menu-items">
+                    <button className="os-start-menu-item" onClick={handleShutDown}>
+                      <span className="icon">⏻</span>
+                      <span>Save & Shut Down</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div className="os-taskbar-clock">
                 {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </div>
@@ -121,6 +158,7 @@ export function VirtualOS() {
               isOpen={benchModalOpen}
               onClose={() => setBenchModalOpen(false)}
             />
+            <TutorialOverlay />
           </div>
         </div>
         <div className="monitor-stand-neck"></div>

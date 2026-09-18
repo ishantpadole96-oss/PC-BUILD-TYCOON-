@@ -3,6 +3,7 @@ import { useGameStore } from './store/gameStore';
 import { LandingPage } from './components/os/LandingPage';
 import { IntroScreen } from './components/os/IntroScreen';
 import { VirtualOS } from './components/os/VirtualOS';
+import { AuthModal } from './components/common/AuthModal';
 import './index.css';
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
       {gameState === 'landing' && <LandingPage />}
       {gameState === 'intro' && <IntroScreen />}
       {(gameState === 'booting' || gameState === 'desktop') && <VirtualOS />}
+      <AuthModal />
     </div>
   );
 }

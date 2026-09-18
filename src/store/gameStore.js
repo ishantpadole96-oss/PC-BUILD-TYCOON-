@@ -11,6 +11,7 @@ import { runBenchmark, evaluateCustomerSatisfaction } from '../engine/benchmark'
 import { initializeMarket, advanceMarketDay } from '../engine/marketSimulation';
 import { generateRepairJob } from '../engine/repairDiagnostics';
 import { soundFx } from '../utils/audio';
+import { saveTycoonGameToCloud, fetchUserTycoonGame, isSupabaseConfigured } from '../utils/supabase';
 import confetti from 'canvas-confetti';
 
 const STORAGE_KEY = 'pc_builder_tycoon_save_v1';
@@ -137,9 +138,8 @@ export const useGameStore = create((set, get) => ({
 
   setGameState: (state) => set({ gameState: state }),
 
-  saveGame: () => {
+  saveGame: async () => {
     const state = get();
-    // Only save core game data, omit temporary UI states
     const saveData = {
       cash: state.cash,
       reputation: state.reputation,
@@ -152,15 +152,82 @@ export const useGameStore = create((set, get) => ({
       market: state.market,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
+    
+    if (isSupabaseConfigured) {
+      await saveTycoonGameToCloud(saveData);
+    }
+    
     soundFx.playCash();
     get().triggerNotification('Game Saved Successfully!', 'success');
   },
 
-  loadGame: () => {
-    const savedStr = localStorage.getItem(STORAGE_KEY);
-    if (savedStr) {
-      try {
-        const savedData = JSON.parse(savedStr);
+  exportSaveToFile: () => {
+    const state = get();
+    const saveData = {
+      cash: state.cash,
+      reputation: state.reputation,
+      shopLevel: state.shopLevel,
+      day: state.day,
+      inventory: state.inventory,
+      orders: state.orders,
+      repairJobs: state.repairJobs,
+      completedChallenges: state.completedChallenges,
+      market: state.market,
+    };
+    
+    const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `titan_os_save_day_${state.day}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    get().triggerNotification('Save exported!', 'success');
+  },
+
+  loadGame: async () => {
+    let savedData = null;
+    
+    if (isSupabaseConfigured) {
+      const { data } = await fetchUserTycoonGame();
+      if (data) savedData = data;
+    }
+    
+    if (!savedData) {
+      const savedStr = localStorage.getItem(STORAGE_KEY);
+      if (savedStr) {
+        try {
+          savedData = JSON.parse(savedStr);
+        } catch {
+          console.error("Save file corrupted");
+        }
+      }
+    }
+    
+    if (savedData) {
+      set({
+        ...savedData,
+        gameState: 'desktop', // load straight to OS
+        currentBuild: { ...INITIAL_BUILD },
+        biosSettings: { ...INITIAL_BIOS },
+        installedFromInventory: {},
+        pcPowerState: 'off',
+        activeOrder: null,
+        activeRepair: null,
+        activeChallenge: null,
+      });
+      soundFx.playBootChime();
+    }
+  },
+
+  importSaveFromFile: (jsonString) => {
+    try {
+      const savedData = JSON.parse(jsonString);
+      if (savedData && savedData.cash !== undefined) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData));
         set({
           ...savedData,
           gameState: 'desktop', // load straight to OS
@@ -173,9 +240,13 @@ export const useGameStore = create((set, get) => ({
           activeChallenge: null,
         });
         soundFx.playBootChime();
-      } catch {
-        console.error("Save file corrupted");
+        get().triggerNotification('Save imported successfully!', 'success');
+      } else {
+        get().triggerNotification('Invalid save file format!', 'error');
       }
+    } catch (e) {
+      console.error("Failed to parse save file", e);
+      get().triggerNotification('Failed to read save file!', 'error');
     }
   },
 

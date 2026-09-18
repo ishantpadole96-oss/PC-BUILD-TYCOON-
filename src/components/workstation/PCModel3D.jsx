@@ -41,9 +41,9 @@ function SpinningFan({ position, rotation, isPoweredOn }) {
 function RGBStrip({ position, size = [0.05, 5, 0.05], color = '#00e5ff', isPoweredOn }) {
   const stripRef = useRef();
 
-  useFrame(({ clock }) => {
+  useFrame(() => {
     if (stripRef.current && isPoweredOn) {
-      const t = clock.getElapsedTime();
+      const t = performance.now() / 1000;
       stripRef.current.material.emissiveIntensity = 0.5 + Math.sin(t * 2) * 0.3;
     }
   });
@@ -228,11 +228,11 @@ export function PCModel3D({ build, powerState }) {
   );
 }
 
-export function PCViewer({ build, powerState }) {
+export function PCViewer({ build, powerState, autoRotate = true }) {
   return (
-    <Suspense fallback={<div className="loading-3d">Loading 3D Models...</div>}>
+    <Suspense fallback={null}>
       <PCModel3D build={build} powerState={powerState} />
-      <OrbitControls enableZoom={true} enablePan={true} autoRotate={!powerState || powerState === 'off'} autoRotateSpeed={1.0} />
+      <OrbitControls enableZoom={true} enablePan={true} autoRotate={autoRotate} autoRotateSpeed={1.0} />
     </Suspense>
   );
 }

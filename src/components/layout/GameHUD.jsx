@@ -1,6 +1,7 @@
 // Game HUD - Top status bar showing Cash, Reputation, Day, Shop Level
 import React, { useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
+import { useSiteStore } from '../../store/siteStore';
 import { shopLevels } from '../../data/shopLevels';
 import { soundFx } from '../../utils/audio';
 import './GameHUD.css';
@@ -11,9 +12,11 @@ export function GameHUD() {
   const day = useGameStore((s) => s.day);
   const shopLevel = useGameStore((s) => s.shopLevel);
   const advanceDay = useGameStore((s) => s.advanceDay);
-  const resetGame = useGameStore((s) => s.resetGame);
+  const clearSave = useGameStore((s) => s.clearSave);
   const market = useGameStore((s) => s.market);
   const notification = useGameStore((s) => s.notification);
+  const setAuthModalOpen = useSiteStore((s) => s.setAuthModalOpen);
+  const user = useSiteStore((s) => s.user);
   const [isMuted, setIsMuted] = useState(soundFx.isMuted);
 
   const currentTier = shopLevels.find((l) => l.level === shopLevel) || shopLevels[0];
@@ -82,11 +85,11 @@ export function GameHUD() {
           <button className="hud-btn hud-btn-day" onClick={advanceDay} title="Advance to next business day">
             ☀️ Next Day
           </button>
-          <button className="hud-btn hud-btn-reset" onClick={resetGame} title="Reset game to Day 1">
+          <button className="hud-btn hud-btn-reset" onClick={clearSave} title="Reset game to Day 1">
             🔄 Reset
           </button>
-          <button className="hud-btn hud-btn-signin" onClick={() => alert('Sign in functionality coming soon!')} title="Sign in to cloud save your progress">
-            👤 Sign In
+          <button className="hud-btn hud-btn-signin" onClick={() => { setAuthModalOpen(true); useGameStore.getState().saveGame(); }} title="Sign in to cloud save your progress">
+            {user ? '✅ Cloud Saved' : '👤 Sign In to Save'}
           </button>
         </div>
       </div>

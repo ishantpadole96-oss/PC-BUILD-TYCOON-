@@ -9,7 +9,7 @@ export function IntroScreen() {
   const [phase, setPhase] = useState(0);
   const keystrokeCounter = useRef(0);
 
-  const fullText = "You've inherited an old PC repair shop...\\n\\nThe bank is breathing down your neck.\\nThe tech is outdated.\\nThe clients are demanding.\\n\\nBut you know hardware.\\nIt's time to build your empire.";
+  const fullText = "You've inherited an old PC repair shop...\n\nThe bank is breathing down your neck.\nThe tech is outdated.\nThe clients are demanding.\n\nBut you know hardware.\nIt's time to build your empire.";
 
   useEffect(() => {
     soundFx.ensureContext();

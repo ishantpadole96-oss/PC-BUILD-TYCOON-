@@ -113,3 +113,43 @@ export async function deleteCloudBuild(id) {
     .delete()
     .eq('id', id);
 }
+
+/**
+ * Save Tycoon Game State to Cloud
+ */
+export async function saveTycoonGameToCloud(saveData) {
+  if (!isSupabaseConfigured || !supabase) return { error: { message: 'Supabase not configured' } };
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: { message: 'Not signed in' } };
+
+  const { data, error } = await supabase
+    .from('tycoon_saves')
+    .upsert({
+      user_id: user.id,
+      save_data: saveData,
+      updated_at: new Date().toISOString()
+    })
+    .select()
+    .single();
+
+  return { data, error };
+}
+
+/**
+ * Load Tycoon Game State from Cloud
+ */
+export async function fetchUserTycoonGame() {
+  if (!isSupabaseConfigured || !supabase) return { data: null, error: null };
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { data: null, error: null };
+
+  const { data, error } = await supabase
+    .from('tycoon_saves')
+    .select('*')
+    .eq('user_id', user.id)
+    .single();
+
+  return { data: data?.save_data || null, error };
+}

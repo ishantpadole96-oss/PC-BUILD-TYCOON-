@@ -137,10 +137,10 @@
 /* Window Manager */
 .os-window {
   position: absolute;
-  top: 50px;
-  left: 120px;
-  right: 20px;
-  bottom: 50px;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 40px;
   background: rgba(15, 15, 25, 0.95);
   border: 1px solid #333;
   border-radius: 8px 8px 0 0;

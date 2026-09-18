@@ -10,6 +10,7 @@ import { PCViewer } from './PCModel3D';
 export function WorkstationView({ onOpenBenchmark }) {
   const [selectedCategory, setSelectedCategory] = useState('cpu');
   const [viewMode, setViewMode] = useState('3d'); // '3d' | 'schematic'
+  const [isAutoRotate, setIsAutoRotate] = useState(true);
 
   const currentBuild = useGameStore((s) => s.currentBuild);
   const inventory = useGameStore((s) => s.inventory);
@@ -140,6 +141,16 @@ export function WorkstationView({ onOpenBenchmark }) {
             </div>
 
             <div className="toolbar-right">
+              {/* Auto Rotate Toggle */}
+              <button
+                onClick={() => { soundFx.playClick(); setIsAutoRotate(!isAutoRotate); }}
+                className={`btn-secondary ${isAutoRotate ? 'active' : ''}`}
+                title="Toggle 3D auto-rotation"
+                style={{ marginRight: '0.5rem' }}
+              >
+                ↻ Auto-Rotate {isAutoRotate ? 'ON' : 'OFF'}
+              </button>
+
               {/* Physical Power Button */}
               <button
                 onClick={powerOnPC}
@@ -165,7 +176,7 @@ export function WorkstationView({ onOpenBenchmark }) {
             <div className="work-bench" style={{ width: '100%', height: '100%' }}>
               <div className="bench-pc-container" style={{ width: '100%', height: '100%', minHeight: '600px' }}>
                 <Canvas camera={{ position: [5, 3, 5], fov: 50 }}>
-                  <PCViewer build={currentBuild} powerState={pcPowerState} />
+                  <PCViewer build={currentBuild} powerState={pcPowerState} autoRotate={isAutoRotate} />
                 </Canvas>
               </div>
             </div>
