@@ -188,6 +188,7 @@ export function VirtualOS() {
             <TutorialOverlay />
           </div>
         )}
+        </div>
         <div className="monitor-stand-neck"></div>
         <div className="monitor-stand-base"></div>
       </div>
