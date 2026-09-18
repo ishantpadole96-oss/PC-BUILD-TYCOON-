@@ -74,108 +74,223 @@
   flex-direction: column;
 }
 
-.os-icons-column {
+/* Top Menu Bar */
+.os-taskbar {
   position: absolute;
-  top: 80px; /* Below HUD */
-  left: 20px;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 100;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.os-start-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s;
+}
+
+.os-start-btn:hover, .os-start-btn.active {
+  opacity: 0.7;
+}
+
+/* Apple Menu */
+.os-start-menu {
+  position: absolute;
+  top: 24px;
+  left: 10px;
+  width: 220px;
+  background: rgba(30, 30, 30, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  display: flex;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  z-index: 101;
+  animation: startMenuOpen 0.15s ease-out forwards;
+}
+
+@keyframes startMenuOpen {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.os-start-menu-items {
+  flex: 1;
+  padding: 5px;
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
-  gap: 15px;
-  max-height: calc(100vh - 140px);
+}
+
+.os-start-menu-item {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  padding: 6px 12px;
+  text-align: left;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.os-start-menu-item:hover {
+  background: #0066cc;
+  color: white;
+}
+
+/* Bottom Dock */
+.os-dock {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(24px);
+  padding: 8px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 100;
 }
 
 .os-icon {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 80px;
-  padding: 10px 5px;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
   cursor: pointer;
-  border-radius: 4px;
-  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .os-icon:hover {
+  transform: scale(1.3) translateY(-10px);
+  margin: 0 10px;
+  z-index: 10;
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.os-icon.active {
-  background: rgba(0, 255, 204, 0.2);
-  border: 1px solid rgba(0, 255, 204, 0.5);
 }
 
 .os-icon-emoji {
-  font-size: 2rem;
-  margin-bottom: 5px;
-  text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+  font-size: 1.8rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-.os-icon-label {
-  color: #fff;
-  font-size: 0.8rem;
-  text-align: center;
-  text-shadow: 1px 1px 2px #000;
-  font-family: 'Inter', sans-serif;
+.os-icon-indicator {
+  position: absolute;
+  bottom: -5px;
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 4px #fff;
+}
+
+.os-icon-tooltip {
+  position: absolute;
+  top: -35px;
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.os-icon:hover .os-icon-tooltip {
+  opacity: 1;
 }
 
 /* Window Manager */
 .os-window {
   position: absolute;
-  top: 80px;
-  left: 120px;
-  right: 20px;
-  bottom: 60px;
-  background: rgba(15, 15, 25, 0.95);
-  border: 1px solid #333;
-  border-radius: 8px;
+  top: 40px;
+  left: 80px;
+  right: 80px;
+  bottom: 85px;
+  background: rgba(30, 30, 30, 0.95);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.6);
   animation: windowOpen 0.2s ease-out forwards;
   z-index: 50;
+  overflow: hidden;
 }
 
 @keyframes windowOpen {
-  from { opacity: 0; transform: scale(0.95) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .os-window-titlebar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(to right, #1a1a2e, #16213e);
-  padding: 8px 16px;
-  border-radius: 8px 8px 0 0;
-  border-bottom: 1px solid #333;
+  background: linear-gradient(to bottom, #444, #333);
+  padding: 0 12px;
+  height: 28px;
+  border-bottom: 1px solid #111;
 }
 
 .os-window-title {
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 0.9rem;
+  color: #ddd;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 500;
+  font-size: 13px;
 }
 
-.os-window-close {
-  background: #ff4757;
-  color: white;
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
+.os-window-controls {
   display: flex;
+  gap: 8px;
   align-items: center;
-  justify-content: center;
-  font-size: 12px;
 }
 
-.os-window-close:hover {
-  background: #ff6b81;
+.os-window-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.2);
+  cursor: pointer;
+  padding: 0;
 }
+
+.os-window-close { background: #ff5f56; }
+.os-window-close:hover { background: #ff746d; }
+
+.os-window-min { background: #ffbd2e; }
+.os-window-min:hover { background: #ffcf54; }
+
+.os-window-max { background: #27c93f; }
+.os-window-max:hover { background: #3ce053; }
 
 .os-window-content {
   flex: 1;
@@ -184,115 +299,4 @@
   position: relative;
   display: flex;
   flex-direction: column;
-}
-
-/* Taskbar */
-.os-taskbar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
-  background: rgba(10, 10, 15, 0.95);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
-  z-index: 100;
-}
-
-.os-start-btn {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.os-start-btn:hover {
-  color: #00ffcc;
-}
-
-.os-taskbar-clock {
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-}
-
-/* Start Menu */
-.os-start-menu {
-  position: absolute;
-  bottom: 50px;
-  left: 10px;
-  width: 250px;
-  background: rgba(20, 20, 30, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  display: flex;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
-  overflow: hidden;
-  z-index: 101;
-  animation: startMenuOpen 0.15s ease-out forwards;
-}
-
-@keyframes startMenuOpen {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.os-start-menu-sidebar {
-  background: linear-gradient(to bottom, #1a1a2e, #16213e);
-  padding: 10px;
-  display: flex;
-  align-items: flex-end;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.os-start-menu-brand {
-  color: #fff;
-  font-family: 'Inter', sans-serif;
-  font-weight: 800;
-  font-size: 1.2rem;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
-}
-
-.os-start-menu-items {
-  flex: 1;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.os-start-menu-item {
-  background: transparent !important;
-  border: none;
-  color: #fff !important;
-  font-family: 'Inter', sans-serif;
-  padding: 10px;
-  text-align: left;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: all 0.2s;
-}
-
-.os-start-menu-item:hover {
-  background: rgba(255, 71, 87, 0.2);
-  color: #ff4757;
-}
-
-.os-start-menu-item .icon {
-  font-size: 1.2rem;
 }

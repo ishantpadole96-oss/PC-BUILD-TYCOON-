@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { titankartProducts } from '../../data/titankart';
 import { soundFx } from '../../utils/audio';
@@ -8,6 +8,7 @@ export function TitanKartView() {
   const shopLevel = useGameStore((s) => s.shopLevel);
   const perks = useGameStore((s) => s.perks) || [];
   const buyPerk = useGameStore((s) => s.buyPerk);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleBuy = (product) => {
     if (shopLevel < product.unlockLevel) {
@@ -25,6 +26,12 @@ export function TitanKartView() {
       buyPerk(product);
     }
   };
+
+  const filteredProducts = titankartProducts.filter(product => 
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', background: '#f1f3f6', overflowY: 'auto' }}>
@@ -49,8 +56,9 @@ export function TitanKartView() {
             <input 
               type="text" 
               placeholder="Search for tools, lifestyle, luxury and more" 
-              style={{ width: '400px', padding: '8px 12px', borderRadius: '2px', border: 'none', outline: 'none', fontSize: '14px' }}
-              readOnly
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ width: '400px', padding: '8px 12px', borderRadius: '2px', border: 'none', outline: 'none', fontSize: '14px', color: '#000' }}
             />
             <span style={{ position: 'absolute', right: '10px', top: '7px', color: '#2874f0', cursor: 'pointer' }}>🔍</span>
           </div>
@@ -92,7 +100,7 @@ export function TitanKartView() {
 
         {/* Product Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-          {titankartProducts.map(product => {
+          {filteredProducts.map(product => {
             const isLocked = shopLevel < product.unlockLevel;
             const isOwned = perks.includes(product.id);
 

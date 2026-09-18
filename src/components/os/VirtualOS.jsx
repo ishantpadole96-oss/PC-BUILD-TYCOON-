@@ -124,7 +124,57 @@ export function VirtualOS() {
               <GameHUD />
               <TutorialOverlay />
               
-              <div className="os-icons-column" style={{ zIndex: 1 }}>
+              {/* Top Menu Bar (macOS style) */}
+              <div className="os-taskbar" style={{ zIndex: 2 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                  <button 
+                    className={`os-start-btn ${showStartMenu ? 'active' : ''}`} 
+                    onClick={() => {
+                      soundFx.playClick();
+                      setShowStartMenu(!showStartMenu);
+                    }}
+                  >
+                    
+                  </button>
+                  <span style={{ fontSize: '13px', fontWeight: 'bold', cursor: 'default' }}>TitanOS</span>
+                  <span style={{ fontSize: '13px', cursor: 'default' }}>File</span>
+                  <span style={{ fontSize: '13px', cursor: 'default' }}>Edit</span>
+                  <span style={{ fontSize: '13px', cursor: 'default' }}>View</span>
+                  <span style={{ fontSize: '13px', cursor: 'default' }}>Go</span>
+                  <span style={{ fontSize: '13px', cursor: 'default' }}>Window</span>
+                  <span style={{ fontSize: '13px', cursor: 'default' }}>Help</span>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <span style={{ fontSize: '14px', cursor: 'default' }}>🔋 100%</span>
+                  <span style={{ fontSize: '14px', cursor: 'default' }}>📶</span>
+                  <div className="os-taskbar-clock" style={{ fontWeight: '500', fontSize: '13px', cursor: 'default' }}>
+                    {new Date().toLocaleTimeString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Apple Menu Dropdown */}
+              {showStartMenu && (
+                <div className="os-start-menu">
+                  <div className="os-start-menu-items">
+                    <button className="os-start-menu-item" onClick={() => { soundFx.playClick(); setShowStartMenu(false); }}>
+                      <span>About This PC</span>
+                    </button>
+                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '5px 0' }}></div>
+                    <button className="os-start-menu-item" onClick={() => { soundFx.playClick(); useGameStore.getState().exportSaveToFile(); setShowStartMenu(false); }}>
+                      <span>Export Save File...</span>
+                    </button>
+                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '5px 0' }}></div>
+                    <button className="os-start-menu-item" onClick={handleShutDown}>
+                      <span>Shut Down...</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Bottom Dock (macOS style) */}
+              <div className="os-dock" style={{ zIndex: 1 }}>
                 {DESKTOP_ICONS.map((app) => (
                   <div 
                     key={app.id} 
@@ -132,8 +182,9 @@ export function VirtualOS() {
                     onClick={() => openApp(app.id)}
                     onMouseEnter={() => soundFx.playHover()}
                   >
+                    <div className="os-icon-tooltip">{app.label}</div>
                     <span className="os-icon-emoji">{app.icon}</span>
-                    <span className="os-icon-label">{app.label}</span>
+                    {activeTab === app.id && <div className="os-icon-indicator" />}
                   </div>
                 ))}
               </div>
@@ -141,10 +192,15 @@ export function VirtualOS() {
               {activeTab && (
                 <div className="os-window">
                   <div className="os-window-titlebar">
+                    <div className="os-window-controls">
+                      <button className="os-window-btn os-window-close" onClick={closeApp}></button>
+                      <button className="os-window-btn os-window-min"></button>
+                      <button className="os-window-btn os-window-max"></button>
+                    </div>
                     <span className="os-window-title">
-                      {DESKTOP_ICONS.find(i => i.id === activeTab)?.icon} {DESKTOP_ICONS.find(i => i.id === activeTab)?.label}
+                      {DESKTOP_ICONS.find(i => i.id === activeTab)?.label}
                     </span>
-                    <button className="os-window-close" onClick={closeApp}>✕</button>
+                    <div style={{ width: '52px' }}></div> {/* Balance flex space */}
                   </div>
                   <div className="os-window-content">
                     {activeTab === 'workstation' && <WorkstationView onOpenBenchmark={() => setBenchModalOpen(true)} />}
@@ -166,41 +222,6 @@ export function VirtualOS() {
                   </div>
                 </div>
               )}
-
-              {/* Taskbar */}
-              <div className="os-taskbar" style={{ zIndex: 2 }}>
-                <button 
-                  className={`os-start-btn ${showStartMenu ? 'active' : ''}`} 
-                  onClick={() => {
-                    soundFx.playClick();
-                    setShowStartMenu(!showStartMenu);
-                  }}
-                >
-                  ⊞ Start
-                </button>
-              
-              {showStartMenu && (
-                <div className="os-start-menu">
-                  <div className="os-start-menu-sidebar">
-                    <span className="os-start-menu-brand">TITAN OS</span>
-                  </div>
-                  <div className="os-start-menu-items">
-                    <button className="os-start-menu-item" onClick={() => { soundFx.playClick(); useGameStore.getState().exportSaveToFile(); setShowStartMenu(false); }}>
-                      <span className="icon">💾</span>
-                      <span>Export Save File</span>
-                    </button>
-                    <button className="os-start-menu-item" onClick={handleShutDown}>
-                      <span className="icon">⏻</span>
-                      <span>Save & Shut Down</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div className="os-taskbar-clock">
-                {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </div>
-            </div>
 
             <BenchmarkModal
               isOpen={benchModalOpen}
