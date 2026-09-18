@@ -47,7 +47,7 @@ export function MiniGameView() {
   };
 
   return (
-    <div className="os-window-content mini-game-view" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0f172a', color: 'white' }}>
+    <div className="mini-game-view" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0f172a', color: 'white', width: '100%', height: '100%' }}>
       <h2 style={{ marginBottom: '20px', color: '#38bdf8' }}>TitanOS Tic-Tac-Toe</h2>
       
       <div style={{ marginBottom: '20px', fontSize: '18px', fontWeight: 'bold' }}>{status}</div>

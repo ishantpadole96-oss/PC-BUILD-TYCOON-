@@ -50,10 +50,10 @@ export function FileManagerView() {
     }
   };
 
-  const currentDirFiles = getCurrentDir();
+  const currentDirFiles = getCurrentDir().children || {};
 
   return (
-    <div className="os-window-content file-manager-view" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="file-manager-view" style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
       <div className="file-toolbar" style={{ display: 'flex', gap: '10px', padding: '10px', background: '#f1f5f9', borderBottom: '1px solid #cbd5e1' }}>
         <button onClick={handleNavigateUp} disabled={currentPath.length <= 1} style={{ padding: '5px 10px', cursor: currentPath.length <= 1 ? 'default' : 'pointer' }}>⬆️ Up</button>
         <div style={{ flex: 1, padding: '5px 10px', background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', color: '#334155' }}>

@@ -11,7 +11,7 @@ export function BrowserView() {
   };
 
   return (
-    <div className="os-window-content browser-view">
+    <div className="browser-view" style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
       <div className="browser-toolbar" style={{ display: 'flex', gap: '10px', padding: '10px', background: '#1e293b', borderBottom: '1px solid #334155' }}>
         <button style={{ background: '#334155', border: 'none', color: 'white', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>◀</button>
         <button style={{ background: '#334155', border: 'none', color: 'white', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>▶</button>

@@ -106,10 +106,12 @@ export function VirtualOS() {
             >
               {wallpaper?.type === 'video' && (
                 <video 
+                  key={wallpaper.url}
                   src={wallpaper.url} 
                   autoPlay 
                   loop 
                   muted 
+                  playsInline
                   className="dynamic-wallpaper-video"
                   style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
                 />
