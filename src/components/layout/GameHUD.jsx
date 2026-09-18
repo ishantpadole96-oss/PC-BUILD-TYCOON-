@@ -31,7 +31,7 @@ export function GameHUD() {
       <div className="game-hud">
         {/* Brand */}
         <div className="hud-brand">
-          <span className="hud-logo">⚡</span>
+          <img src="/logo.png" alt="PC Builder Tycoon Logo" style={{ height: '40px', borderRadius: '4px', marginRight: '8px' }} />
           <div className="hud-brand-text">
             <span className="hud-title">PC Builder Tycoon</span>
             <span className="hud-subtitle">Build. Repair. Dominate.</span>
