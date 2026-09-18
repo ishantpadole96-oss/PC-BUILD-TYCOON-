@@ -139,6 +139,7 @@ export const useGameStore = create((set, get) => ({
   ...loadPersistedState(),
 
   setGameState: (state) => set({ gameState: state }),
+  setWallpaper: (wallpaper) => set({ wallpaper }),
 
   saveGame: async () => {
     const state = get();
