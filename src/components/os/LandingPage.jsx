@@ -10,8 +10,6 @@ export function LandingPage() {
   const clearSave = useGameStore((s) => s.clearSave);
   const exportSaveToFile = useGameStore((s) => s.exportSaveToFile);
   const importSaveFromFile = useGameStore((s) => s.importSaveFromFile);
-  const user = useSiteStore((s) => s.user);
-  const setAuthModalOpen = useSiteStore((s) => s.setAuthModalOpen);
   
   const fileInputRef = useRef(null);
 
