@@ -67,8 +67,8 @@ export function GameHUD() {
           <div className="hud-stat stat-shop">
             <span className="stat-icon">{currentTier.icon}</span>
             <div className="stat-info">
-              <span className="stat-label">SHOP LEVEL</span>
-              <span className="stat-value">{currentTier.name}</span>
+              <span className="stat-label">PLAYER LEVEL</span>
+              <span className="stat-value">Level {shopLevel} ({currentTier.name})</span>
             </div>
           </div>
         </div>
