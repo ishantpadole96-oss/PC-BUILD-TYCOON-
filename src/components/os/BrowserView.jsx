@@ -9,9 +9,15 @@ export function BrowserView() {
   const handleNavigate = (e) => {
     e.preventDefault();
     let finalUrl = inputUrl;
-    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://') && !finalUrl.includes('titanos.web') && !finalUrl.endsWith('.mock')) {
+    
+    // Auto-correct common google inputs to the iframe-friendly version
+    if (finalUrl.toLowerCase().includes('google.com')) {
+      finalUrl = 'https://www.google.com/webhp?igu=1';
+    }
+    else if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://') && !finalUrl.includes('titanos.web') && !finalUrl.endsWith('.mock')) {
       finalUrl = 'https://' + finalUrl;
     }
+    
     setUrl(finalUrl);
     setInputUrl(finalUrl);
   };
@@ -42,6 +48,9 @@ export function BrowserView() {
               <h1 style={{ color: '#0f172a' }}>TitanOS Web Browser</h1>
               <p>Welcome to the World Wide Web.</p>
               <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '20px' }}>
+                <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', cursor: 'pointer' }} onClick={() => {setInputUrl('https://www.google.com'); setUrl('https://www.google.com/webhp?igu=1');}}>
+                  Google Search
+                </div>
                 <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', cursor: 'pointer' }} onClick={() => {setInputUrl('https://pcpartpicker.mock'); setUrl('https://pcpartpicker.mock');}}>
                   PC Parts Store
                 </div>
