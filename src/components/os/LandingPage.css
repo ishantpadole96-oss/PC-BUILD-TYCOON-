@@ -12,12 +12,13 @@
 
 .landing-background {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image: url('/wallpaper.jpg');
+  top: -5%; left: -5%; right: -5%; bottom: -5%; /* extend beyond screen to allow panning */
+  background-image: url('/landing_bg.jpg');
   background-size: cover;
   background-position: center;
   filter: brightness(0.6) contrast(1.2);
   z-index: 1;
+  animation: bgKenBurns 30s infinite alternate ease-in-out;
 }
 
 .grid-overlay {
@@ -141,4 +142,9 @@
 .landing-menu, .landing-footer, .landing-content > div:nth-child(4) {
   opacity: 0;
   animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.6s;
+}
+
+@keyframes bgKenBurns {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.08) translate(-1%, -1%); }
 }
