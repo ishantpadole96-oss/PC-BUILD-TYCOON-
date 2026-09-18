@@ -47,6 +47,21 @@ export function WallpaperSettings() {
     }
   };
 
+  const shopLevel = useGameStore((s) => s.shopLevel);
+  
+  const defaultWallpapers = [
+    { url: '/wallpaper.jpg', level: 1 },
+    { url: '/wallpaper_1.jpg', level: 1 },
+    { url: '/wallpaper_2.jpg', level: 1 },
+    { url: '/wallpaper_3.jpg', level: 2 },
+    { url: '/wallpaper_4.jpg', level: 2 },
+    { url: '/wp_cyberpunk.jpg', level: 3 },
+    { url: '/wp_hardware.jpg', level: 4 },
+    { url: '/wp_synthwave.jpg', level: 5 },
+    { url: '/wp_server.jpg', level: 6 },
+    { url: '/wp_cozy.jpg', level: 7 }
+  ];
+
   return (
     <div className="os-window-content wallpaper-settings-content">
       <div className="os-window-header-internal">
@@ -57,21 +72,40 @@ export function WallpaperSettings() {
         <p>Select an image or dynamic video (.mp4, .webm) from your PC to set as the TitanOS background.</p>
         
         <div className="default-wallpapers-section">
-          <h3>Default Wallpapers</h3>
-          <div className="default-wallpapers-grid">
-            {['/wallpaper.jpg', '/wallpaper_1.jpg', '/wallpaper_2.jpg', '/wallpaper_3.jpg', '/wallpaper_4.jpg'].map((wp, index) => (
-              <div 
-                key={index} 
-                className="default-wallpaper-thumb"
-                onClick={() => {
-                  soundFx.playSuccess();
-                  setWallpaper({ type: 'image', url: wp });
-                  clearWallpaper().catch(console.error); // Clear custom to use default
-                }}
-              >
-                <img src={wp} alt={`Wallpaper ${index + 1}`} />
-              </div>
-            ))}
+          <h3>Default Wallpapers (Unlock more via Shop upgrades!)</h3>
+          <div className="default-wallpapers-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '15px' }}>
+            {defaultWallpapers.map((wp, index) => {
+              const isLocked = shopLevel < wp.level;
+              return (
+                <div 
+                  key={index} 
+                  className={`default-wallpaper-thumb ${isLocked ? 'locked' : ''}`}
+                  style={{ 
+                    position: 'relative', 
+                    cursor: isLocked ? 'not-allowed' : 'pointer',
+                    opacity: isLocked ? 0.5 : 1,
+                    filter: isLocked ? 'grayscale(1)' : 'none'
+                  }}
+                  onClick={() => {
+                    if (isLocked) {
+                      soundFx.playError();
+                      alert(`Requires Shop Level ${wp.level} to unlock!`);
+                      return;
+                    }
+                    soundFx.playSuccess();
+                    setWallpaper({ type: 'image', url: wp.url });
+                    clearWallpaper().catch(console.error);
+                  }}
+                >
+                  <img src={wp.url} alt={`Wallpaper ${index + 1}`} style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '4px' }} />
+                  {isLocked && (
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)', borderRadius: '4px', color: 'white', fontWeight: 'bold' }}>
+                      🔒 Lv {wp.level}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
         

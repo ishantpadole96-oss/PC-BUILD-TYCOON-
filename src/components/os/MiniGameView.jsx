@@ -1,4 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useGameStore } from '../../store/gameStore';
+import { soundFx } from '../../utils/audio';
+import { TicTacToe } from './minigames/TicTacToe';
+import { MemoryMatch } from './minigames/MemoryMatch';
+import { WhackAMole } from './minigames/WhackAMole';
+import { SimonSays } from './minigames/SimonSays';
+import { AimTrainer } from './minigames/AimTrainer';
+import { TypingTest } from './minigames/TypingTest';
+import { ReactionTest } from './minigames/ReactionTest';
+import { ClickerGame } from './minigames/ClickerGame';
+import { CatchGame } from './minigames/CatchGame';
+import { DinoRun } from './minigames/DinoRun';
 import './VirtualOS.css';
 
 const GAME_WIDTH = 400;
@@ -435,51 +447,91 @@ function PongGame({ onBack }) {
   );
 }
 
+const ARCADE_GAMES = [
+  { id: 'flappy', name: 'Flappy', icon: '🐦', minLevel: 1 },
+  { id: 'snake', name: 'Snake', icon: '🐍', minLevel: 1 },
+  { id: 'pong', name: 'Pong', icon: '🏓', minLevel: 1 },
+  { id: 'tictactoe', name: 'Tic-Tac-Toe', icon: '❌', minLevel: 2 },
+  { id: 'memory', name: 'Memory Match', icon: '🃏', minLevel: 2 },
+  { id: 'whack', name: 'Virus Whacker', icon: '🦠', minLevel: 3 },
+  { id: 'simon', name: 'Simon Says', icon: '🎨', minLevel: 3 },
+  { id: 'aim', name: 'Aim Trainer', icon: '🎯', minLevel: 4 },
+  { id: 'typing', name: 'Typing Test', icon: '⌨️', minLevel: 4 },
+  { id: 'reaction', name: 'Reaction Test', icon: '⚡', minLevel: 5 },
+  { id: 'clicker', name: 'PC Clicker', icon: '🖱️', minLevel: 5 },
+  { id: 'catch', name: 'Catch Game', icon: '🛒', minLevel: 6 },
+  { id: 'dino', name: 'Dino Run', icon: '🦖', minLevel: 6 }
+];
+
 export function MiniGameView() {
   const [activeGame, setActiveGame] = useState(null);
+  const shopLevel = useGameStore((s) => s.shopLevel);
+
+  const handleGameSelect = (game) => {
+    if (shopLevel < game.minLevel) {
+      soundFx.playError();
+      alert(`Requires Shop Level ${game.minLevel} to unlock!`);
+      return;
+    }
+    soundFx.playClick();
+    setActiveGame(game.id);
+  };
 
   return (
     <div className="mini-game-view" style={{ width: '100%', height: '100%', background: '#0f172a', color: 'white', display: 'flex', flexDirection: 'column' }}>
       {!activeGame && (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '40px', overflowY: 'auto' }}>
           <h1 style={{ color: '#38bdf8', marginBottom: '40px', fontSize: '3rem', textAlign: 'center' }}>TitanOS<br/>Arcade Hub</h1>
           
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '600px' }}>
-            <div 
-              onClick={() => setActiveGame('flappy')}
-              style={{ background: '#1e293b', padding: '30px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center', border: '2px solid #334155', width: '150px', transition: 'transform 0.2s' }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              <div style={{ fontSize: '48px', marginBottom: '10px' }}>🐦</div>
-              <h3 style={{ margin: 0 }}>Flappy</h3>
-            </div>
-            
-            <div 
-              onClick={() => setActiveGame('snake')}
-              style={{ background: '#1e293b', padding: '30px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center', border: '2px solid #334155', width: '150px', transition: 'transform 0.2s' }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              <div style={{ fontSize: '48px', marginBottom: '10px' }}>🐍</div>
-              <h3 style={{ margin: 0 }}>Snake</h3>
-            </div>
-
-            <div 
-              onClick={() => setActiveGame('pong')}
-              style={{ background: '#1e293b', padding: '30px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center', border: '2px solid #334155', width: '150px', transition: 'transform 0.2s' }}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              <div style={{ fontSize: '48px', marginBottom: '10px' }}>🏓</div>
-              <h3 style={{ margin: 0 }}>Pong</h3>
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '20px', width: '100%', maxWidth: '800px', padding: '0 20px', paddingBottom: '40px' }}>
+            {ARCADE_GAMES.map(game => {
+              const isLocked = shopLevel < game.minLevel;
+              return (
+                <div 
+                  key={game.id}
+                  onClick={() => handleGameSelect(game)}
+                  style={{ 
+                    background: '#1e293b', 
+                    padding: '20px 10px', 
+                    borderRadius: '12px', 
+                    cursor: isLocked ? 'not-allowed' : 'pointer', 
+                    textAlign: 'center', 
+                    border: '2px solid #334155', 
+                    transition: 'transform 0.2s',
+                    position: 'relative',
+                    opacity: isLocked ? 0.6 : 1,
+                    filter: isLocked ? 'grayscale(0.8)' : 'none'
+                  }}
+                  onMouseOver={(e) => { if (!isLocked) e.currentTarget.style.transform = 'scale(1.05)'; }}
+                  onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                  <div style={{ fontSize: '40px', marginBottom: '10px' }}>{game.icon}</div>
+                  <h3 style={{ margin: 0, fontSize: '14px' }}>{game.name}</h3>
+                  {isLocked && (
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', borderRadius: '10px', color: '#f87171', fontWeight: 'bold' }}>
+                      🔒 Lv {game.minLevel}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
+      
       {activeGame === 'flappy' && <FlappyBird onBack={() => setActiveGame(null)} />}
       {activeGame === 'snake' && <SnakeGame onBack={() => setActiveGame(null)} />}
       {activeGame === 'pong' && <PongGame onBack={() => setActiveGame(null)} />}
+      {activeGame === 'tictactoe' && <TicTacToe onBack={() => setActiveGame(null)} />}
+      {activeGame === 'memory' && <MemoryMatch onBack={() => setActiveGame(null)} />}
+      {activeGame === 'whack' && <WhackAMole onBack={() => setActiveGame(null)} />}
+      {activeGame === 'simon' && <SimonSays onBack={() => setActiveGame(null)} />}
+      {activeGame === 'aim' && <AimTrainer onBack={() => setActiveGame(null)} />}
+      {activeGame === 'typing' && <TypingTest onBack={() => setActiveGame(null)} />}
+      {activeGame === 'reaction' && <ReactionTest onBack={() => setActiveGame(null)} />}
+      {activeGame === 'clicker' && <ClickerGame onBack={() => setActiveGame(null)} />}
+      {activeGame === 'catch' && <CatchGame onBack={() => setActiveGame(null)} />}
+      {activeGame === 'dino' && <DinoRun onBack={() => setActiveGame(null)} />}
     </div>
   );
 }
