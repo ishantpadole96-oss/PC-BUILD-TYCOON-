@@ -291,7 +291,8 @@ export function VirtualOS() {
                       {DESKTOP_ICONS.filter(app => app.label.toLowerCase().includes(searchQuery.toLowerCase())).map(app => (
                         <div 
                           key={app.id} 
-                          onClick={() => {
+                          onMouseDown={(e) => {
+                            e.preventDefault();
                             openApp(app.id);
                             setShowSearchMenu(false);
                             setSearchQuery('');
@@ -314,6 +315,37 @@ export function VirtualOS() {
                           <span>{app.label}</span>
                         </div>
                       ))}
+                      
+                      {searchQuery.trim().length > 0 && (
+                        <>
+                          <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '8px 0' }}></div>
+                          <div 
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              openApp('browser');
+                              setShowSearchMenu(false);
+                              setSearchQuery('');
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '12px',
+                              padding: '8px 10px',
+                              cursor: 'pointer',
+                              borderRadius: '6px',
+                              color: 'white',
+                              fontSize: '13px',
+                              transition: 'background 0.1s'
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; soundFx.playHover(); }}
+                            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                          >
+                            <span style={{ fontSize: '1.4rem' }}>🌐</span>
+                            <span>Search Web for "{searchQuery}"</span>
+                          </div>
+                        </>
+                      )}
+
                       {DESKTOP_ICONS.filter(app => app.label.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
                         <div style={{ padding: '20px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>
                           No apps found for "{searchQuery}"
