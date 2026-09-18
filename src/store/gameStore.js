@@ -125,9 +125,14 @@ function loadPersistedState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return getInitialState();
     const parsed = JSON.parse(raw);
+    
+    // Ensure fileSystem is valid (must have a 'C:' drive), otherwise fall back to default
+    const validFs = (parsed.fileSystem && parsed.fileSystem['C:']) ? parsed.fileSystem : DEFAULT_FS;
+    
     return {
       ...getInitialState(),
       ...parsed,
+      fileSystem: validFs,
       // reset transient power state on reload
       pcPowerState: 'off',
       postFailReason: null,

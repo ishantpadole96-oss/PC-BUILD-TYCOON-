@@ -44,6 +44,7 @@ export function FileManagerView() {
     if (!dir.children) dir.children = {};
     dir.children[name] = { type: 'file', size: '1 KB', content: '' };
     setFs(newFs);
+    useGameStore.getState().saveGame();
   };
 
   const handleCreateFolder = () => {
@@ -65,6 +66,7 @@ export function FileManagerView() {
     if (!dir.children) dir.children = {};
     dir.children[name] = { type: 'dir', children: {} };
     setFs(newFs);
+    useGameStore.getState().saveGame();
   };
 
   const handleOpenFile = (name, data) => {
