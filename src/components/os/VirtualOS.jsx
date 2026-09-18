@@ -52,6 +52,7 @@ export function VirtualOS() {
   
   const [benchModalOpen, setBenchModalOpen] = useState(false);
   const [showStartMenu, setShowStartMenu] = useState(false);
+  const [windowState, setWindowState] = useState('normal');
   const [isBooting, setIsBooting] = useState(gameState === 'booting');
   const wallpaper = useGameStore((s) => s.wallpaper);
   const setWallpaper = useGameStore((s) => s.setWallpaper);
@@ -83,9 +84,23 @@ export function VirtualOS() {
     setActiveTab(appId);
   };
 
-  const closeApp = () => {
+  const closeApp = (e) => {
+    if (e) e.stopPropagation();
     soundFx.playClick();
     setActiveTab(null);
+    setWindowState('normal');
+  };
+
+  const handleMin = (e) => {
+    if (e) e.stopPropagation();
+    soundFx.playClick();
+    setWindowState(prev => prev === 'compact' ? 'normal' : 'compact');
+  };
+
+  const handleMax = (e) => {
+    if (e) e.stopPropagation();
+    soundFx.playClick();
+    setWindowState(prev => prev === 'maximized' ? 'normal' : 'maximized');
   };
 
   const handleShutDown = async () => {
@@ -140,12 +155,18 @@ export function VirtualOS() {
               </div>
 
               {activeTab && (
-                <div className="os-window">
+                <div 
+                  className="os-window"
+                  style={{
+                    ...(windowState === 'maximized' ? { top: '65px', left: 0, right: 0, bottom: '40px', borderRadius: 0 } : {}),
+                    ...(windowState === 'compact' ? { top: '150px', left: '150px', right: '150px', bottom: '150px' } : {})
+                  }}
+                >
                   <div className="os-window-titlebar">
                     <div className="os-window-controls">
                       <button className="os-window-btn os-window-close" onClick={closeApp}></button>
-                      <button className="os-window-btn os-window-min"></button>
-                      <button className="os-window-btn os-window-max"></button>
+                      <button className="os-window-btn os-window-min" onClick={handleMin}></button>
+                      <button className="os-window-btn os-window-max" onClick={handleMax}></button>
                     </div>
                     <span className="os-window-title">
                       {DESKTOP_ICONS.find(i => i.id === activeTab)?.label}
