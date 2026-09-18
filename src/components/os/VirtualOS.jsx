@@ -52,6 +52,8 @@ export function VirtualOS() {
   
   const [benchModalOpen, setBenchModalOpen] = useState(false);
   const [showStartMenu, setShowStartMenu] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchMenu, setShowSearchMenu] = useState(false);
   const [windowState, setWindowState] = useState('normal');
   const [isBooting, setIsBooting] = useState(gameState === 'booting');
   const wallpaper = useGameStore((s) => s.wallpaper);
@@ -241,12 +243,13 @@ export function VirtualOS() {
 
               {/* Bottom Taskbar */}
               <div className="os-taskbar" style={{ zIndex: 2, top: 'auto', bottom: 0, borderTop: '1px solid rgba(255,255,255,0.1)', borderBottom: 'none' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative' }}>
                   <button 
                     className={`os-start-btn ${showStartMenu ? 'active' : ''}`} 
                     onClick={() => {
                       soundFx.playClick();
                       setShowStartMenu(!showStartMenu);
+                      setShowSearchMenu(false);
                     }}
                   >
                     ⊞ Start
@@ -255,10 +258,69 @@ export function VirtualOS() {
                     <input 
                       type="text" 
                       placeholder="Type here to search..." 
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onFocus={() => {
+                        setShowSearchMenu(true);
+                        setShowStartMenu(false);
+                      }}
+                      onBlur={() => setTimeout(() => setShowSearchMenu(false), 200)}
                       style={{ padding: '4px 10px 4px 30px', borderRadius: '15px', border: 'none', outline: 'none', background: 'rgba(255,255,255,0.2)', color: 'white', fontSize: '12px', width: '200px' }}
                     />
                     <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px' }}>🔍</span>
                   </div>
+                  
+                  {/* Search Menu Popup */}
+                  {showSearchMenu && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '45px',
+                      left: '80px',
+                      width: '320px',
+                      maxHeight: '400px',
+                      background: 'rgba(20, 20, 20, 0.95)',
+                      backdropFilter: 'blur(12px)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '8px',
+                      padding: '10px',
+                      zIndex: 100,
+                      boxShadow: '0 -5px 20px rgba(0,0,0,0.5)',
+                      overflowY: 'auto'
+                    }}>
+                      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', marginBottom: '8px', paddingBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Best Matches</div>
+                      {DESKTOP_ICONS.filter(app => app.label.toLowerCase().includes(searchQuery.toLowerCase())).map(app => (
+                        <div 
+                          key={app.id} 
+                          onClick={() => {
+                            openApp(app.id);
+                            setShowSearchMenu(false);
+                            setSearchQuery('');
+                          }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            padding: '8px 10px',
+                            cursor: 'pointer',
+                            borderRadius: '6px',
+                            color: 'white',
+                            fontSize: '13px',
+                            transition: 'background 0.1s'
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; soundFx.playHover(); }}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >
+                          <span style={{ fontSize: '1.4rem' }}>{app.icon}</span>
+                          <span>{app.label}</span>
+                        </div>
+                      ))}
+                      {DESKTOP_ICONS.filter(app => app.label.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                        <div style={{ padding: '20px 0', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>
+                          No apps found for "{searchQuery}"
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
