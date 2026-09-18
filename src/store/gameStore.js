@@ -12,6 +12,7 @@ import { initializeMarket, advanceMarketDay } from '../engine/marketSimulation';
 import { generateRepairJob } from '../engine/repairDiagnostics';
 import { soundFx } from '../utils/audio';
 import { saveTycoonGameToCloud, fetchUserTycoonGame, isSupabaseConfigured } from '../utils/supabase';
+import { DEFAULT_FS } from '../data/filesystem';
 import confetti from 'canvas-confetti';
 
 const STORAGE_KEY = 'pc_builder_tycoon_save_v1';
@@ -57,6 +58,7 @@ function getInitialState() {
     installedFromInventory: {}, // map of category -> inventory item ID
 
     wallpaper: null, // { type: 'image' | 'video', url: string }
+    fileSystem: DEFAULT_FS,
 
     orders: initialOrders,
     activeOrder: null,
@@ -140,6 +142,7 @@ export const useGameStore = create((set, get) => ({
 
   setGameState: (state) => set({ gameState: state }),
   setWallpaper: (wallpaper) => set({ wallpaper }),
+  setFileSystem: (fs) => set({ fileSystem: fs }),
 
   saveGame: async () => {
     const state = get();
@@ -153,6 +156,7 @@ export const useGameStore = create((set, get) => ({
       repairJobs: state.repairJobs,
       completedChallenges: state.completedChallenges,
       market: state.market,
+      fileSystem: state.fileSystem,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
     
@@ -176,6 +180,7 @@ export const useGameStore = create((set, get) => ({
       repairJobs: state.repairJobs,
       completedChallenges: state.completedChallenges,
       market: state.market,
+      fileSystem: state.fileSystem,
     };
     
     const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });

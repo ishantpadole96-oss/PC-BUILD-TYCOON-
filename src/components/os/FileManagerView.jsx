@@ -1,46 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useGameStore } from '../../store/gameStore';
 import './VirtualOS.css';
 
-const DEFAULT_FS = {
-  'C:': {
-    type: 'dir',
-    children: {
-      'TitanOS': {
-        type: 'dir',
-        children: {
-          'System32': { type: 'dir', children: {} },
-          'boot.ini': { type: 'file', size: '12 KB', content: '[boot loader]\ntimeout=30\ndefault=multi(0)disk(0)rdisk(0)partition(1)\\WINDOWS' },
-        }
-      },
-      'Users': {
-        type: 'dir',
-        children: {
-          'Guest': {
-            type: 'dir',
-            children: {
-              'Documents': { type: 'dir', children: { 'passwords.txt': { type: 'file', size: '2 KB', content: 'admin123\npassword123' } } },
-              'Downloads': { type: 'dir', children: { 'installer.exe': { type: 'file', size: '45 MB', content: 'MZ...' } } },
-              'Pictures': { type: 'dir', children: { 'wallpaper.png': { type: 'file', size: '2.5 MB', content: '' } } },
-            }
-          }
-        }
-      }
-    }
-  }
-};
-
 export function FileManagerView() {
-  const [fs, setFs] = useState(() => {
-    const saved = localStorage.getItem('titanos_fs');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) { console.error("Failed to parse saved filesystem:", e); }
-    }
-    return DEFAULT_FS;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('titanos_fs', JSON.stringify(fs));
-  }, [fs]);
+  const fs = useGameStore((s) => s.fileSystem);
+  const setFs = useGameStore((s) => s.setFileSystem);
 
   const [currentPath, setCurrentPath] = useState(['C:', 'Users', 'Guest']);
   const [editingFile, setEditingFile] = useState(null); // { name, path, content }
@@ -82,6 +46,27 @@ export function FileManagerView() {
     setFs(newFs);
   };
 
+  const handleCreateFolder = () => {
+    const name = prompt("Enter new folder name:");
+    if (!name) return;
+    if (currentDirFiles[name]) {
+      alert("File or folder already exists!");
+      return;
+    }
+    
+    // Deep clone fs to update
+    const newFs = JSON.parse(JSON.stringify(fs));
+    let dir = newFs;
+    for (const part of currentPath) {
+      if (dir[part] && dir[part].children) dir = dir[part].children;
+      else if (dir.children && dir.children[part]) dir = dir.children[part].children;
+    }
+    
+    if (!dir.children) dir.children = {};
+    dir.children[name] = { type: 'dir', children: {} };
+    setFs(newFs);
+  };
+
   const handleOpenFile = (name, data) => {
     if (data.type === 'dir') {
       setCurrentPath([...currentPath, name]);
@@ -104,6 +89,7 @@ export function FileManagerView() {
     }
     
     setFs(newFs);
+    useGameStore.getState().saveGame(); // Automatically persist
     setEditingFile(null);
   };
 
@@ -115,7 +101,8 @@ export function FileManagerView() {
       if (item.type === 'dir' && item.children) {
         bytes += calculateSpace(item.children);
       } else if (item.type === 'file') {
-        if (item.size && item.size.includes('MB')) bytes += parseFloat(item.size) * 1024 * 1024;
+        if (item.size && item.size.includes('GB')) bytes += parseFloat(item.size) * 1024 * 1024 * 1024;
+        else if (item.size && item.size.includes('MB')) bytes += parseFloat(item.size) * 1024 * 1024;
         else if (item.size && item.size.includes('KB')) bytes += parseFloat(item.size) * 1024;
       }
     }
@@ -149,6 +136,7 @@ export function FileManagerView() {
         <div style={{ flex: 1, padding: '5px 10px', background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', color: '#334155' }}>
           {currentPath.join(' \\ ')}
         </div>
+        <button onClick={handleCreateFolder} style={{ padding: '5px 10px', background: '#eab308', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ New Folder</button>
         <button onClick={handleCreateFile} style={{ padding: '5px 10px', background: '#10b981', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ New File</button>
       </div>
       

@@ -15,14 +15,15 @@ import { WallpaperSettings } from './WallpaperSettings';
 import { BrowserView } from './BrowserView';
 import { FileManagerView } from './FileManagerView';
 import { MiniGameView } from './MiniGameView';
+import { NotepadView } from './NotepadView';
 import { BenchmarkModal } from '../workstation/BenchmarkModal';
 import { TutorialOverlay } from '../common/TutorialOverlay';
 import { soundFx } from '../../utils/audio';
 import { getWallpaperBlob } from '../../utils/idb';
 import './VirtualOS.css';
 
-const DESKTOP_ICONS = [
   { id: 'browser', label: 'Web Browser', icon: '🌐' },
+  { id: 'notepad', label: 'Notepad', icon: '📝' },
   { id: 'files', label: 'File Manager', icon: '📁' },
   { id: 'minigame', label: 'Mini Game', icon: '🎮' },
   { id: 'orders', label: 'E-mail', icon: '📧' },
@@ -157,6 +158,7 @@ export function VirtualOS() {
                     {activeTab === 'browser' && <BrowserView />}
                     {activeTab === 'files' && <FileManagerView />}
                     {activeTab === 'minigame' && <MiniGameView />}
+                    {activeTab === 'notepad' && <NotepadView />}
                   </div>
                 </div>
               )}
