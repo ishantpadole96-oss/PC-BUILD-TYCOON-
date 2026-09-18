@@ -59,6 +59,7 @@ function getInitialState() {
 
     wallpaper: null, // { type: 'image' | 'video', url: string }
     fileSystem: DEFAULT_FS,
+    activeNotepadFile: null, // { name, path, content }
     perks: [], // IDs of purchased TitanKart products
 
     orders: initialOrders,
@@ -120,6 +121,25 @@ function getInitialState() {
   };
 }
 
+// Helper for deep merging FS
+function mergeFs(defaultFs, savedFs) {
+  if (!savedFs) return defaultFs;
+  if (!defaultFs) return savedFs;
+  
+  const result = { ...defaultFs };
+  for (const key in savedFs) {
+    if (savedFs[key] && savedFs[key].type === 'dir' && defaultFs[key] && defaultFs[key].type === 'dir') {
+      result[key] = {
+        ...savedFs[key],
+        children: mergeFs(defaultFs[key].children || {}, savedFs[key].children || {})
+      };
+    } else {
+      result[key] = savedFs[key];
+    }
+  }
+  return result;
+}
+
 // Load saved state or default
 function loadPersistedState() {
   try {
@@ -127,8 +147,8 @@ function loadPersistedState() {
     if (!raw) return getInitialState();
     const parsed = JSON.parse(raw);
     
-    // Ensure fileSystem is valid (must have a 'C:' drive), otherwise fall back to default
-    const validFs = (parsed.fileSystem && parsed.fileSystem['C:']) ? parsed.fileSystem : DEFAULT_FS;
+    // Deep merge to ensure all default paths exist for older saves
+    const validFs = mergeFs(DEFAULT_FS, parsed.fileSystem || {});
     
     return {
       ...getInitialState(),
@@ -148,7 +168,12 @@ export const useGameStore = create((set, get) => ({
 
   setGameState: (state) => set({ gameState: state }),
   setWallpaper: (wallpaper) => set({ wallpaper }),
+  setActiveTab: (tab) => {
+    soundFx.playTabSwitch();
+    set({ activeTab: tab });
+  },
   setFileSystem: (fs) => set({ fileSystem: fs }),
+  setActiveNotepadFile: (file) => set({ activeNotepadFile: file }),
 
   saveGame: async () => {
     const state = get();

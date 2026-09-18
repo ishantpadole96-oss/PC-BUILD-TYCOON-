@@ -5,9 +5,10 @@ import './VirtualOS.css';
 export function FileManagerView() {
   const fs = useGameStore((s) => s.fileSystem);
   const setFs = useGameStore((s) => s.setFileSystem);
+  const setActiveTab = useGameStore((s) => s.setActiveTab);
+  const setActiveNotepadFile = useGameStore((s) => s.setActiveNotepadFile);
 
   const [currentPath, setCurrentPath] = useState(['C:', 'Users', 'Guest']);
-  const [editingFile, setEditingFile] = useState(null); // { name, path, content }
 
   const getCurrentDir = () => {
     let dir = fs;
@@ -25,6 +26,24 @@ export function FileManagerView() {
     if (currentPath.length > 1) setCurrentPath(currentPath.slice(0, -1));
   };
 
+  const handleQuickAccess = (pathArray) => {
+    setCurrentPath(pathArray);
+  };
+
+  const ensurePathExists = (targetPath, newFs) => {
+    let current = newFs;
+    for (const part of targetPath) {
+      if (current.children) {
+        if (!current.children[part]) current.children[part] = { type: 'dir', children: {} };
+        current = current.children[part];
+      } else {
+        if (!current[part]) current[part] = { type: 'dir', children: {} };
+        current = current[part];
+      }
+    }
+    return current;
+  };
+
   const handleCreateFile = () => {
     const name = prompt("Enter new file name (e.g. notes.txt):", "newfile.txt");
     if (!name) return;
@@ -33,13 +52,8 @@ export function FileManagerView() {
       return;
     }
     
-    // Deep clone fs to update
     const newFs = JSON.parse(JSON.stringify(fs));
-    let dir = newFs;
-    for (const part of currentPath) {
-      if (dir[part] && dir[part].children) dir = dir[part].children;
-      else if (dir.children && dir.children[part]) dir = dir.children[part].children;
-    }
+    const dir = ensurePathExists(currentPath, newFs);
     
     if (!dir.children) dir.children = {};
     dir.children[name] = { type: 'file', size: '1 KB', content: '' };
@@ -55,13 +69,8 @@ export function FileManagerView() {
       return;
     }
     
-    // Deep clone fs to update
     const newFs = JSON.parse(JSON.stringify(fs));
-    let dir = newFs;
-    for (const part of currentPath) {
-      if (dir[part] && dir[part].children) dir = dir[part].children;
-      else if (dir.children && dir.children[part]) dir = dir.children[part].children;
-    }
+    const dir = ensurePathExists(currentPath, newFs);
     
     if (!dir.children) dir.children = {};
     dir.children[name] = { type: 'dir', children: {} };
@@ -73,26 +82,16 @@ export function FileManagerView() {
     if (data.type === 'dir') {
       setCurrentPath([...currentPath, name]);
     } else {
-      setEditingFile({ name, path: [...currentPath, name], content: data.content || '' });
+      if (name.endsWith('.txt') || name.endsWith('.ini')) {
+        // Dispatch to Notepad app
+        setActiveNotepadFile({ name, path: [...currentPath, name], content: data.content || '' });
+        setActiveTab('notepad');
+      } else if (name.endsWith('.png') || name.endsWith('.jpg')) {
+        alert("Cannot open image files. Use Wallpaper Settings to apply them!");
+      } else {
+        alert(`Cannot open ${name}. No associated program.`);
+      }
     }
-  };
-
-  const saveFile = () => {
-    const newFs = JSON.parse(JSON.stringify(fs));
-    let dir = newFs;
-    for (const part of currentPath) {
-      if (dir[part] && dir[part].children) dir = dir[part].children;
-      else if (dir.children && dir.children[part]) dir = dir.children[part].children;
-    }
-    
-    if (dir.children && dir.children[editingFile.name]) {
-      dir.children[editingFile.name].content = editingFile.content;
-      dir.children[editingFile.name].size = (Math.max(1, Math.round(editingFile.content.length / 1024))) + ' KB';
-    }
-    
-    setFs(newFs);
-    useGameStore.getState().saveGame(); // Automatically persist
-    setEditingFile(null);
   };
 
   // Calculate used space roughly
@@ -113,57 +112,74 @@ export function FileManagerView() {
   
   const usedSpaceMB = (calculateSpace(fs) / (1024 * 1024)).toFixed(1);
 
-  if (editingFile) {
-    return (
-      <div className="file-manager-view" style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
-        <div className="file-toolbar" style={{ display: 'flex', gap: '10px', padding: '10px', background: '#f1f5f9', borderBottom: '1px solid #cbd5e1' }}>
-          <button onClick={() => setEditingFile(null)} style={{ padding: '5px 10px', cursor: 'pointer' }}>◀ Cancel</button>
-          <div style={{ flex: 1, padding: '5px 10px', fontWeight: 'bold', color: '#000' }}>Editing: {editingFile.name}</div>
-          <button onClick={saveFile} style={{ padding: '5px 10px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>💾 Save</button>
-        </div>
-        <textarea 
-          value={editingFile.content}
-          onChange={(e) => setEditingFile({...editingFile, content: e.target.value})}
-          style={{ flex: 1, padding: '15px', border: 'none', resize: 'none', fontFamily: 'monospace', fontSize: '14px', outline: 'none' }}
-          autoFocus
-        />
-      </div>
-    );
-  }
-
   return (
-    <div className="file-manager-view" style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', background: '#f8fafc' }}>
-      <div className="file-toolbar" style={{ display: 'flex', gap: '10px', padding: '10px', background: '#f1f5f9', borderBottom: '1px solid #cbd5e1' }}>
-        <button onClick={handleNavigateUp} disabled={currentPath.length <= 1} style={{ padding: '5px 10px', cursor: currentPath.length <= 1 ? 'default' : 'pointer' }}>⬆️ Up</button>
-        <div style={{ flex: 1, padding: '5px 10px', background: 'white', border: '1px solid #cbd5e1', borderRadius: '4px', color: '#334155' }}>
-          {currentPath.join(' \\ ')}
-        </div>
-        <button onClick={handleCreateFolder} style={{ padding: '5px 10px', background: '#eab308', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ New Folder</button>
-        <button onClick={handleCreateFile} style={{ padding: '5px 10px', background: '#10b981', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ New File</button>
-      </div>
+    <div className="file-manager-view" style={{ display: 'flex', width: '100%', height: '100%', background: '#f8fafc', overflow: 'hidden' }}>
       
-      <div className="file-list" style={{ flex: 1, background: 'white', color: '#333', padding: '10px', overflowY: 'auto' }}>
-        {Object.entries(currentDirFiles).map(([name, data]) => (
-          <div 
-            key={name}
-            style={{ display: 'flex', alignItems: 'center', padding: '8px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}
-            onClick={() => handleOpenFile(name, data)}
-          >
-            <span style={{ fontSize: '20px', marginRight: '10px' }}>
-              {data.type === 'dir' ? '📁' : '📄'}
-            </span>
-            <span style={{ flex: 1 }}>{name}</span>
-            {data.type === 'file' && <span style={{ color: '#64748b', fontSize: '12px' }}>{data.size}</span>}
-          </div>
-        ))}
-        {Object.keys(currentDirFiles).length === 0 && (
-          <div style={{ padding: '20px', color: '#94a3b8', textAlign: 'center' }}>This folder is empty.</div>
-        )}
+      {/* Sidebar Navigation */}
+      <div style={{ width: '200px', background: '#f1f5f9', borderRight: '1px solid #cbd5e1', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+        <div style={{ padding: '15px 10px', fontWeight: 'bold', color: '#475569', fontSize: '12px', textTransform: 'uppercase' }}>Quick Access</div>
+        
+        <div onClick={() => handleQuickAccess(['C:'])} style={{ padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', background: currentPath.join() === 'C:' ? '#e2e8f0' : 'transparent' }}>
+          <span>💻</span> This PC
+        </div>
+        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Documents'])} style={{ padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', background: currentPath.join() === 'C:,Users,Guest,Documents' ? '#e2e8f0' : 'transparent' }}>
+          <span>📄</span> Documents
+        </div>
+        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Downloads'])} style={{ padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', background: currentPath.join() === 'C:,Users,Guest,Downloads' ? '#e2e8f0' : 'transparent' }}>
+          <span>⬇️</span> Downloads
+        </div>
+        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Pictures'])} style={{ padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', background: currentPath.join() === 'C:,Users,Guest,Pictures' ? '#e2e8f0' : 'transparent' }}>
+          <span>🖼️</span> Pictures
+        </div>
+        <div onClick={() => handleQuickAccess(['C:', 'Users', 'Guest', 'Games'])} style={{ padding: '10px 15px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', background: currentPath.join() === 'C:,Users,Guest,Games' ? '#e2e8f0' : 'transparent' }}>
+          <span>🎮</span> Games
+        </div>
       </div>
 
-      <div style={{ padding: '10px', background: '#e2e8f0', borderTop: '1px solid #cbd5e1', fontSize: '12px', color: '#475569', display: 'flex', justifyContent: 'space-between' }}>
-        <span>{Object.keys(currentDirFiles).length} item(s)</span>
-        <span>Disk Space: {usedSpaceMB} MB Used / 256.0 GB Total</span>
+      {/* Main Content Area */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        
+        {/* Toolbar */}
+        <div className="file-toolbar" style={{ display: 'flex', gap: '10px', padding: '10px', background: '#ffffff', borderBottom: '1px solid #cbd5e1' }}>
+          <button onClick={handleNavigateUp} disabled={currentPath.length <= 1} style={{ padding: '5px 10px', cursor: currentPath.length <= 1 ? 'default' : 'pointer' }}>⬆️ Up</button>
+          
+          {/* Breadcrumb Path */}
+          <div style={{ flex: 1, padding: '5px 10px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '4px', color: '#334155', display: 'flex', alignItems: 'center' }}>
+            {currentPath.join(' \\ ')}
+          </div>
+          
+          <button onClick={handleCreateFolder} style={{ padding: '5px 10px', background: '#eab308', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ Folder</button>
+          <button onClick={handleCreateFile} style={{ padding: '5px 10px', background: '#10b981', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ Text File</button>
+        </div>
+        
+        {/* File Grid/List */}
+        <div className="file-list" style={{ flex: 1, background: 'white', color: '#333', padding: '10px', overflowY: 'auto' }}>
+          {Object.entries(currentDirFiles).map(([name, data]) => (
+            <div 
+              key={name}
+              style={{ display: 'flex', alignItems: 'center', padding: '8px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}
+              onClick={() => handleOpenFile(name, data)}
+            >
+              <span style={{ fontSize: '24px', marginRight: '15px' }}>
+                {data.type === 'dir' ? '📁' : '📄'}
+              </span>
+              <span style={{ flex: 1, fontWeight: data.type === 'dir' ? 'bold' : 'normal' }}>{name}</span>
+              {data.type === 'file' && <span style={{ color: '#64748b', fontSize: '12px' }}>{data.size}</span>}
+            </div>
+          ))}
+          {Object.keys(currentDirFiles).length === 0 && (
+            <div style={{ padding: '40px', color: '#94a3b8', textAlign: 'center' }}>
+              <div style={{ fontSize: '48px', marginBottom: '10px' }}>📂</div>
+              This folder is empty.
+            </div>
+          )}
+        </div>
+
+        {/* Status Bar */}
+        <div style={{ padding: '8px 10px', background: '#e2e8f0', borderTop: '1px solid #cbd5e1', fontSize: '12px', color: '#475569', display: 'flex', justifyContent: 'space-between' }}>
+          <span>{Object.keys(currentDirFiles).length} item(s)</span>
+          <span>Disk Space: {usedSpaceMB} MB Used / 256.0 GB Total</span>
+        </div>
       </div>
     </div>
   );
