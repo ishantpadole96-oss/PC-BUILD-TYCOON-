@@ -18,7 +18,9 @@
   border: 1px solid #3b82f6;
   border-radius: 12px;
   padding: 2rem;
-  max-width: 500px;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(59, 130, 246, 0.3);
   color: white;
 }
