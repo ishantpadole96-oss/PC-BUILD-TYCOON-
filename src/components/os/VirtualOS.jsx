@@ -12,6 +12,9 @@ import { CommunityView } from '../community/CommunityView';
 import { DonateView } from './DonateView';
 import { ContactView } from './ContactView';
 import { WallpaperSettings } from './WallpaperSettings';
+import { BrowserView } from './BrowserView';
+import { FileManagerView } from './FileManagerView';
+import { MiniGameView } from './MiniGameView';
 import { BenchmarkModal } from '../workstation/BenchmarkModal';
 import { TutorialOverlay } from '../common/TutorialOverlay';
 import { soundFx } from '../../utils/audio';
@@ -19,6 +22,9 @@ import { getWallpaperBlob } from '../../utils/idb';
 import './VirtualOS.css';
 
 const DESKTOP_ICONS = [
+  { id: 'browser', label: 'Web Browser', icon: '🌐' },
+  { id: 'files', label: 'File Manager', icon: '📁' },
+  { id: 'minigame', label: 'Mini Game', icon: '🎮' },
   { id: 'orders', label: 'E-mail', icon: '📧' },
   { id: 'marketplace', label: 'Shop', icon: '🛒' },
   { id: 'inventory', label: 'Inventory', icon: '📦' },
@@ -146,6 +152,9 @@ export function VirtualOS() {
                     {activeTab === 'donate' && <DonateView />}
                     {activeTab === 'contact' && <ContactView />}
                     {activeTab === 'wallpaper' && <WallpaperSettings />}
+                    {activeTab === 'browser' && <BrowserView />}
+                    {activeTab === 'files' && <FileManagerView />}
+                    {activeTab === 'minigame' && <MiniGameView />}
                   </div>
                 </div>
               )}
