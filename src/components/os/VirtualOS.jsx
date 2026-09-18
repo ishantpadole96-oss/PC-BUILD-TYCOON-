@@ -69,7 +69,7 @@ export function VirtualOS() {
           if (indexB === -1) indexB = 999;
           return indexA - indexB;
         });
-      } catch (e) {}
+      } catch {}
     }
     return DESKTOP_ICONS;
   });

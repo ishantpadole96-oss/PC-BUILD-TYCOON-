@@ -11,7 +11,6 @@ export function BenchmarkModal({ isOpen, onClose }) {
 
   const currentBuild = useGameStore((s) => s.currentBuild);
   const benchmarkResult = useGameStore((s) => s.benchmarkResult);
-  const pcPowerState = useGameStore((s) => s.pcPowerState);
   const runBenchmarkSuite = useGameStore((s) => s.runBenchmarkSuite);
   const biosSettings = useGameStore((s) => s.biosSettings);
   const perks = useGameStore((s) => s.perks);
