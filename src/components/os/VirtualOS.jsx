@@ -102,7 +102,7 @@ export function VirtualOS() {
           ) : (
             <div 
               className="os-desktop" 
-              style={wallpaper?.type === 'image' ? { backgroundImage: `url(${wallpaper.url})` } : {}}
+              style={(!wallpaper || wallpaper?.type === 'image') ? { backgroundImage: wallpaper?.url ? `url(${wallpaper.url})` : 'url(/logo.png)', backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
             >
               {wallpaper?.type === 'video' && (
                 <video 
