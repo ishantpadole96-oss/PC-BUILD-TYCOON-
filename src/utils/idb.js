@@ -1,6 +1,6 @@
 export function initDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('TitanOS_Settings', 1);
+    const request = indexedDB.open('TitanOS_Settings', 2);
     
     request.onupgradeneeded = (e) => {
       const db = e.target.result;

@@ -16,13 +16,20 @@ export function WallpaperSettings() {
     setLoading(true);
     try {
       const type = file.type.startsWith('video') ? 'video' : 'image';
-      await saveWallpaperBlob(file, type);
-      
       const url = URL.createObjectURL(file);
+      
+      // Immediately apply wallpaper for the current session
       setWallpaper({ type, url });
       soundFx.playSuccess();
+      
+      // Attempt to save for future sessions (may fail in incognito)
+      try {
+        await saveWallpaperBlob(file, type);
+      } catch (dbErr) {
+        console.warn("Could not save wallpaper to local storage. It will reset on reload.", dbErr);
+      }
     } catch (err) {
-      console.error("Failed to save wallpaper", err);
+      console.error("Failed to load wallpaper", err);
     } finally {
       setLoading(false);
       e.target.value = null; // reset
