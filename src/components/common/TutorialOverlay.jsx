@@ -5,12 +5,19 @@ import './TutorialOverlay.css';
 export function TutorialOverlay() {
   const day = useGameStore((s) => s.day);
   const reputation = useGameStore((s) => s.reputation);
-  const [closed, setClosed] = useState(false);
+  const [closed, setClosed] = useState(() => {
+    return localStorage.getItem('titanos_tutorial_seen') === 'true';
+  });
 
   // Only show tutorial on Day 1 when reputation is 0
   if (day !== 1 || reputation > 0 || closed) {
     return null;
   }
+
+  const handleClose = () => {
+    localStorage.setItem('titanos_tutorial_seen', 'true');
+    setClosed(true);
+  };
 
   return (
     <div className="tutorial-overlay">
@@ -27,7 +34,7 @@ export function TutorialOverlay() {
           <li><strong>🎮 7. Mini Games:</strong> Waiting for orders? Open the Mini Game hub to play Flappy Bird, Snake, or Pong!</li>
           <li><strong>🌐 8. Browse Web:</strong> Check out the Web Browser to visit real websites or our simulated hardware news and part picker tools.</li>
         </ul>
-        <button className="btn-primary btn-tutorial-close" onClick={() => setClosed(true)}>
+        <button className="btn-primary btn-tutorial-close" onClick={handleClose}>
           Got it, let's build! 🚀
         </button>
       </div>

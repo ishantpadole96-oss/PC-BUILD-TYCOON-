@@ -196,7 +196,6 @@ export function VirtualOS() {
               isOpen={benchModalOpen}
               onClose={() => setBenchModalOpen(false)}
             />
-            <TutorialOverlay />
           </div>
         )}
         </div>
