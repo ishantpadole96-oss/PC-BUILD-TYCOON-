@@ -339,9 +339,9 @@ body {
 
 .workstation-grid {
   display: grid;
-  grid-template-columns: 1fr 480px;
+  grid-template-columns: 350px 1fr;
   gap: 20px;
-  min-height: 700px;
+  min-height: 500px;
 }
 
 @media (max-width: 1200px) {
@@ -2139,7 +2139,7 @@ body {
 
 .workstation-grid {
   display: grid;
-  grid-template-columns: 1fr 380px;
+  grid-template-columns: 350px 1fr;
   gap: 1rem;
   min-height: 500px;
 }

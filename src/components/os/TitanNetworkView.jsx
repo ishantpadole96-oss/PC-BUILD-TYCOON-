@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSiteStore } from '../../store/siteStore';
+import { useGameStore } from '../../store/gameStore';
 import { 
   fetchGlobalLeaderboard, 
   fetchFriends, 
@@ -12,6 +13,8 @@ import {
 export function TitanNetworkView() {
   const user = useSiteStore(s => s.user);
   const setAuthModalOpen = useSiteStore(s => s.setAuthModalOpen);
+  const cash = useGameStore(s => s.cash);
+  const reputation = useGameStore(s => s.reputation);
   
   const [activeTab, setActiveTab] = useState('leaderboard');
   const [leaderboard, setLeaderboard] = useState([]);
@@ -30,7 +33,28 @@ export function TitanNetworkView() {
   const loadLeaderboard = async () => {
     setLoading(true);
     const { data } = await fetchGlobalLeaderboard();
-    if (data) setLeaderboard(data);
+    
+    let board = data || [];
+    
+    // If user is a mock user or not found in leaderboard, add them locally
+    if (user) {
+      const userName = user.user_metadata?.full_name || user.email?.replace('@titanos.com', '') || 'You';
+      const userId = user.id || `mock_${userName}`;
+      const alreadyInBoard = board.some(p => p.user_id === userId || p.username === userName);
+      
+      if (!alreadyInBoard) {
+        board = [...board, {
+          user_id: userId,
+          username: userName,
+          cash: cash || 0,
+          reputation: reputation || 0
+        }];
+        // Sort by cash descending
+        board.sort((a, b) => (b.cash || 0) - (a.cash || 0));
+      }
+    }
+    
+    setLeaderboard(board);
     setLoading(false);
   };
 
@@ -100,6 +124,9 @@ export function TitanNetworkView() {
   const pendingSent = friends.filter(f => f.status === 'pending' && f.sender_id === user.id);
   const acceptedFriends = friends.filter(f => f.status === 'accepted');
 
+  const userName = user.user_metadata?.full_name || user.email?.replace('@titanos.com', '') || 'You';
+  const userId = user.id || `mock_${userName}`;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#0f172a', color: 'white', fontFamily: "'Inter', sans-serif" }}>
       
@@ -109,30 +136,43 @@ export function TitanNetworkView() {
           <span style={{ color: '#3b82f6' }}>🌐</span> Titan Network
         </h1>
         <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
-          <button 
-            onClick={() => setActiveTab('leaderboard')}
-            style={{ 
-              background: 'none', border: 'none', color: activeTab === 'leaderboard' ? '#3b82f6' : '#94a3b8', 
-              fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', padding: '0 0 5px 0',
-              borderBottom: activeTab === 'leaderboard' ? '2px solid #3b82f6' : '2px solid transparent'
-            }}>
-            Global Leaderboard
-          </button>
-          <button 
-            onClick={() => setActiveTab('friends')}
-            style={{ 
-              background: 'none', border: 'none', color: activeTab === 'friends' ? '#3b82f6' : '#94a3b8', 
-              fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', padding: '0 0 5px 0',
-              borderBottom: activeTab === 'friends' ? '2px solid #3b82f6' : '2px solid transparent'
-            }}>
-            Friends ({acceptedFriends.length})
-          </button>
+          {['leaderboard', 'friends', 'requests'].map(tab => (
+            <button 
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{ 
+                background: 'none', border: 'none', 
+                color: activeTab === tab ? '#3b82f6' : '#94a3b8', 
+                fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', padding: '0 0 5px 0',
+                borderBottom: activeTab === tab ? '2px solid #3b82f6' : '2px solid transparent',
+                position: 'relative'
+              }}>
+              {tab === 'leaderboard' && 'Global Leaderboard'}
+              {tab === 'friends' && `Friends (${acceptedFriends.length})`}
+              {tab === 'requests' && (
+                <>
+                  Requests
+                  {pendingReceived.length > 0 && (
+                    <span style={{ 
+                      position: 'absolute', top: '-8px', right: '-12px',
+                      background: '#ef4444', color: 'white', fontSize: '11px', 
+                      width: '18px', height: '18px', borderRadius: '50%',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
+                    }}>
+                      {pendingReceived.length}
+                    </span>
+                  )}
+                </>
+              )}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Content */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
         
+        {/* ===== LEADERBOARD TAB ===== */}
         {activeTab === 'leaderboard' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -144,29 +184,32 @@ export function TitanNetworkView() {
             
             {loading ? <p style={{ color: '#94a3b8' }}>Loading leaderboard...</p> : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {leaderboard.map((player, idx) => (
-                  <div key={player.user_id} style={{ 
-                    background: player.user_id === user.id ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255,255,255,0.03)', 
-                    border: player.user_id === user.id ? '1px solid rgba(59, 130, 246, 0.5)' : '1px solid rgba(255,255,255,0.05)',
-                    padding: '15px 20px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '20px'
-                  }}>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: idx < 3 ? '#f59e0b' : '#64748b', width: '30px' }}>
-                      #{idx + 1}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '16px', fontWeight: 'bold', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {player.username}
-                        {player.user_id === user.id && <span style={{ fontSize: '11px', background: '#3b82f6', padding: '2px 6px', borderRadius: '10px' }}>YOU</span>}
+                {leaderboard.map((player, idx) => {
+                  const isMe = player.user_id === userId || player.username === userName;
+                  return (
+                    <div key={player.user_id || idx} style={{ 
+                      background: isMe ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255,255,255,0.03)', 
+                      border: isMe ? '1px solid rgba(59, 130, 246, 0.5)' : '1px solid rgba(255,255,255,0.05)',
+                      padding: '15px 20px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '20px'
+                    }}>
+                      <div style={{ fontSize: '20px', fontWeight: 'bold', color: idx < 3 ? '#f59e0b' : '#64748b', width: '30px' }}>
+                        #{idx + 1}
                       </div>
-                      <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px' }}>
-                        {getRankTitle(player.cash)} • {player.reputation} Rep
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '16px', fontWeight: 'bold', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {player.username}
+                          {isMe && <span style={{ fontSize: '11px', background: '#3b82f6', padding: '2px 6px', borderRadius: '10px' }}>YOU</span>}
+                        </div>
+                        <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px' }}>
+                          {getRankTitle(player.cash)} • {player.reputation || 0} Rep
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#10b981' }}>
+                        ₹{parseInt(player.cash || 0).toLocaleString('en-IN')}
                       </div>
                     </div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#10b981' }}>
-                      ₹{parseInt(player.cash).toLocaleString('en-IN')}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {leaderboard.length === 0 && (
                   <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px 0' }}>
                     Leaderboard is empty. Be the first to save your game to the cloud!
@@ -177,30 +220,14 @@ export function TitanNetworkView() {
           </div>
         )}
 
+        {/* ===== FRIENDS TAB ===== */}
         {activeTab === 'friends' && (
-          <div style={{ display: 'flex', gap: '30px', height: '100%' }}>
+          <div style={{ display: 'flex', gap: '30px', height: '100%', flexWrap: 'wrap' }}>
             
             {/* Left Col: Friends List */}
-            <div style={{ flex: 2 }}>
+            <div style={{ flex: 2, minWidth: '250px' }}>
               <h2 style={{ fontSize: '18px', color: '#e2e8f0', margin: '0 0 20px 0' }}>My Connections</h2>
               
-              {pendingReceived.length > 0 && (
-                <div style={{ marginBottom: '30px' }}>
-                  <h3 style={{ fontSize: '14px', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '10px' }}>Pending Requests</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {pendingReceived.map(req => (
-                      <div key={req.id} style={{ background: 'rgba(255,255,255,0.05)', padding: '12px 15px', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontWeight: 'bold' }}>{req.sender?.username || 'Unknown User'}</span>
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                          <button onClick={() => handleRespond(req.id, 'accepted')} style={{ background: '#10b981', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Accept</button>
-                          <button onClick={() => handleRespond(req.id, 'rejected')} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>Reject</button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               <div>
                 <h3 style={{ fontSize: '14px', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '10px' }}>Friends</h3>
                 {acceptedFriends.length === 0 ? (
@@ -214,7 +241,7 @@ export function TitanNetworkView() {
                         <div key={f.id} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', padding: '15px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                             <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
-                              {friendName[0].toUpperCase()}
+                              {friendName[0]?.toUpperCase() || '?'}
                             </div>
                             <span style={{ fontSize: '16px', fontWeight: 'bold' }}>{friendName}</span>
                           </div>
@@ -230,7 +257,7 @@ export function TitanNetworkView() {
             </div>
 
             {/* Right Col: Add Friend */}
-            <div style={{ flex: 1, background: 'rgba(0,0,0,0.2)', padding: '20px', borderRadius: '8px', height: 'fit-content' }}>
+            <div style={{ flex: 1, minWidth: '220px', background: 'rgba(0,0,0,0.2)', padding: '20px', borderRadius: '8px', height: 'fit-content' }}>
               <h2 style={{ fontSize: '16px', color: '#e2e8f0', margin: '0 0 15px 0' }}>Add Friends</h2>
               <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
                 <input 
@@ -249,32 +276,135 @@ export function TitanNetworkView() {
               
               {searchResults.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {searchResults.map(u => {
-                    const isAlreadyFriend = acceptedFriends.some(f => (f.sender_id === u.user_id || f.receiver_id === u.user_id));
-                    const isPending = pendingSent.some(f => f.receiver_id === u.user_id) || pendingReceived.some(f => f.sender_id === u.user_id);
-                    
-                    return (
-                      <div key={u.user_id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1e293b', padding: '10px', borderRadius: '4px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500' }}>{u.username}</span>
-                        {isAlreadyFriend ? (
-                          <span style={{ fontSize: '11px', color: '#10b981' }}>Friends</span>
-                        ) : isPending ? (
-                          <span style={{ fontSize: '11px', color: '#f59e0b' }}>Pending</span>
-                        ) : (
-                          <button onClick={() => handleSendRequest(u.user_id)} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' }}>
-                            Add
-                          </button>
-                        )}
+                  {searchResults.map(sr => (
+                    <div key={sr.user_id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.05)', padding: '10px 12px', borderRadius: '6px' }}>
+                      <span style={{ fontWeight: 'bold', fontSize: '14px' }}>{sr.username}</span>
+                      <button 
+                        onClick={() => handleSendRequest(sr.user_id)}
+                        style={{ background: '#10b981', color: 'white', border: 'none', padding: '5px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                      >
+                        + Add
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Sent Requests */}
+              {pendingSent.length > 0 && (
+                <div style={{ marginTop: '20px' }}>
+                  <h3 style={{ fontSize: '13px', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '8px' }}>Sent Requests</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {pendingSent.map(req => (
+                      <div key={req.id} style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '13px' }}>{req.receiver?.username || 'Unknown User'}</span>
+                        <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 'bold' }}>PENDING</span>
                       </div>
-                    );
-                  })}
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ===== REQUESTS TAB ===== */}
+        {activeTab === 'requests' && (
+          <div>
+            <h2 style={{ fontSize: '18px', color: '#e2e8f0', margin: '0 0 20px 0' }}>Friend Requests</h2>
+            
+            {/* Incoming Requests */}
+            <div style={{ marginBottom: '30px' }}>
+              <h3 style={{ fontSize: '14px', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                📥 Incoming Requests
+                {pendingReceived.length > 0 && (
+                  <span style={{ background: '#ef4444', color: 'white', fontSize: '11px', padding: '2px 8px', borderRadius: '10px' }}>
+                    {pendingReceived.length}
+                  </span>
+                )}
+              </h3>
+              {pendingReceived.length === 0 ? (
+                <p style={{ color: '#64748b', fontStyle: 'italic', padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', textAlign: 'center' }}>
+                  No incoming friend requests right now.
+                </p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {pendingReceived.map(req => (
+                    <div key={req.id} style={{ 
+                      background: 'rgba(59, 130, 246, 0.08)', 
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                      padding: '15px 20px', borderRadius: '8px', 
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center' 
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                        <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 'bold' }}>
+                          {(req.sender?.username || '?')[0]?.toUpperCase()}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{req.sender?.username || 'Unknown User'}</div>
+                          <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>Wants to connect with you</div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <button onClick={() => handleRespond(req.id, 'accepted')} style={{ 
+                          background: '#10b981', color: 'white', border: 'none', 
+                          padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px' 
+                        }}>
+                          ✓ Accept
+                        </button>
+                        <button onClick={() => handleRespond(req.id, 'rejected')} style={{ 
+                          background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', 
+                          padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px' 
+                        }}>
+                          ✕ Reject
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
 
+            {/* Sent Requests */}
+            <div>
+              <h3 style={{ fontSize: '14px', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                📤 Sent Requests
+                {pendingSent.length > 0 && (
+                  <span style={{ background: '#f59e0b', color: 'black', fontSize: '11px', padding: '2px 8px', borderRadius: '10px' }}>
+                    {pendingSent.length}
+                  </span>
+                )}
+              </h3>
+              {pendingSent.length === 0 ? (
+                <p style={{ color: '#64748b', fontStyle: 'italic', padding: '20px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', textAlign: 'center' }}>
+                  You haven't sent any friend requests yet.
+                </p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {pendingSent.map(req => (
+                    <div key={req.id} style={{ 
+                      background: 'rgba(255,255,255,0.03)', 
+                      border: '1px solid rgba(255,255,255,0.05)',
+                      padding: '15px 20px', borderRadius: '8px', 
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center' 
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                        <div style={{ width: '45px', height: '45px', borderRadius: '50%', background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 'bold' }}>
+                          {(req.receiver?.username || '?')[0]?.toUpperCase()}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{req.receiver?.username || 'Unknown User'}</div>
+                          <div style={{ fontSize: '12px', color: '#f59e0b', marginTop: '2px' }}>⏳ Waiting for response...</div>
+                        </div>
+                      </div>
+                      <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 'bold', background: 'rgba(245, 158, 11, 0.1)', padding: '4px 10px', borderRadius: '4px' }}>PENDING</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
-
       </div>
     </div>
   );
