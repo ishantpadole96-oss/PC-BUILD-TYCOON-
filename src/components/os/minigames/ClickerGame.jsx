@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 const GAME_WIDTH = 400;
-const GAME_HEIGHT = 400;
 
 export function ClickerGame({ onBack }) {
   const [score, setScore] = useState(0);

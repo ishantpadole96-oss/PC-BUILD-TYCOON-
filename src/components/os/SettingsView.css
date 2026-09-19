@@ -1,0 +1,302 @@
+.settings-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--settings-text);
+}
+
+.settings-container.dark-theme {
+  --settings-bg: rgba(30, 30, 30, 0.95);
+  --settings-sidebar-bg: rgba(20, 20, 20, 0.9);
+  --settings-card-bg: rgba(40, 40, 40, 0.6);
+  --settings-text: #fff;
+  --settings-border: rgba(255, 255, 255, 0.1);
+  --settings-input-bg: rgba(0, 0, 0, 0.3);
+}
+
+.settings-container.light-theme {
+  --settings-bg: rgba(245, 245, 245, 0.95);
+  --settings-sidebar-bg: rgba(230, 230, 230, 0.9);
+  --settings-card-bg: rgba(255, 255, 255, 0.7);
+  --settings-text: #111;
+  --settings-border: rgba(0, 0, 0, 0.1);
+  --settings-input-bg: rgba(255, 255, 255, 0.5);
+}
+
+.settings-sidebar {
+  width: 250px;
+  background: var(--settings-sidebar-bg);
+  border-right: 1px solid var(--settings-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-sidebar-header {
+  padding: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--settings-border);
+}
+
+.settings-sidebar-nav {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.settings-nav-item {
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.1s;
+}
+
+.settings-nav-item:hover {
+  background: var(--settings-border);
+}
+
+.settings-nav-item.active {
+  background: var(--os-accent-color);
+  color: white;
+}
+
+.settings-nav-icon {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.settings-content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px;
+  background: transparent;
+}
+
+.settings-section {
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeIn 0.2s;
+}
+
+.settings-section h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+
+.settings-card {
+  background: var(--settings-card-bg);
+  border: 1px solid var(--settings-border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.settings-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 15px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--settings-border);
+}
+
+.settings-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.settings-input, .settings-select {
+  background: var(--settings-input-bg);
+  border: 1px solid var(--settings-border);
+  color: var(--settings-text);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  width: 200px;
+}
+
+.settings-input:focus, .settings-select:focus {
+  border-color: var(--os-accent-color);
+}
+
+.settings-btn {
+  background: var(--settings-input-bg);
+  border: 1px solid var(--settings-border);
+  color: var(--settings-text);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.settings-btn:hover {
+  background: var(--settings-border);
+}
+
+.settings-btn.danger {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.settings-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.avatar-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.avatar-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--settings-input-bg);
+  border: 2px solid transparent;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+}
+
+.avatar-btn:hover {
+  transform: scale(1.1);
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.specs-grid div:nth-child(odd) {
+  opacity: 0.6;
+}
+
+.specs-grid div:nth-child(even) {
+  font-weight: 500;
+}
+
+/* Toggle Switch */
+.settings-toggle {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+}
+
+.settings-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.settings-toggle .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--settings-input-bg);
+  border: 1px solid var(--settings-border);
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.settings-toggle .slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--settings-text);
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.settings-toggle input:checked + .slider {
+  background-color: var(--os-accent-color, #3b82f6);
+  border-color: var(--os-accent-color, #3b82f6);
+}
+
+.settings-toggle input:checked + .slider:before {
+  transform: translateX(16px);
+  background-color: white;
+}
+
+/* Range input styling */
+input[type=range] {
+  -webkit-appearance: none;
+  width: 150px;
+  background: transparent;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--settings-text);
+  cursor: pointer;
+  margin-top: -6px;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: var(--settings-border);
+  border-radius: 2px;
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--settings-input-bg);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.shortcut-keys kbd {
+  background: var(--settings-card-bg);
+  border: 1px solid var(--settings-border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.shortcut-desc {
+  font-size: 13px;
+  opacity: 0.8;
+}

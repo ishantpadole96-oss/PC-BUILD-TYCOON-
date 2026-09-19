@@ -9,16 +9,12 @@ export function TitanKartView() {
   const perks = useGameStore((s) => s.perks) || [];
   const buyPerk = useGameStore((s) => s.buyPerk);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('All');
 
   const handleBuy = (product) => {
     if (shopLevel < product.unlockLevel) {
       soundFx.playWarning();
       alert(`This item unlocks at Shop Level ${product.unlockLevel}! Keep growing your business.`);
-      return;
-    }
-    
-    if (perks.includes(product.id)) {
-      alert("You already own this item!");
       return;
     }
 
@@ -129,7 +125,6 @@ export function TitanKartView() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
           {filteredProducts.map(product => {
             const isLocked = shopLevel < product.unlockLevel;
-            const isOwned = perks.includes(product.id);
 
             return (
               <div key={product.id} style={{ 
@@ -180,36 +175,36 @@ export function TitanKartView() {
 
                 {/* Price and Action */}
                 <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '15px', marginTop: 'auto' }}>
-                  <div style={{ fontSize: '22px', fontWeight: 'bold', color: '#212121', marginBottom: '15px' }}>
-                    ₹{product.price.toLocaleString('en-IN')}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#212121' }}>
+                      ₹{product.price.toLocaleString('en-IN')}
+                    </div>
+                    {perks.filter(id => id === product.id).length > 0 && (
+                      <span style={{ fontSize: '12px', background: '#e0e0e0', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                        Owned: {perks.filter(id => id === product.id).length}
+                      </span>
+                    )}
                   </div>
                   
-                  {isOwned ? (
-                    <button style={{ 
-                      width: '100%', padding: '12px', background: '#e0e0e0', color: '#757575', 
-                      border: 'none', borderRadius: '2px', fontWeight: 'bold', fontSize: '15px', cursor: 'not-allowed' 
-                    }} disabled>
-                      ALREADY OWNED
-                    </button>
-                  ) : isLocked ? (
-                    <button style={{ 
-                      width: '100%', padding: '12px', background: '#ffe0e0', color: '#d32f2f', 
-                      border: '1px solid #d32f2f', borderRadius: '2px', fontWeight: 'bold', fontSize: '15px', cursor: 'not-allowed' 
-                    }} disabled>
-                      UNLOCKS AT LEVEL {product.unlockLevel}
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={() => handleBuy(product)}
-                      style={{ 
-                        width: '100%', padding: '12px', background: '#ff9f00', color: 'white', 
-                        border: 'none', borderRadius: '2px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.2)'
-                      }}
-                    >
-                      BUY NOW
-                    </button>
-                  )}
+                    {isLocked ? (
+                      <button style={{ 
+                        width: '100%', padding: '12px', background: '#ffe0e0', color: '#d32f2f', 
+                        border: '1px solid #d32f2f', borderRadius: '2px', fontWeight: 'bold', fontSize: '15px', cursor: 'not-allowed' 
+                      }} disabled>
+                        UNLOCKS AT LEVEL {product.unlockLevel}
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => handleBuy(product)}
+                        style={{ 
+                          width: '100%', padding: '12px', background: '#ff9f00', color: 'white', 
+                          border: 'none', borderRadius: '2px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer',
+                          boxShadow: '0 1px 2px rgba(0,0,0,0.2)'
+                        }}
+                      >
+                        BUY NOW
+                      </button>
+                    )}
                 </div>
                 
               </div>

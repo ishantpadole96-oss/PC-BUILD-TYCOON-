@@ -39,7 +39,7 @@ export function AimTrainer({ onBack }) {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  const handleClick = (e) => {
+  const handleClick = () => {
     if (!isPlaying) return;
     setScore(s => s + 1);
     spawnTarget();

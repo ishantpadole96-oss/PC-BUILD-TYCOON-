@@ -415,5 +415,1285 @@ export const titankartProducts = [
     description: 'A personal zoo with rare animals. Because why not.',
     icon: '🦁',
     type: 'cosmetic'
+  },,
+  {
+    id: 'perk_vehicles_1',
+    name: 'Electric Scooter',
+    category: 'Vehicles',
+    price: 15000,
+    unlockLevel: 3,
+    description: 'Basic mobility around the shop.',
+    icon: '🛴',
+    type: 'cosmetic'
   },
+  {
+    id: 'perk_vehicles_2',
+    name: 'Vintage Cruiser Bike',
+    category: 'Vehicles',
+    price: 120000,
+    unlockLevel: 4,
+    description: 'Stylish and classic two-wheeler.',
+    icon: '🚲',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_3',
+    name: 'Hoverboard',
+    category: 'Vehicles',
+    price: 45000,
+    unlockLevel: 4,
+    description: 'A futuristic way to move around the office.',
+    icon: '🛹',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_4',
+    name: 'Off-Road ATV',
+    category: 'Vehicles',
+    price: 850000,
+    unlockLevel: 6,
+    description: 'For weekend adventures outside the city.',
+    icon: '🚜',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_5',
+    name: 'Armored Transport Van',
+    category: 'Vehicles',
+    price: 3500000,
+    unlockLevel: 8,
+    description: 'Secure delivery for millions of rupees of hardware.',
+    icon: '🚐',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_6',
+    name: 'Luxury Sedan',
+    category: 'Vehicles',
+    price: 4500000,
+    unlockLevel: 8,
+    description: 'Arrive at business meetings in style.',
+    icon: '🚙',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_7',
+    name: 'Track Day Hypercar',
+    category: 'Vehicles',
+    price: 15000000,
+    unlockLevel: 10,
+    description: '0-60 in 2 seconds. The track is yours.',
+    icon: '🏎️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_8',
+    name: 'Electric Super Truck',
+    category: 'Vehicles',
+    price: 8500000,
+    unlockLevel: 9,
+    description: 'Massive electric truck with immense torque.',
+    icon: '🛻',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_9',
+    name: 'Personal Submarine',
+    category: 'Vehicles',
+    price: 45000000,
+    unlockLevel: 11,
+    description: 'Explore the ocean depths in pure luxury.',
+    icon: '🛥️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_10',
+    name: 'Hyperloop Pod',
+    category: 'Vehicles',
+    price: 150000000,
+    unlockLevel: 12,
+    description: 'Travel between cities in minutes.',
+    icon: '🚄',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_11',
+    name: 'Downtown Studio',
+    category: 'Real Estate',
+    price: 1500000,
+    unlockLevel: 6,
+    description: 'A cozy spot near the tech hub.',
+    icon: '🏢',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_12',
+    name: 'Beachfront Condo',
+    category: 'Real Estate',
+    price: 5000000,
+    unlockLevel: 7,
+    description: 'Wake up to the sound of waves.',
+    icon: '🏖️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_13',
+    name: 'Ski Chalet',
+    category: 'Real Estate',
+    price: 12000000,
+    unlockLevel: 8,
+    description: 'A snowy retreat in the mountains.',
+    icon: '🏔️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_14',
+    name: 'Vineyard Estate',
+    category: 'Real Estate',
+    price: 35000000,
+    unlockLevel: 10,
+    description: 'Make your own wine in the countryside.',
+    icon: '🍇',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_15',
+    name: 'Underground Bunker',
+    category: 'Real Estate',
+    price: 50000000,
+    unlockLevel: 11,
+    description: 'Survive the apocalypse in ultimate comfort.',
+    icon: '🛡️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_16',
+    name: 'Skyscraper Penthouse',
+    category: 'Real Estate',
+    price: 85000000,
+    unlockLevel: 12,
+    description: 'Look down upon the entire city.',
+    icon: '🏙️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_17',
+    name: 'Historical Castle',
+    category: 'Real Estate',
+    price: 150000000,
+    unlockLevel: 13,
+    description: 'A 15th-century castle with modern fiber internet.',
+    icon: '🏰',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_18',
+    name: 'Lunar Base Alpha',
+    category: 'Real Estate',
+    price: 500000000,
+    unlockLevel: 14,
+    description: 'Your first real estate on the moon.',
+    icon: '🌕',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_19',
+    name: 'Mars Colony Plot',
+    category: 'Real Estate',
+    price: 1000000000,
+    unlockLevel: 15,
+    description: 'Be a pioneer on the red planet.',
+    icon: '🪐',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_20',
+    name: 'Orbital Space Station',
+    category: 'Real Estate',
+    price: 5000000000,
+    unlockLevel: 16,
+    description: 'A private space station orbiting Earth.',
+    icon: '🛰️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_21',
+    name: 'Startup Seed Fund',
+    category: 'Investments',
+    price: 1000000,
+    unlockLevel: 5,
+    description: 'Invest in the next big tech startup.',
+    icon: '🌱',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_22',
+    name: 'Angel Investor Portfolio',
+    category: 'Investments',
+    price: 5000000,
+    unlockLevel: 7,
+    description: 'A collection of promising early-stage companies.',
+    icon: '👼',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_23',
+    name: 'Venture Capital Firm',
+    category: 'Investments',
+    price: 25000000,
+    unlockLevel: 9,
+    description: 'Own a firm that funds the future.',
+    icon: '📈',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_24',
+    name: 'E-Sports Team Franchise',
+    category: 'Investments',
+    price: 50000000,
+    unlockLevel: 10,
+    description: 'Own a top-tier professional gaming team.',
+    icon: '🎮',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_25',
+    name: 'Tech Magazine Publisher',
+    category: 'Investments',
+    price: 35000000,
+    unlockLevel: 9,
+    description: 'Control the media narrative in the PC world.',
+    icon: '📰',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_26',
+    name: 'Semiconductor Fab',
+    category: 'Investments',
+    price: 500000000,
+    unlockLevel: 13,
+    description: 'Manufacture your own silicon chips.',
+    icon: '🏭',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_27',
+    name: 'Social Media Network',
+    category: 'Investments',
+    price: 1000000000,
+    unlockLevel: 14,
+    description: 'Buy a platform and change its name.',
+    icon: '📱',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_28',
+    name: 'AI Research Lab',
+    category: 'Investments',
+    price: 2500000000,
+    unlockLevel: 15,
+    description: 'Pioneering artificial general intelligence.',
+    icon: '🧠',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_29',
+    name: 'Asteroid Mining Corp',
+    category: 'Investments',
+    price: 5000000000,
+    unlockLevel: 16,
+    description: 'Mine rare metals from near-Earth objects.',
+    icon: '☄️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_30',
+    name: 'Global Bank',
+    category: 'Investments',
+    price: 10000000000,
+    unlockLevel: 18,
+    description: 'You now control the flow of money.',
+    icon: '🏦',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_31',
+    name: 'Personal Chef',
+    category: 'Lifestyle',
+    price: 1500000,
+    unlockLevel: 6,
+    description: 'Never cook or order takeout again.',
+    icon: '👨‍🍳',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_32',
+    name: 'Private Security Team',
+    category: 'Lifestyle',
+    price: 2500000,
+    unlockLevel: 7,
+    description: '24/7 protection for you and your assets.',
+    icon: '💂',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_33',
+    name: 'Lifetime Sushi Supply',
+    category: 'Lifestyle',
+    price: 5000000,
+    unlockLevel: 8,
+    description: 'Premium Omakase delivered daily.',
+    icon: '🍣',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_34',
+    name: 'VIP Club Membership',
+    category: 'Lifestyle',
+    price: 7500000,
+    unlockLevel: 8,
+    description: 'Access to the most exclusive clubs worldwide.',
+    icon: '🍸',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_35',
+    name: 'Private Concert',
+    category: 'Lifestyle',
+    price: 15000000,
+    unlockLevel: 9,
+    description: 'Hire your favorite artist for a private show.',
+    icon: '🎸',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_36',
+    name: 'Philanthropy Foundation',
+    category: 'Lifestyle',
+    price: 50000000,
+    unlockLevel: 11,
+    description: 'Give back to the community and reduce taxes.',
+    icon: '🤝',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_37',
+    name: 'Cryogenic Freezing Chamber',
+    category: 'Lifestyle',
+    price: 85000000,
+    unlockLevel: 12,
+    description: 'Preserve yourself for the future.',
+    icon: '❄️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_38',
+    name: 'Cybernetic Enhancements',
+    category: 'Lifestyle',
+    price: 150000000,
+    unlockLevel: 13,
+    description: 'Upgrade your physical body with tech.',
+    icon: '🦾',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_39',
+    name: 'Immortality Serum',
+    category: 'Lifestyle',
+    price: 1000000000,
+    unlockLevel: 15,
+    description: 'Live forever to build more PCs.',
+    icon: '🧬',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_40',
+    name: 'First Edition Comic Book',
+    category: 'Collectibles',
+    price: 2500000,
+    unlockLevel: 7,
+    description: 'Pristine condition superhero origins.',
+    icon: '🦸‍♂️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_41',
+    name: 'Dinosaur Fossil',
+    category: 'Collectibles',
+    price: 8500000,
+    unlockLevel: 8,
+    description: 'A complete T-Rex skull for your lobby.',
+    icon: '🦖',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_42',
+    name: 'Historical Sword',
+    category: 'Collectibles',
+    price: 12000000,
+    unlockLevel: 9,
+    description: 'A katana forged by a legendary master.',
+    icon: '⚔️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_43',
+    name: 'Vintage Arcade Cabinet',
+    category: 'Collectibles',
+    price: 500000,
+    unlockLevel: 5,
+    description: 'Original Pac-Man machine from 1980.',
+    icon: '🕹️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_44',
+    name: 'Moon Rock',
+    category: 'Collectibles',
+    price: 25000000,
+    unlockLevel: 10,
+    description: 'A genuine piece of the lunar surface.',
+    icon: '🌑',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_45',
+    name: 'Alien Artifact',
+    category: 'Collectibles',
+    price: 500000000,
+    unlockLevel: 14,
+    description: 'Recovered from a classified crash site.',
+    icon: '🛸',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_46',
+    name: 'The Mona Lisa (Replica)',
+    category: 'Collectibles',
+    price: 1500000,
+    unlockLevel: 6,
+    description: 'A very convincing fake.',
+    icon: '🎨',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_47',
+    name: 'The Mona Lisa (Real)',
+    category: 'Collectibles',
+    price: 2500000000,
+    unlockLevel: 15,
+    description: 'Don\'t ask how you got this.',
+    icon: '🖼️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_48',
+    name: 'Precision Screwdriver Set',
+    category: 'Tools',
+    price: 5000,
+    unlockLevel: 1,
+    description: 'High quality bits that never strip screws.',
+    icon: '🛠️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_49',
+    name: 'Anti-Static Mat',
+    category: 'Tools',
+    price: 2500,
+    unlockLevel: 1,
+    description: 'Protect components from electrostatic discharge.',
+    icon: '⚡',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_50',
+    name: 'Electric Air Duster',
+    category: 'Tools',
+    price: 8000,
+    unlockLevel: 2,
+    description: 'No more canned air. Infinite cleaning power.',
+    icon: '💨',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_51',
+    name: 'Thermal Camera',
+    category: 'Tools',
+    price: 45000,
+    unlockLevel: 4,
+    description: 'Spot overheating components instantly.',
+    icon: '🌡️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_52',
+    name: 'Oscilloscope',
+    category: 'Tools',
+    price: 120000,
+    unlockLevel: 5,
+    description: 'Advanced diagnostics for motherboard repair.',
+    icon: '📈',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_53',
+    name: '3D Printer',
+    category: 'Tools',
+    price: 250000,
+    unlockLevel: 6,
+    description: 'Print custom brackets and case mods.',
+    icon: '🖨️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_54',
+    name: 'CNC Milling Machine',
+    category: 'Tools',
+    price: 850000,
+    unlockLevel: 7,
+    description: 'Mill custom water cooling distro plates.',
+    icon: '🏭',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_55',
+    name: 'Automated Assembly Robot',
+    category: 'Tools',
+    price: 5000000,
+    unlockLevel: 10,
+    description: 'A robotic arm that helps build PCs.',
+    icon: '🤖',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_56',
+    name: 'Quantum Diagnostic Tool',
+    category: 'Tools',
+    price: 50000000,
+    unlockLevel: 13,
+    description: 'Diagnose problems before they even happen.',
+    icon: '🔮',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_57',
+    name: 'Potted Plant',
+    category: 'Decor',
+    price: 1500,
+    unlockLevel: 1,
+    description: 'Adds a touch of green to your desk.',
+    icon: '🪴',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_58',
+    name: 'Nanoleaf Light Panels',
+    category: 'Decor',
+    price: 25000,
+    unlockLevel: 3,
+    description: 'Syncs with your PC RGB.',
+    icon: '🔺',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_59',
+    name: 'Server Rack',
+    category: 'Decor',
+    price: 150000,
+    unlockLevel: 5,
+    description: 'A full 42U rack blinking with LEDs.',
+    icon: '🗄️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_60',
+    name: 'Arcade Machine',
+    category: 'Decor',
+    price: 350000,
+    unlockLevel: 6,
+    description: 'For when you need a break from building.',
+    icon: '👾',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_61',
+    name: 'Indoor Waterfall',
+    category: 'Decor',
+    price: 1200000,
+    unlockLevel: 8,
+    description: 'Soothing water sounds for a zen workspace.',
+    icon: '💧',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_62',
+    name: 'Holographic Display',
+    category: 'Decor',
+    price: 5000000,
+    unlockLevel: 11,
+    description: 'Project 3D models of PCs in mid-air.',
+    icon: '🌌',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_63',
+    name: 'Solid Gold Desk',
+    category: 'Decor',
+    price: 25000000,
+    unlockLevel: 12,
+    description: 'Because wood is for peasants.',
+    icon: '🪑',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_64',
+    name: 'Zero Gravity Chamber',
+    category: 'Decor',
+    price: 150000000,
+    unlockLevel: 14,
+    description: 'Float while you work.',
+    icon: '🛸',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_1',
+    name: 'Electric Scooter',
+    category: 'Vehicles',
+    price: 15000,
+    unlockLevel: 3,
+    description: 'Basic mobility around the shop.',
+    icon: '🛴',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_2',
+    name: 'Vintage Cruiser Bike',
+    category: 'Vehicles',
+    price: 120000,
+    unlockLevel: 4,
+    description: 'Stylish and classic two-wheeler.',
+    icon: '🚲',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_3',
+    name: 'Hoverboard',
+    category: 'Vehicles',
+    price: 45000,
+    unlockLevel: 4,
+    description: 'A futuristic way to move around the office.',
+    icon: '🛹',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_4',
+    name: 'Off-Road ATV',
+    category: 'Vehicles',
+    price: 850000,
+    unlockLevel: 6,
+    description: 'For weekend adventures outside the city.',
+    icon: '🚜',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_5',
+    name: 'Armored Transport Van',
+    category: 'Vehicles',
+    price: 3500000,
+    unlockLevel: 8,
+    description: 'Secure delivery for millions of rupees of hardware.',
+    icon: '🚐',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_6',
+    name: 'Luxury Sedan',
+    category: 'Vehicles',
+    price: 4500000,
+    unlockLevel: 8,
+    description: 'Arrive at business meetings in style.',
+    icon: '🚙',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_7',
+    name: 'Track Day Hypercar',
+    category: 'Vehicles',
+    price: 15000000,
+    unlockLevel: 10,
+    description: '0-60 in 2 seconds. The track is yours.',
+    icon: '🏎️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_8',
+    name: 'Electric Super Truck',
+    category: 'Vehicles',
+    price: 8500000,
+    unlockLevel: 9,
+    description: 'Massive electric truck with immense torque.',
+    icon: '🛻',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_9',
+    name: 'Personal Submarine',
+    category: 'Vehicles',
+    price: 45000000,
+    unlockLevel: 11,
+    description: 'Explore the ocean depths in pure luxury.',
+    icon: '🛥️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_vehicles_10',
+    name: 'Hyperloop Pod',
+    category: 'Vehicles',
+    price: 150000000,
+    unlockLevel: 12,
+    description: 'Travel between cities in minutes.',
+    icon: '🚄',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_11',
+    name: 'Downtown Studio',
+    category: 'Real Estate',
+    price: 1500000,
+    unlockLevel: 6,
+    description: 'A cozy spot near the tech hub.',
+    icon: '🏢',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_12',
+    name: 'Beachfront Condo',
+    category: 'Real Estate',
+    price: 5000000,
+    unlockLevel: 7,
+    description: 'Wake up to the sound of waves.',
+    icon: '🏖️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_13',
+    name: 'Ski Chalet',
+    category: 'Real Estate',
+    price: 12000000,
+    unlockLevel: 8,
+    description: 'A snowy retreat in the mountains.',
+    icon: '🏔️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_14',
+    name: 'Vineyard Estate',
+    category: 'Real Estate',
+    price: 35000000,
+    unlockLevel: 10,
+    description: 'Make your own wine in the countryside.',
+    icon: '🍇',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_15',
+    name: 'Underground Bunker',
+    category: 'Real Estate',
+    price: 50000000,
+    unlockLevel: 11,
+    description: 'Survive the apocalypse in ultimate comfort.',
+    icon: '🛡️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_16',
+    name: 'Skyscraper Penthouse',
+    category: 'Real Estate',
+    price: 85000000,
+    unlockLevel: 12,
+    description: 'Look down upon the entire city.',
+    icon: '🏙️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_17',
+    name: 'Historical Castle',
+    category: 'Real Estate',
+    price: 150000000,
+    unlockLevel: 13,
+    description: 'A 15th-century castle with modern fiber internet.',
+    icon: '🏰',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_18',
+    name: 'Lunar Base Alpha',
+    category: 'Real Estate',
+    price: 500000000,
+    unlockLevel: 14,
+    description: 'Your first real estate on the moon.',
+    icon: '🌕',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_19',
+    name: 'Mars Colony Plot',
+    category: 'Real Estate',
+    price: 1000000000,
+    unlockLevel: 15,
+    description: 'Be a pioneer on the red planet.',
+    icon: '🪐',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_real_estate_20',
+    name: 'Orbital Space Station',
+    category: 'Real Estate',
+    price: 5000000000,
+    unlockLevel: 16,
+    description: 'A private space station orbiting Earth.',
+    icon: '🛰️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_21',
+    name: 'Startup Seed Fund',
+    category: 'Investments',
+    price: 1000000,
+    unlockLevel: 5,
+    description: 'Invest in the next big tech startup.',
+    icon: '🌱',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_22',
+    name: 'Angel Investor Portfolio',
+    category: 'Investments',
+    price: 5000000,
+    unlockLevel: 7,
+    description: 'A collection of promising early-stage companies.',
+    icon: '👼',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_23',
+    name: 'Venture Capital Firm',
+    category: 'Investments',
+    price: 25000000,
+    unlockLevel: 9,
+    description: 'Own a firm that funds the future.',
+    icon: '📈',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_24',
+    name: 'E-Sports Team Franchise',
+    category: 'Investments',
+    price: 50000000,
+    unlockLevel: 10,
+    description: 'Own a top-tier professional gaming team.',
+    icon: '🎮',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_25',
+    name: 'Tech Magazine Publisher',
+    category: 'Investments',
+    price: 35000000,
+    unlockLevel: 9,
+    description: 'Control the media narrative in the PC world.',
+    icon: '📰',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_26',
+    name: 'Semiconductor Fab',
+    category: 'Investments',
+    price: 500000000,
+    unlockLevel: 13,
+    description: 'Manufacture your own silicon chips.',
+    icon: '🏭',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_27',
+    name: 'Social Media Network',
+    category: 'Investments',
+    price: 1000000000,
+    unlockLevel: 14,
+    description: 'Buy a platform and change its name.',
+    icon: '📱',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_28',
+    name: 'AI Research Lab',
+    category: 'Investments',
+    price: 2500000000,
+    unlockLevel: 15,
+    description: 'Pioneering artificial general intelligence.',
+    icon: '🧠',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_29',
+    name: 'Asteroid Mining Corp',
+    category: 'Investments',
+    price: 5000000000,
+    unlockLevel: 16,
+    description: 'Mine rare metals from near-Earth objects.',
+    icon: '☄️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_investments_30',
+    name: 'Global Bank',
+    category: 'Investments',
+    price: 10000000000,
+    unlockLevel: 18,
+    description: 'You now control the flow of money.',
+    icon: '🏦',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_31',
+    name: 'Personal Chef',
+    category: 'Lifestyle',
+    price: 1500000,
+    unlockLevel: 6,
+    description: 'Never cook or order takeout again.',
+    icon: '👨‍🍳',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_32',
+    name: 'Private Security Team',
+    category: 'Lifestyle',
+    price: 2500000,
+    unlockLevel: 7,
+    description: '24/7 protection for you and your assets.',
+    icon: '💂',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_33',
+    name: 'Lifetime Sushi Supply',
+    category: 'Lifestyle',
+    price: 5000000,
+    unlockLevel: 8,
+    description: 'Premium Omakase delivered daily.',
+    icon: '🍣',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_34',
+    name: 'VIP Club Membership',
+    category: 'Lifestyle',
+    price: 7500000,
+    unlockLevel: 8,
+    description: 'Access to the most exclusive clubs worldwide.',
+    icon: '🍸',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_35',
+    name: 'Private Concert',
+    category: 'Lifestyle',
+    price: 15000000,
+    unlockLevel: 9,
+    description: 'Hire your favorite artist for a private show.',
+    icon: '🎸',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_36',
+    name: 'Philanthropy Foundation',
+    category: 'Lifestyle',
+    price: 50000000,
+    unlockLevel: 11,
+    description: 'Give back to the community and reduce taxes.',
+    icon: '🤝',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_37',
+    name: 'Cryogenic Freezing Chamber',
+    category: 'Lifestyle',
+    price: 85000000,
+    unlockLevel: 12,
+    description: 'Preserve yourself for the future.',
+    icon: '❄️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_38',
+    name: 'Cybernetic Enhancements',
+    category: 'Lifestyle',
+    price: 150000000,
+    unlockLevel: 13,
+    description: 'Upgrade your physical body with tech.',
+    icon: '🦾',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_lifestyle_39',
+    name: 'Immortality Serum',
+    category: 'Lifestyle',
+    price: 1000000000,
+    unlockLevel: 15,
+    description: 'Live forever to build more PCs.',
+    icon: '🧬',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_40',
+    name: 'First Edition Comic Book',
+    category: 'Collectibles',
+    price: 2500000,
+    unlockLevel: 7,
+    description: 'Pristine condition superhero origins.',
+    icon: '🦸‍♂️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_41',
+    name: 'Dinosaur Fossil',
+    category: 'Collectibles',
+    price: 8500000,
+    unlockLevel: 8,
+    description: 'A complete T-Rex skull for your lobby.',
+    icon: '🦖',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_42',
+    name: 'Historical Sword',
+    category: 'Collectibles',
+    price: 12000000,
+    unlockLevel: 9,
+    description: 'A katana forged by a legendary master.',
+    icon: '⚔️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_43',
+    name: 'Vintage Arcade Cabinet',
+    category: 'Collectibles',
+    price: 500000,
+    unlockLevel: 5,
+    description: 'Original Pac-Man machine from 1980.',
+    icon: '🕹️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_44',
+    name: 'Moon Rock',
+    category: 'Collectibles',
+    price: 25000000,
+    unlockLevel: 10,
+    description: 'A genuine piece of the lunar surface.',
+    icon: '🌑',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_45',
+    name: 'Alien Artifact',
+    category: 'Collectibles',
+    price: 500000000,
+    unlockLevel: 14,
+    description: 'Recovered from a classified crash site.',
+    icon: '🛸',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_46',
+    name: 'The Mona Lisa (Replica)',
+    category: 'Collectibles',
+    price: 1500000,
+    unlockLevel: 6,
+    description: 'A very convincing fake.',
+    icon: '🎨',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_collectibles_47',
+    name: 'The Mona Lisa (Real)',
+    category: 'Collectibles',
+    price: 2500000000,
+    unlockLevel: 15,
+    description: 'Don\'t ask how you got this.',
+    icon: '🖼️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_48',
+    name: 'Precision Screwdriver Set',
+    category: 'Tools',
+    price: 5000,
+    unlockLevel: 1,
+    description: 'High quality bits that never strip screws.',
+    icon: '🛠️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_49',
+    name: 'Anti-Static Mat',
+    category: 'Tools',
+    price: 2500,
+    unlockLevel: 1,
+    description: 'Protect components from electrostatic discharge.',
+    icon: '⚡',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_50',
+    name: 'Electric Air Duster',
+    category: 'Tools',
+    price: 8000,
+    unlockLevel: 2,
+    description: 'No more canned air. Infinite cleaning power.',
+    icon: '💨',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_51',
+    name: 'Thermal Camera',
+    category: 'Tools',
+    price: 45000,
+    unlockLevel: 4,
+    description: 'Spot overheating components instantly.',
+    icon: '🌡️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_52',
+    name: 'Oscilloscope',
+    category: 'Tools',
+    price: 120000,
+    unlockLevel: 5,
+    description: 'Advanced diagnostics for motherboard repair.',
+    icon: '📈',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_53',
+    name: '3D Printer',
+    category: 'Tools',
+    price: 250000,
+    unlockLevel: 6,
+    description: 'Print custom brackets and case mods.',
+    icon: '🖨️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_54',
+    name: 'CNC Milling Machine',
+    category: 'Tools',
+    price: 850000,
+    unlockLevel: 7,
+    description: 'Mill custom water cooling distro plates.',
+    icon: '🏭',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_55',
+    name: 'Automated Assembly Robot',
+    category: 'Tools',
+    price: 5000000,
+    unlockLevel: 10,
+    description: 'A robotic arm that helps build PCs.',
+    icon: '🤖',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_tools_56',
+    name: 'Quantum Diagnostic Tool',
+    category: 'Tools',
+    price: 50000000,
+    unlockLevel: 13,
+    description: 'Diagnose problems before they even happen.',
+    icon: '🔮',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_57',
+    name: 'Potted Plant',
+    category: 'Decor',
+    price: 1500,
+    unlockLevel: 1,
+    description: 'Adds a touch of green to your desk.',
+    icon: '🪴',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_58',
+    name: 'Nanoleaf Light Panels',
+    category: 'Decor',
+    price: 25000,
+    unlockLevel: 3,
+    description: 'Syncs with your PC RGB.',
+    icon: '🔺',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_59',
+    name: 'Server Rack',
+    category: 'Decor',
+    price: 150000,
+    unlockLevel: 5,
+    description: 'A full 42U rack blinking with LEDs.',
+    icon: '🗄️',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_60',
+    name: 'Arcade Machine',
+    category: 'Decor',
+    price: 350000,
+    unlockLevel: 6,
+    description: 'For when you need a break from building.',
+    icon: '👾',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_61',
+    name: 'Indoor Waterfall',
+    category: 'Decor',
+    price: 1200000,
+    unlockLevel: 8,
+    description: 'Soothing water sounds for a zen workspace.',
+    icon: '💧',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_62',
+    name: 'Holographic Display',
+    category: 'Decor',
+    price: 5000000,
+    unlockLevel: 11,
+    description: 'Project 3D models of PCs in mid-air.',
+    icon: '🌌',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_63',
+    name: 'Solid Gold Desk',
+    category: 'Decor',
+    price: 25000000,
+    unlockLevel: 12,
+    description: 'Because wood is for peasants.',
+    icon: '🪑',
+    type: 'cosmetic'
+  },
+  {
+    id: 'perk_decor_64',
+    name: 'Zero Gravity Chamber',
+    category: 'Decor',
+    price: 150000000,
+    unlockLevel: 14,
+    description: 'Float while you work.',
+    icon: '🛸',
+    type: 'cosmetic'
+  }
 ];

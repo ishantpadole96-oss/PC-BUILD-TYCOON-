@@ -30,6 +30,10 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
     if (finalUrl.toLowerCase().includes('google.com')) {
       finalUrl = 'https://www.google.com/webhp?igu=1';
     }
+    // Check if it's a search query (no dot, or contains spaces)
+    else if (!finalUrl.includes('.') || finalUrl.includes(' ')) {
+      finalUrl = `https://www.google.com/search?igu=1&q=${encodeURIComponent(finalUrl)}`;
+    }
     else if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://') && !finalUrl.includes('titanos.web') && !finalUrl.endsWith('.mock')) {
       finalUrl = 'https://' + finalUrl;
     }
@@ -96,7 +100,13 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
         
         <form onSubmit={handleNavigate} style={{ flex: 1, display: 'flex', marginLeft: '10px' }}>
           <div style={{ flex: 1, display: 'flex', background: '#18181f', borderRadius: '20px', border: '1px solid #333', overflow: 'hidden' }}>
-            <span style={{ padding: '8px 12px', background: '#18181f', color: '#fa003f', fontWeight: 'bold' }}>GX</span>
+            <span 
+              onClick={() => navigateTo('https://titanos.web/home')}
+              style={{ padding: '8px 12px', background: '#18181f', color: '#fa003f', fontWeight: 'bold', cursor: 'pointer' }}
+              title="Go to GX Home"
+            >
+              GX
+            </span>
             <input 
               type="text" 
               value={inputUrl}
@@ -127,7 +137,7 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
-                      onClick={() => navigateTo('https://pcpartpicker.com')}
+                      onClick={() => window.open('https://pcpartpicker.com', '_blank')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
@@ -135,7 +145,7 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                       <div style={{ fontSize: '12px', color: '#888' }}>Shop the latest hardware</div>
                     </div>
                     <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
-                      onClick={() => navigateTo('https://www.tomshardware.com')}
+                      onClick={() => window.open('https://www.tomshardware.com', '_blank')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
@@ -143,15 +153,15 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                       <div style={{ fontSize: '12px', color: '#888' }}>Tom's Hardware - Latest tech news</div>
                     </div>
                     <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
-                      onClick={() => navigateTo('https://www.youtube.com')}
-                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
+                      onClick={() => window.open('https://www.twitch.tv', '_blank')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#9146ff'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
-                      <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>YouTube</div>
-                      <div style={{ fontSize: '12px', color: '#888' }}>Watch tech reviews & builds</div>
+                      <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>Twitch</div>
+                      <div style={{ fontSize: '12px', color: '#888' }}>Live game streaming</div>
                     </div>
                     <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
-                      onClick={() => navigateTo('https://www.reddit.com/r/buildapc')}
+                      onClick={() => window.open('https://www.reddit.com/r/buildapc', '_blank')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
@@ -166,14 +176,46 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                   <h3 style={{ margin: '0 0 15px 0', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ color: '#00f0ff' }}>🔍</span> Quick Search
                   </h3>
-                  <div 
-                    style={{ background: '#18181f', padding: '20px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', textAlign: 'center', transition: 'all 0.2s' }} 
-                    onClick={() => navigateTo('https://www.google.com')}
-                    onMouseEnter={(e) => e.currentTarget.style.borderColor = '#00f0ff'}
-                    onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
-                  >
-                    <div style={{ fontSize: '32px', marginBottom: '10px' }}>G</div>
-                    <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>Google Search</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div 
+                      style={{ display: 'flex', alignItems: 'center', gap: '15px', background: '#18181f', padding: '15px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'all 0.2s' }} 
+                      onClick={() => navigateTo('https://www.google.com/search?igu=1')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#00f0ff'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
+                      <div style={{ fontSize: '24px', fontWeight: 'bold', width: '30px', textAlign: 'center' }}>G</div>
+                      <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>Google Search</div>
+                    </div>
+                    
+                    <div 
+                      style={{ display: 'flex', alignItems: 'center', gap: '15px', background: '#18181f', padding: '15px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'all 0.2s' }} 
+                      onClick={() => window.open('https://www.youtube.com', '_blank')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ff0000'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
+                      <div style={{ fontSize: '24px', color: '#ff0000', width: '30px', textAlign: 'center' }}>▶</div>
+                      <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>YouTube</div>
+                    </div>
+
+                    <div 
+                      style={{ display: 'flex', alignItems: 'center', gap: '15px', background: '#18181f', padding: '15px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'all 0.2s' }} 
+                      onClick={() => window.open('https://music.youtube.com', '_blank')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ff0000'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
+                      <div style={{ fontSize: '24px', color: '#ff0000', width: '30px', textAlign: 'center' }}>🎵</div>
+                      <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>YouTube Music</div>
+                    </div>
+
+                    <div 
+                      style={{ display: 'flex', alignItems: 'center', gap: '15px', background: '#18181f', padding: '15px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'all 0.2s' }} 
+                      onClick={() => window.open('https://www.onlinegdb.com', '_blank')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#4a90e2'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
+                      <div style={{ fontSize: '24px', color: '#4a90e2', width: '30px', textAlign: 'center', fontWeight: 'bold' }}>{'</>'}</div>
+                      <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>CODE</div>
+                    </div>
                   </div>
                 </div>
 
@@ -184,19 +226,51 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }}
-                      onClick={() => navigateTo('https://store.steampowered.com')}
+                      onClick={() => navigateTo('https://www.crazygames.com/embed/city-car-driving-simulator')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#a200ff'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
-                      <div style={{ fontSize: '13px', color: '#ccc' }}>Cyber Strike 2077</div>
+                      <div style={{ fontSize: '13px', color: '#ccc' }}>Vice City</div>
                       <div style={{ fontSize: '11px', background: '#a200ff', padding: '2px 6px', borderRadius: '4px', color: 'white' }}>FREE</div>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }}
-                      onClick={() => navigateTo('https://playvalorant.com')}
+                      onClick={() => navigateTo('https://www.crazygames.com/embed/bloxdhop-io')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#a200ff'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
-                      <div style={{ fontSize: '13px', color: '#ccc' }}>Valorant</div>
+                      <div style={{ fontSize: '13px', color: '#ccc' }}>Minecraft</div>
+                      <div style={{ fontSize: '11px', background: '#a200ff', padding: '2px 6px', borderRadius: '4px', color: 'white' }}>FREE</div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }}
+                      onClick={() => navigateTo('https://www.crazygames.com/embed/angry-gran-run')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#a200ff'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
+                      <div style={{ fontSize: '13px', color: '#ccc' }}>Angry Birds</div>
+                      <div style={{ fontSize: '11px', background: '#a200ff', padding: '2px 6px', borderRadius: '4px', color: 'white' }}>FREE</div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }}
+                      onClick={() => navigateTo('https://www.crazygames.com/embed/madalin-stunt-cars-2')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#a200ff'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
+                      <div style={{ fontSize: '13px', color: '#ccc' }}>CAR</div>
+                      <div style={{ fontSize: '11px', background: '#a200ff', padding: '2px 6px', borderRadius: '4px', color: 'white' }}>FREE</div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }}
+                      onClick={() => navigateTo('https://www.crazygames.com/embed/moto-x3m')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#a200ff'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
+                      <div style={{ fontSize: '13px', color: '#ccc' }}>HILL CLIMB</div>
+                      <div style={{ fontSize: '11px', background: '#a200ff', padding: '2px 6px', borderRadius: '4px', color: 'white' }}>FREE</div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }}
+                      onClick={() => navigateTo('https://www.crazygames.com/embed/geometry-dash-online')}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = '#a200ff'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
+                    >
+                      <div style={{ fontSize: '13px', color: '#ccc' }}>DASH</div>
                       <div style={{ fontSize: '11px', background: '#a200ff', padding: '2px 6px', borderRadius: '4px', color: 'white' }}>FREE</div>
                     </div>
                   </div>
@@ -214,7 +288,8 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
             key={iframeKey}
             src={url} 
             title="web-content"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
+            allow="pointer-lock; fullscreen; autoplay; keyboard-map"
             referrerPolicy="no-referrer-when-downgrade"
             style={{ flex: 1, width: '100%', height: '100%', border: 'none', background: '#fff' }}
           />

@@ -9,6 +9,7 @@ class SoundManager {
     this._volume = 0.85;
     this._fanNode = null;
     this._fanGain = null;
+    this.uiSoundsEnabled = true;
   }
 
   init() {
@@ -55,7 +56,7 @@ class SoundManager {
 
   // UI Button Click
   playClick() {
-    if (this.muted) return;
+    if (this.muted || !this.uiSoundsEnabled) return;
     this.ensureContext();
     if (!this.ctx) return;
 
@@ -78,7 +79,7 @@ class SoundManager {
 
   // Hover Tick — subtle micro-feedback for interactive elements
   playHover() {
-    if (this.muted) return;
+    if (this.muted || !this.uiSoundsEnabled) return;
     this.ensureContext();
     if (!this.ctx) return;
 
@@ -100,7 +101,7 @@ class SoundManager {
 
   // Tab Switch — snappy navigation click
   playTabSwitch() {
-    if (this.muted) return;
+    if (this.muted || !this.uiSoundsEnabled) return;
     this.ensureContext();
     if (!this.ctx) return;
 

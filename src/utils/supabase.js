@@ -33,7 +33,7 @@ export async function signUpWithPCID(pcId, password) {
   }
 
   // Append dummy domain to satisfy email requirements
-  const dummyEmail = `${pcId.toLowerCase()}@titanos.local`;
+  const dummyEmail = `${pcId.toLowerCase()}@titanos.com`;
   
   const { data, error } = await supabase.auth.signUp({
     email: dummyEmail,
@@ -58,7 +58,7 @@ export async function signInWithPCID(pcId, password) {
     };
   }
 
-  const dummyEmail = `${pcId.toLowerCase()}@titanos.local`;
+  const dummyEmail = `${pcId.toLowerCase()}@titanos.com`;
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email: dummyEmail,
@@ -174,4 +174,73 @@ export async function fetchUserTycoonGame() {
     .single();
 
   return { data: data?.save_data || null, error };
+}
+
+/**
+ * ================================
+ * TITAN NETWORK / MULTIPLAYER API
+ * ================================
+ */
+
+export async function fetchGlobalLeaderboard() {
+  if (!isSupabaseConfigured || !supabase) return { data: [], error: { message: 'Not configured' } };
+  return await supabase
+    .from('global_leaderboard')
+    .select('*')
+    .order('cash', { ascending: false })
+    .limit(50);
+}
+
+export async function searchUsers(query) {
+  if (!isSupabaseConfigured || !supabase) return { data: [], error: { message: 'Not configured' } };
+  if (!query) return { data: [], error: null };
+  return await supabase
+    .from('profiles')
+    .select('user_id, username')
+    .ilike('username', `%${query}%`)
+    .limit(10);
+}
+
+export async function fetchFriends() {
+  if (!isSupabaseConfigured || !supabase) return { data: [], error: { message: 'Not configured' } };
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { data: [], error: { message: 'Not signed in' } };
+
+  // Fetch all friendships involving the user
+  const { data, error } = await supabase
+    .from('friends')
+    .select(`
+      id, status, sender_id, receiver_id,
+      sender:profiles!friends_sender_id_fkey(username),
+      receiver:profiles!friends_receiver_id_fkey(username)
+    `)
+    .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`);
+    
+  return { data, error };
+}
+
+export async function sendFriendRequest(receiverId) {
+  if (!isSupabaseConfigured || !supabase) return { error: { message: 'Not configured' } };
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: { message: 'Not signed in' } };
+
+  return await supabase
+    .from('friends')
+    .insert({ sender_id: user.id, receiver_id: receiverId, status: 'pending' });
+}
+
+export async function respondToFriendRequest(requestId, newStatus) {
+  if (!isSupabaseConfigured || !supabase) return { error: { message: 'Not configured' } };
+  return await supabase
+    .from('friends')
+    .update({ status: newStatus })
+    .eq('id', requestId);
+}
+
+export async function removeFriend(requestId) {
+  if (!isSupabaseConfigured || !supabase) return { error: { message: 'Not configured' } };
+  return await supabase
+    .from('friends')
+    .delete()
+    .eq('id', requestId);
 }

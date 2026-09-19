@@ -16,6 +16,16 @@ export function LandingPage() {
 
   const hasSave = !!localStorage.getItem('pc_builder_tycoon_save_v1');
 
+  const requestFullScreen = () => {
+    try {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn("Fullscreen request failed:", err);
+        });
+      }
+    } catch (e) {}
+  };
+
   const handleNewGame = () => {
     soundFx.playClick();
     if (hasSave) {
@@ -23,12 +33,14 @@ export function LandingPage() {
         return;
       }
     }
+    requestFullScreen();
     clearSave();
     setGameState('intro');
   };
 
   const handleContinue = () => {
     soundFx.playClick();
+    requestFullScreen();
     loadGame();
   };
 

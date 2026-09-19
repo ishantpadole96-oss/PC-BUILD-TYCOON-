@@ -7,10 +7,17 @@ export function AssetManagerView() {
   const cash = useGameStore((s) => s.cash);
   const [activeCategory, setActiveCategory] = useState('All');
 
-  const ownedProducts = titankartProducts.filter(p => perks.includes(p.id));
+  // Create a map of quantities
+  const quantityMap = {};
+  perks.forEach(id => {
+    quantityMap[id] = (quantityMap[id] || 0) + 1;
+  });
+
+  const uniqueOwnedIds = Object.keys(quantityMap);
+  const ownedProducts = titankartProducts.filter(p => uniqueOwnedIds.includes(p.id));
   
-  // Calculate total asset value
-  const totalAssetValue = ownedProducts.reduce((sum, p) => sum + p.price, 0);
+  // Calculate total asset value taking quantities into account
+  const totalAssetValue = ownedProducts.reduce((sum, p) => sum + (p.price * quantityMap[p.id]), 0);
   const netWorth = cash + totalAssetValue;
 
   // Get categories from owned items
@@ -23,7 +30,7 @@ export function AssetManagerView() {
   // Category breakdown for pie chart style display
   const categoryBreakdown = {};
   ownedProducts.forEach(p => {
-    categoryBreakdown[p.category] = (categoryBreakdown[p.category] || 0) + p.price;
+    categoryBreakdown[p.category] = (categoryBreakdown[p.category] || 0) + (p.price * quantityMap[p.id]);
   });
 
   const categoryColors = {
@@ -83,8 +90,8 @@ export function AssetManagerView() {
           <div style={{ fontSize: '22px', fontWeight: '700', color: '#f59e0b' }}>₹{totalAssetValue.toLocaleString('en-IN')}</div>
         </div>
         <div style={{ background: 'rgba(99, 102, 241, 0.15)', border: '1px solid rgba(99, 102, 241, 0.3)', borderRadius: '12px', padding: '18px' }}>
-          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Items Owned</div>
-          <div style={{ fontSize: '22px', fontWeight: '700', color: '#6366f1' }}>{ownedProducts.length} / {titankartProducts.length}</div>
+          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Total Assets</div>
+          <div style={{ fontSize: '22px', fontWeight: '700', color: '#6366f1' }}>{perks.length}</div>
         </div>
         <div style={{ background: 'rgba(236, 72, 153, 0.15)', border: '1px solid rgba(236, 72, 153, 0.3)', borderRadius: '12px', padding: '18px' }}>
           <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Portfolio Rank</div>
@@ -161,47 +168,53 @@ export function AssetManagerView() {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
-            {displayedAssets.map(asset => (
-              <div key={asset.id} style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '10px',
-                padding: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '15px',
-                transition: 'all 0.2s',
-                cursor: 'default'
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
-              >
-                <div style={{ 
-                  width: '55px', height: '55px', borderRadius: '12px',
-                  background: `${categoryColors[asset.category] || '#666'}22`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '28px', flexShrink: 0
-                }}>
-                  {asset.icon}
+            {displayedAssets.map((asset) => {
+              const qty = quantityMap[asset.id];
+              const totalVal = asset.price * qty;
+              return (
+                <div key={asset.id} style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '10px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '15px',
+                  transition: 'all 0.2s',
+                  cursor: 'default'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; }}
+                >
+                  <div style={{ 
+                    width: '55px', height: '55px', borderRadius: '12px',
+                    background: `${categoryColors[asset.category] || '#666'}22`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '28px', flexShrink: 0
+                  }}>
+                    {asset.icon}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ fontSize: '14px', fontWeight: '600', color: 'white', marginBottom: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{asset.name}</div>
+                    </div>
+                    <div style={{ fontSize: '11px', color: categoryColors[asset.category] || '#888', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>{asset.category}</div>
+                    <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>₹{totalVal.toLocaleString('en-IN')}</div>
+                  </div>
+                  <div style={{
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    color: '#10b981',
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    flexShrink: 0
+                  }}>
+                    x{qty}
+                  </div>
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '14px', fontWeight: '600', color: 'white', marginBottom: '3px' }}>{asset.name}</div>
-                  <div style={{ fontSize: '11px', color: categoryColors[asset.category] || '#888', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>{asset.category}</div>
-                  <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>Value: ₹{asset.price.toLocaleString('en-IN')}</div>
-                </div>
-                <div style={{
-                  background: 'rgba(16, 185, 129, 0.15)',
-                  color: '#10b981',
-                  padding: '4px 10px',
-                  borderRadius: '6px',
-                  fontSize: '11px',
-                  fontWeight: '700',
-                  flexShrink: 0
-                }}>
-                  OWNED ✓
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

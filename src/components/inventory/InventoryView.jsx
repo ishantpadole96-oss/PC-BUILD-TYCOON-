@@ -7,10 +7,8 @@ export function InventoryView() {
   const [filterCat, setFilterCat] = useState('all');
 
   const inventory = useGameStore((s) => s.inventory);
-  const sellInventoryItem = useGameStore((s) => s.sellInventoryItem);
   const installPartFromInventory = useGameStore((s) => s.installPartFromInventory);
   const setActiveTab = useGameStore((s) => s.setActiveTab);
-  const market = useGameStore((s) => s.market);
 
   const filtered = filterCat === 'all'
     ? inventory
@@ -22,7 +20,7 @@ export function InventoryView() {
         <div>
           <h2 className="page-title">📦 WORKSHOP INVENTORY ({inventory.length} ITEMS)</h2>
           <p className="page-subtitle">
-            All components purchased or uninstalled are stored here. Install them directly into workstation builds or resell them back to the market.
+            All components purchased or uninstalled are stored here. Install them directly into workstation builds or send them to the Scrapper to recycle for cash.
           </p>
         </div>
         <button
@@ -71,9 +69,6 @@ export function InventoryView() {
       ) : (
         <div className="inventory-grid">
           {filtered.map((invItem) => {
-            const currentMarketPrice = market.prices[invItem.componentId]?.currentPrice || invItem.purchasePrice;
-            const resellValue = Math.round(currentMarketPrice * 0.85);
-
             return (
               <div key={invItem.instanceId} className="inventory-card">
                 <div className="card-header">
@@ -93,11 +88,6 @@ export function InventoryView() {
                   {invItem.item.specs?.capacity && <span>Capacity: {invItem.item.specs.capacity}GB</span>}
                 </div>
 
-                <div className="resell-row">
-                  <span>Current Resale Value:</span>
-                  <strong className="text-cash">₹{resellValue.toLocaleString('en-IN')}</strong>
-                </div>
-
                 <div className="inv-card-actions">
                   <button
                     onClick={() => {
@@ -109,11 +99,10 @@ export function InventoryView() {
                     🛠️ Install to PC
                   </button>
                   <button
-                    onClick={() => sellInventoryItem(invItem.instanceId)}
-                    className="btn-secondary btn-sm btn-sell"
-                    title={`Resell to market for ₹${resellValue.toLocaleString('en-IN')}`}
+                    onClick={() => setActiveTab('scrapper')}
+                    className="btn-secondary btn-sm"
                   >
-                    💰 Resell
+                    ♻️ Send to Scrapper
                   </button>
                 </div>
               </div>

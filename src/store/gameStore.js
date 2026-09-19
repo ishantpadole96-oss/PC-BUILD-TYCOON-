@@ -14,6 +14,7 @@ import { soundFx } from '../utils/audio';
 import { saveTycoonGameToCloud, fetchUserTycoonGame, isSupabaseConfigured } from '../utils/supabase';
 import { DEFAULT_FS } from '../data/filesystem';
 import confetti from 'canvas-confetti';
+import { CORE_APPS } from '../components/os/appsConfig';
 
 const STORAGE_KEY = 'pc_builder_tycoon_save_v1';
 
@@ -51,11 +52,31 @@ function getInitialState() {
     reputation: 0,
     shopLevel: 1,
     day: 1,
-    activeTab: 'workstation', // start on workstation for immediate gameplay
+    activeTab: 'contact', // start on developer app for immediate gameplay
     inventory: [],
     currentBuild: { ...INITIAL_BUILD },
     biosSettings: { ...INITIAL_BIOS },
     installedFromInventory: {}, // map of category -> inventory item ID
+
+    installedApps: [...CORE_APPS],
+    osSettings: { 
+      theme: 'dark', 
+      soundVolume: 100, 
+      uiSounds: true,
+      bootChime: true,
+      accentColor: '#3b82f6', 
+      showFPS: false,
+      reduceMotion: false,
+      use24HourTime: false,
+      hideDesktopIcons: false,
+      windowOpacity: 100,
+      wallpaperFit: 'cover',
+      osPassword: '', 
+      requirePasswordOnWake: false,
+      username: 'User',
+      avatar: '1'
+    },
+    isLocked: false,
 
     wallpaper: null, // { type: 'image' | 'video', url: string }
     fileSystem: DEFAULT_FS,
@@ -150,13 +171,18 @@ function loadPersistedState() {
     // Deep merge to ensure all default paths exist for older saves
     const validFs = mergeFs(DEFAULT_FS, parsed.fileSystem || {});
     
+    // Ensure all core apps are always installed (fixes older saves missing new core apps)
+    const validApps = Array.from(new Set([...CORE_APPS, ...(parsed.installedApps || [])]));
+    
     return {
       ...getInitialState(),
       ...parsed,
       fileSystem: validFs,
-      // reset transient power state on reload
+      installedApps: validApps,
+      // reset transient states on reload
       pcPowerState: 'off',
       postFailReason: null,
+      isLocked: !!(parsed.osSettings?.osPassword)
     };
   } catch {
     return getInitialState();
@@ -167,13 +193,35 @@ export const useGameStore = create((set, get) => ({
   ...loadPersistedState(),
 
   setGameState: (state) => set({ gameState: state }),
+  setIsLocked: (locked) => set({ isLocked: locked }),
   setWallpaper: (wallpaper) => set({ wallpaper }),
-  setActiveTab: (tab) => {
-    soundFx.playTabSwitch();
-    set({ activeTab: tab });
-  },
   setFileSystem: (fs) => set({ fileSystem: fs }),
   setActiveNotepadFile: (file) => set({ activeNotepadFile: file }),
+  updateOSSettings: (settings) => set((state) => {
+    const newSettings = { ...state.osSettings, ...settings };
+    get().saveGame();
+    return { osSettings: newSettings };
+  }),
+
+  installApp: (appId) => {
+    const state = get();
+    if (!state.installedApps.includes(appId)) {
+      soundFx.playCash(); // Just for feedback
+      set({ installedApps: [...state.installedApps, appId] });
+      get().saveGame();
+    }
+  },
+  
+  uninstallApp: (appId) => {
+    const state = get();
+    if (state.installedApps.includes(appId) && !CORE_APPS.includes(appId)) {
+      set({ 
+        installedApps: state.installedApps.filter(id => id !== appId),
+        activeTab: state.activeTab === appId ? null : state.activeTab
+      });
+      get().saveGame();
+    }
+  },
 
   saveGame: async () => {
     const state = get();
@@ -189,6 +237,8 @@ export const useGameStore = create((set, get) => ({
       market: state.market,
       fileSystem: state.fileSystem,
       perks: state.perks,
+      installedApps: state.installedApps,
+      osSettings: state.osSettings,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(saveData));
     
@@ -214,6 +264,8 @@ export const useGameStore = create((set, get) => ({
       market: state.market,
       fileSystem: state.fileSystem,
       perks: state.perks,
+      installedApps: state.installedApps,
+      osSettings: state.osSettings,
     };
     
     const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });
@@ -249,8 +301,10 @@ export const useGameStore = create((set, get) => ({
     }
     
     if (savedData) {
+      const validApps = Array.from(new Set([...CORE_APPS, ...(savedData.installedApps || [])]));
       set({
         ...savedData,
+        installedApps: validApps,
         gameState: 'desktop', // load straight to OS
         currentBuild: { ...INITIAL_BUILD },
         biosSettings: { ...INITIAL_BIOS },
@@ -268,9 +322,17 @@ export const useGameStore = create((set, get) => ({
     try {
       const savedData = JSON.parse(jsonString);
       if (savedData && savedData.cash !== undefined) {
+        const validApps = Array.from(new Set([...CORE_APPS, ...(savedData.installedApps || [])]));
+        savedData.installedApps = validApps;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData));
+        
+        if (isSupabaseConfigured) {
+          saveTycoonGameToCloud(savedData).catch(console.error);
+        }
+
         set({
           ...savedData,
+          installedApps: validApps,
           gameState: 'desktop', // load straight to OS
           currentBuild: { ...INITIAL_BUILD },
           biosSettings: { ...INITIAL_BIOS },
@@ -293,6 +355,7 @@ export const useGameStore = create((set, get) => ({
 
   clearSave: () => {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('titanos_tutorial_seen');
     set({ ...getInitialState() });
   },
 
@@ -539,9 +602,12 @@ export const useGameStore = create((set, get) => ({
     const invItem = state.inventory.find(i => i.instanceId === instanceId);
     if (!invItem) return;
 
-    // Resell at 85% of market price
+    // Resell at 50% for used/replaced, 95% for new
     const marketPrice = state.market.prices[invItem.componentId]?.currentPrice || invItem.purchasePrice;
-    const sellPrice = Math.round(marketPrice * 0.85);
+    
+    const isUsed = invItem.instanceId.startsWith('inv_rem_');
+    const multiplier = isUsed ? 0.50 : 0.95;
+    const sellPrice = Math.round(marketPrice * multiplier);
 
     soundFx.playCash();
 
@@ -803,8 +869,6 @@ export const useGameStore = create((set, get) => ({
   // ── TITANKART PERKS ──
   buyPerk: (perk) => {
     const state = get();
-    if (state.perks.includes(perk.id)) return false;
-    
     if (state.cash < perk.price) {
       soundFx.playWarning();
       get().setNotification(`Insufficient funds to buy ${perk.name}!`, 'error');

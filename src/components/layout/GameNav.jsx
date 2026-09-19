@@ -45,6 +45,12 @@ export function GameNav() {
       badge: repairJobs.length > 0 ? repairJobs.length : null,
     },
     {
+      id: 'scrapper',
+      label: 'Scrapper',
+      icon: '♻️',
+      badge: null,
+    },
+    {
       id: 'challenges',
       label: 'Challenges',
       icon: '🏆',

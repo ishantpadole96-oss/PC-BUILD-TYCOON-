@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 const GAME_WIDTH = 400;
-const GAME_HEIGHT = 500;
 
 export function TicTacToe({ onBack }) {
   const [board, setBoard] = useState(Array(9).fill(null));
