@@ -116,7 +116,6 @@ export function SettingsView() {
                   className="settings-input"
                 />
               </div>
-              {renderToggle('Require Password on Wake', 'requirePasswordOnWake')}
             </div>
           </div>
         );

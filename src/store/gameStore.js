@@ -72,7 +72,6 @@ function getInitialState() {
       windowOpacity: 100,
       wallpaperFit: 'cover',
       osPassword: '', 
-      requirePasswordOnWake: false,
       username: 'User',
       avatar: '1'
     },

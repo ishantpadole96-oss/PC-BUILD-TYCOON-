@@ -353,11 +353,6 @@ export function VirtualOS() {
     setOpenApps(prev => prev.filter(app => app !== activeTab));
     setActiveTab(null);
     setWindowState('normal');
-    
-    // If requirePasswordOnWake is true, lock the OS when an app is closed
-    if (osSettings.requirePasswordOnWake && osSettings.osPassword) {
-      useGameStore.getState().setIsLocked(true);
-    }
   };
 
   const handleMin = (e) => {
