@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { titankartProducts } from '../../data/titankart';
 import { soundFx } from '../../utils/audio';
@@ -10,6 +10,21 @@ export function TitanKartView() {
   const buyPerk = useGameStore((s) => s.buyPerk);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+
+  // Generate stable ratings per product (avoids flickering from Math.random in render)
+  const productRatings = useMemo(() => {
+    const ratings = {};
+    titankartProducts.forEach(p => {
+      // Simple hash from product id to generate a stable decimal
+      let hash = 0;
+      for (let i = 0; i < p.id.length; i++) {
+        hash = ((hash << 5) - hash) + p.id.charCodeAt(i);
+        hash |= 0;
+      }
+      ratings[p.id] = (4 + (Math.abs(hash) % 10) / 10).toFixed(1);
+    });
+    return ratings;
+  }, []);
 
   const handleBuy = (product) => {
     if (shopLevel < product.unlockLevel) {
@@ -26,9 +41,9 @@ export function TitanKartView() {
   const allCategories = ['All', ...new Set(titankartProducts.map(p => p.category))];
 
   const filteredProducts = titankartProducts.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (product.name || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
+      (product.category || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (product.description || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = activeCategory === 'All' || product.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
@@ -166,7 +181,7 @@ export function TitanKartView() {
                     {product.name}
                   </h3>
                   <div style={{ fontSize: '14px', color: '#388e3c', fontWeight: 'bold', marginBottom: '10px' }}>
-                    ★ 4.{Math.floor(Math.random() * 5) + 5} / 5
+                    ★ {productRatings[product.id] || '4.5'} / 5
                   </div>
                   <p style={{ margin: '0 0 15px 0', fontSize: '13px', color: '#555', lineHeight: '1.4' }}>
                     {product.description}

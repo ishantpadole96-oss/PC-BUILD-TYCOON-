@@ -30,6 +30,11 @@ export function AuthModal() {
       return;
     }
     
+    if (password.length < 6) {
+      setErrorMsg('Password must be at least 6 characters.');
+      return;
+    }
+    
     setLoading(true);
     setErrorMsg('');
     try {
@@ -37,17 +42,38 @@ export function AuthModal() {
         ? await signUpWithPCID(pcId, password) 
         : await signInWithPCID(pcId, password);
       if (error) {
-        if (error.message.toLowerCase().includes('rate limit')) {
-          // Bypass rate limit for local dev / simulator by creating a mock user
-          const mockUser = { email: `${pcId}@titanos.com`, user_metadata: { full_name: pcId } };
+        const msg = error.message.toLowerCase();
+        // Bypass rate limit, email not confirmed, and other auth errors
+        // by creating a local mock user (since we use fake @titanos.com emails)
+        if (msg.includes('rate limit') || msg.includes('email not confirmed') || msg.includes('email') ) {
+          const mockUser = { 
+            id: `mock_${pcId.toLowerCase()}`,
+            email: `${pcId}@titanos.com`, 
+            user_metadata: { full_name: pcId } 
+          };
           setUser(mockUser);
           localStorage.setItem('pc_simulator_mock_user', JSON.stringify(mockUser));
           setOpen(false);
           return;
+        } else if (msg.includes('invalid login')) {
+          setErrorMsg('Invalid username or password. Try again or create a new account.');
         } else {
           setErrorMsg(error.message);
         }
-      } else if (isRegistering || _data?.user) {
+      } else if (_data?.user) {
+        // Real Supabase sign in succeeded
+        setUser(_data.user);
+        localStorage.removeItem('pc_simulator_mock_user');
+        setOpen(false);
+      } else if (isRegistering) {
+        // Sign up succeeded, create mock user since email confirmation won't work
+        const mockUser = { 
+          id: `mock_${pcId.toLowerCase()}`,
+          email: `${pcId}@titanos.com`, 
+          user_metadata: { full_name: pcId } 
+        };
+        setUser(mockUser);
+        localStorage.setItem('pc_simulator_mock_user', JSON.stringify(mockUser));
         setOpen(false);
       }
     } catch (err) {

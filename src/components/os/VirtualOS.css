@@ -303,3 +303,119 @@
   display: flex;
   flex-direction: column;
 }
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+
+/* Tablets and small laptops */
+@media (max-width: 1024px) {
+  .os-window {
+    top: 30px;
+    left: 10px;
+    right: 10px;
+    bottom: 50px;
+  }
+  
+  .os-icons-column {
+    top: 35px;
+    left: 10px;
+    gap: 10px;
+  }
+  
+  .os-icon {
+    width: 60px;
+    height: 65px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 768px) {
+  .os-window {
+    top: 26px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 0;
+    border: none;
+  }
+
+  .os-icons-column {
+    top: 30px;
+    left: 5px;
+    right: 5px;
+    bottom: 55px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    gap: 8px;
+  }
+
+  .os-icon {
+    width: 55px;
+    height: 60px;
+  }
+
+  .os-icon-emoji {
+    font-size: 1.5rem;
+  }
+  
+  .os-icon:hover {
+    transform: scale(1.05);
+  }
+
+  .os-taskbar {
+    height: 22px;
+    padding: 0 8px;
+    font-size: 11px;
+  }
+
+  .os-start-menu {
+    width: 200px;
+    left: 5px;
+  }
+
+  .os-start-menu-item {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .os-window-titlebar {
+    height: 26px;
+    padding: 0 8px;
+  }
+
+  .os-window-title {
+    font-size: 11px;
+  }
+
+  .os-window-btn {
+    width: 12px !important;
+    height: 12px !important;
+    min-width: 12px !important;
+    min-height: 12px !important;
+  }
+
+  .boot-logo {
+    font-size: 3rem;
+  }
+
+  .boot-text {
+    font-size: 0.8rem;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 480px) {
+  .os-icons-column {
+    gap: 5px;
+  }
+
+  .os-icon {
+    width: 48px;
+    height: 52px;
+  }
+
+  .os-icon-emoji {
+    font-size: 1.3rem;
+  }
+}

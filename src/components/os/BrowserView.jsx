@@ -137,7 +137,7 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
-                      onClick={() => window.open('https://pcpartpicker.com', '_blank')}
+                      onClick={() => navigateTo('https://pcpartpicker.com')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
@@ -145,7 +145,7 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                       <div style={{ fontSize: '12px', color: '#888' }}>Shop the latest hardware</div>
                     </div>
                     <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
-                      onClick={() => window.open('https://www.tomshardware.com', '_blank')}
+                      onClick={() => navigateTo('https://www.tomshardware.com')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
@@ -153,7 +153,7 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                       <div style={{ fontSize: '12px', color: '#888' }}>Tom's Hardware - Latest tech news</div>
                     </div>
                     <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
-                      onClick={() => window.open('https://www.twitch.tv', '_blank')}
+                      onClick={() => navigateTo('https://player.twitch.tv/?channel=shroud&parent=' + window.location.hostname)}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#9146ff'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
@@ -161,7 +161,7 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                       <div style={{ fontSize: '12px', color: '#888' }}>Live game streaming</div>
                     </div>
                     <div style={{ background: '#18181f', padding: '12px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'border-color 0.2s' }} 
-                      onClick={() => window.open('https://www.reddit.com/r/buildapc', '_blank')}
+                      onClick={() => navigateTo('https://www.google.com/search?igu=1&q=reddit+buildapc')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#fa003f'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
@@ -179,7 +179,7 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div 
                       style={{ display: 'flex', alignItems: 'center', gap: '15px', background: '#18181f', padding: '15px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'all 0.2s' }} 
-                      onClick={() => navigateTo('https://www.google.com/search?igu=1')}
+                      onClick={() => navigateTo('https://www.google.com/webhp?igu=1')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#00f0ff'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
@@ -189,7 +189,7 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
                     
                     <div 
                       style={{ display: 'flex', alignItems: 'center', gap: '15px', background: '#18181f', padding: '15px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'all 0.2s' }} 
-                      onClick={() => window.open('https://www.youtube.com', '_blank')}
+                      onClick={() => navigateTo('https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ff0000'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
@@ -199,7 +199,7 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
 
                     <div 
                       style={{ display: 'flex', alignItems: 'center', gap: '15px', background: '#18181f', padding: '15px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'all 0.2s' }} 
-                      onClick={() => window.open('https://music.youtube.com', '_blank')}
+                      onClick={() => navigateTo('https://www.google.com/search?igu=1&q=youtube+music')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ff0000'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
@@ -209,7 +209,7 @@ export function BrowserView({ initialSearchQuery, onSearchConsumed }) {
 
                     <div 
                       style={{ display: 'flex', alignItems: 'center', gap: '15px', background: '#18181f', padding: '15px', borderRadius: '8px', cursor: 'pointer', border: '1px solid #222', transition: 'all 0.2s' }} 
-                      onClick={() => window.open('https://www.onlinegdb.com', '_blank')}
+                      onClick={() => navigateTo('https://www.onlinegdb.com')}
                       onMouseEnter={(e) => e.currentTarget.style.borderColor = '#4a90e2'}
                       onMouseLeave={(e) => e.currentTarget.style.borderColor = '#222'}
                     >
