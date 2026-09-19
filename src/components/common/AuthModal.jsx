@@ -39,7 +39,9 @@ export function AuthModal() {
       if (error) {
         if (error.message.toLowerCase().includes('rate limit')) {
           // Bypass rate limit for local dev / simulator by creating a mock user
-          setUser({ email: `${pcId}@titanos.com`, user_metadata: { full_name: pcId } });
+          const mockUser = { email: `${pcId}@titanos.com`, user_metadata: { full_name: pcId } };
+          setUser(mockUser);
+          localStorage.setItem('pc_simulator_mock_user', JSON.stringify(mockUser));
           setOpen(false);
           return;
         } else {
@@ -57,6 +59,7 @@ export function AuthModal() {
 
   const handleSignOut = async () => {
     await signOutUser();
+    localStorage.removeItem('pc_simulator_mock_user');
     setUser(null);
     setOpen(false);
   };
